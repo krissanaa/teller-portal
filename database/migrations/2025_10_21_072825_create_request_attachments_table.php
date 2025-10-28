@@ -11,14 +11,14 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('onboarding_requests', function (Blueprint $table) {
-            $table->string('attachment')->nullable()->after('admin_remark');
+            $table->string('attachments')->nullable()->after('admin_remark');
         });
     }
 
     public function down(): void
     {
         Schema::table('onboarding_requests', function (Blueprint $table) {
-            $table->dropColumn('attachment');
+            $table->dropColumn('attachments');
         });
     }
 };

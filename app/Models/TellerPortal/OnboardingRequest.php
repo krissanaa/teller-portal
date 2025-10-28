@@ -24,7 +24,7 @@ class OnboardingRequest extends Model
     'store_status',
     'approval_status',
     'admin_remark',
-    'attachment',
+    'attachments',
 ];
 public function branch()
 {

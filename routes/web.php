@@ -2,22 +2,27 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProfileController;
+
+// 🧭 Admin Controllers
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\UserController as AdminUserController;
 use App\Http\Controllers\Admin\UserLogController as AdminUserLogController;
 use App\Http\Controllers\Admin\ReportController;
 use App\Http\Controllers\Admin\OnboardingRequestController;
 use App\Http\Controllers\Admin\BranchController;
+
+// 🧭 Teller Controllers
 use App\Http\Controllers\TellerDashboardController;
 use App\Http\Controllers\Teller\OnboardingController;
+use App\Http\Controllers\Teller\ReportController as TellerReportController;
 
 // ============================================================
-// 🏠 หน้าแรก (เปิดเว็บพาไป Login)
+// 🏠 หน้าแรก (Redirect ไปหน้า Login)
 // ============================================================
 Route::get('/', fn() => redirect()->route('login'));
 
 // ============================================================
-// 🔐 หน้าหลัง Login — ส่งผู้ใช้ไป Dashboard ตาม Role
+// 🔐 หลัง Login — ส่งผู้ใช้ไปยัง Dashboard ตาม Role
 // ============================================================
 Route::get('/dashboard', function () {
     $user = auth()->user();
@@ -37,15 +42,29 @@ Route::middleware(['auth', 'role:teller', 'approved'])
     ->prefix('teller')
     ->name('teller.')
     ->group(function () {
-        // Dashboard ของ Teller
+
+        // --------------------------------------------------------
+        // 🏠 Dashboard (เฉพาะ Pending)
+        // --------------------------------------------------------
         Route::get('/dashboard', [TellerDashboardController::class, 'index'])->name('dashboard');
 
-        // แบบฟอร์มสมัครร้านค้า (Onboarding)
+        // --------------------------------------------------------
+        // 📊 รายงานฟอร์มที่อนุมัติแล้ว (Approved)
+        // --------------------------------------------------------
+        Route::get('/report', [TellerReportController::class, 'index'])->name('report');
+
+        // --------------------------------------------------------
+        // 🔐 เปลี่ยนรหัสผ่าน
+        // --------------------------------------------------------
+        Route::post('/change-password', [TellerDashboardController::class, 'changePassword'])
+            ->name('changePassword');
+
+        // --------------------------------------------------------
+        // 🧾 Onboarding Requests (สมัครร้านค้า POS)
+        // --------------------------------------------------------
         Route::get('/requests/create', [OnboardingController::class, 'create'])->name('requests.create');
         Route::post('/requests/store', [OnboardingController::class, 'store'])->name('requests.store');
         Route::get('/requests/{id}', [OnboardingController::class, 'show'])->name('requests.show');
-
-        // ✏️ แก้ไขฟอร์ม (เฉพาะสถานะ pending)
         Route::get('/requests/{id}/edit', [OnboardingController::class, 'edit'])->name('requests.edit');
         Route::put('/requests/{id}', [OnboardingController::class, 'update'])->name('requests.update');
     });
@@ -64,18 +83,18 @@ Route::middleware(['auth', 'role:admin'])
         Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
 
         // --------------------------------------------------------
-        // 👥 Teller Management (CRUD + Reset Password + Approve/Reject)
+        // 👥 Teller Management (CRUD + Approve/Reject + Reset Password)
         // --------------------------------------------------------
         Route::prefix('users')->name('users.')->group(function () {
             Route::get('/', [AdminUserController::class, 'index'])->name('index');
             Route::get('/create', [AdminUserController::class, 'create'])->name('create');
             Route::post('/', [AdminUserController::class, 'store'])->name('store');
+            Route::get('/{id}', [AdminUserController::class, 'show'])->name('show');
             Route::get('/{id}/edit', [AdminUserController::class, 'edit'])->name('edit');
             Route::put('/{id}', [AdminUserController::class, 'update'])->name('update');
             Route::delete('/{id}', [AdminUserController::class, 'destroy'])->name('destroy');
-            Route::post('/{id}/reset-password', [AdminUserController::class, 'resetPassword'])->name('resetPassword');
-            Route::get('/{id}', [AdminUserController::class, 'show'])->name('show');
             Route::post('/{id}/status', [AdminUserController::class, 'updateStatus'])->name('updateStatus');
+            Route::post('/{id}/reset-password', [AdminUserController::class, 'resetPassword'])->name('resetPassword');
         });
 
         // --------------------------------------------------------
@@ -92,7 +111,7 @@ Route::middleware(['auth', 'role:admin'])
         Route::get('/reports/summary', [ReportController::class, 'summaryReport'])->name('reports.summary');
 
         // --------------------------------------------------------
-        // 🏪 Onboarding Requests
+        // 🏪 Onboarding Requests (POS Registration)
         // --------------------------------------------------------
         Route::get('/onboarding', [OnboardingRequestController::class, 'index'])->name('onboarding.index');
         Route::get('/onboarding/{id}', [OnboardingRequestController::class, 'show'])->name('onboarding.show');
@@ -100,7 +119,7 @@ Route::middleware(['auth', 'role:admin'])
         Route::post('/onboarding/{id}/reject', [OnboardingRequestController::class, 'reject'])->name('onboarding.reject');
 
         // --------------------------------------------------------
-        // 🏢 Branch Management
+        // 🏢 Branch Management (CRUD)
         // --------------------------------------------------------
         Route::prefix('branches')->name('branches.')->group(function () {
             Route::get('/', [BranchController::class, 'index'])->name('index');
@@ -113,7 +132,7 @@ Route::middleware(['auth', 'role:admin'])
     });
 
 // ============================================================
-// 👤 Profile Routes
+// 👤 Profile Routes (ใช้ได้ทั้ง Admin / Teller)
 // ============================================================
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -122,6 +141,6 @@ Route::middleware('auth')->group(function () {
 });
 
 // ============================================================
-// 🪪 Auth Routes
+// 🪪 Auth Routes (Login, Register, Forgot Password)
 // ============================================================
 require __DIR__ . '/auth.php';

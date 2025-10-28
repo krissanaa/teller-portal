@@ -23,6 +23,8 @@ return new class extends Migration {
             $table->text('admin_remark')->nullable();
 
             $table->timestamps();
+            $table->json('attachments')->nullable();
+
         });
     }
 

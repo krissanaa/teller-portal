@@ -4,142 +4,124 @@ namespace App\Http\Controllers\Teller;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Str;
-use Illuminate\Support\Facades\Storage;
 use App\Models\TellerPortal\OnboardingRequest;
-use App\Models\TellerPortal\Branch;
+use App\Models\TellerPortal\Branch;   // ✅ เพิ่มตรงนี้
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class OnboardingController extends Controller
 {
-    // ============================================================
-    // 🧾 สร้างฟอร์มใหม่
-    // ============================================================
+    // 🧾 ฟอร์มสร้างคำขอใหม่
     public function create()
     {
-        // ✅ ดึง branch จริงจากฐานข้อมูล teller_portal
-        $branches = Branch::where('status', 'active')
-            ->orderBy('name')
-            ->get();
-
+        $branches = Branch::orderBy('name')->get(); // ✅ เพิ่มบรรทัดนี้
         return view('teller.requests.create', compact('branches'));
     }
 
-    // ============================================================
-    // 💾 บันทึกฟอร์มใหม่
-    // ============================================================
+    // 💾 บันทึกคำขอใหม่
     public function store(Request $request)
-    {
-        $request->validate([
-            'store_name' => 'required|string|max:255',
-            'store_address' => 'required|string|max:500',
-            'business_type' => 'required|string|max:255',
-            'pos_serial' => 'required|string|max:255',
-            'bank_account' => 'nullable|string|max:50',
-            'installation_date' => 'required|date',
-            'branch_id' => 'required|integer|exists:branches,id',
-            'attachment' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:5120',
-        ]);
+{
+    $data = $request->validate([
+    'store_name'       => 'required|string|max:255',
+    'business_type'    => 'nullable|string|max:255',
+    'store_address'    => 'nullable|string',
+    'pos_serial'       => 'nullable|string|max:255',
+    'bank_account'     => 'nullable|string|max:255',
+    'branch_id'        => 'nullable|integer',
+    'installation_date'=> 'nullable|date',
+    'attachments.*'    => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:5120',
+    ]);
 
-        // ✅ generate refer_code เช่น REF-20251022-001
-        $datePrefix = now()->format('Ymd');
-        $last = OnboardingRequest::whereDate('created_at', now())->count() + 1;
-        $referCode = "REF-{$datePrefix}-" . str_pad($last, 3, '0', STR_PAD_LEFT);
+    // ✅ อัปโหลดไฟล์แนบ
+    $paths = [];
+    if ($request->hasFile('attachments')) {
+        foreach ($request->file('attachments') as $file) {
+            $paths[] = $file->store('attachments', 'public');
+        }
+    }
 
-        // ✅ upload file
-        $filePath = null;
-        if ($request->hasFile('attachment')) {
-            $filePath = $request->file('attachment')->store('attachments', 'public');
+    $data['attachments'] = !empty($paths) ? json_encode($paths) : null;
+    $data['teller_id'] = Auth::id();
+    $data['approval_status'] = 'pending';
+
+    // ✅ ใช้ Transaction + Lock ป้องกัน refer_code ซ้ำ
+    \DB::transaction(function () use (&$data) {
+        $today = now()->format('Ymd');
+
+        $latestToday = \App\Models\TellerPortal\OnboardingRequest::whereDate('created_at', today())
+            ->where('refer_code', 'like', 'REF-' . $today . '-%')
+            ->lockForUpdate() // 🔒 ป้องกันซ้ำกรณีหลายคนกดพร้อมกัน
+            ->orderBy('id', 'desc')
+            ->first();
+
+        $nextNumber = 1;
+        if ($latestToday && preg_match('/REF-' . $today . '-(\d+)/', $latestToday->refer_code, $matches)) {
+            $nextNumber = intval($matches[1]) + 1;
         }
 
-        // ✅ บันทึกข้อมูล
-        OnboardingRequest::create([
-            'refer_code' => $referCode,
-            'teller_id' => Auth::id(),
-            'branch_id' => $request->branch_id,
-            'store_name' => $request->store_name,
-            'store_address' => $request->store_address,
-            'business_type' => $request->business_type,
-            'pos_serial' => $request->pos_serial,
-            'bank_account' => $request->bank_account,
-            'installation_date' => $request->installation_date,
-            'store_status' => 'pending',
-            'approval_status' => 'pending',
-            'admin_remark' => null,
-            'attachment' => $filePath,
-        ]);
+        // ✅ Format: REF-YYYYMMDD-XXX
+        $data['refer_code'] = 'REF-' . $today . '-' . str_pad($nextNumber, 3, '0', STR_PAD_LEFT);
 
-        return redirect()->route('teller.dashboard')
-            ->with('success', '✅ Onboarding request submitted successfully.');
-    }
+        \App\Models\TellerPortal\OnboardingRequest::create($data);
+    });
 
-    // ============================================================
-    // 🔍 แสดงรายละเอียดฟอร์ม
-    // ============================================================
-    public function show($id)
-    {
-        $tellerId = Auth::id();
+    return redirect()->route('teller.dashboard')->with('success', 'ສົ່ງຄຳຂໍສຳເລັດ');
+}
 
-        $request = OnboardingRequest::with('branch')
-            ->where('teller_id', $tellerId)
-            ->where('id', $id)
-            ->firstOrFail();
 
-        return view('teller.requests.show', compact('request'));
-    }
 
-    // ============================================================
-    // ✏️ แก้ไขฟอร์ม (เฉพาะ Pending)
-    // ============================================================
+
+
+    // 🧰 ฟอร์มแก้ไข
     public function edit($id)
     {
-        $tellerId = Auth::id();
-        $request = OnboardingRequest::where('teller_id', $tellerId)->findOrFail($id);
+        $request = OnboardingRequest::where('id', $id)
+            ->where('teller_id', Auth::id())
+            ->firstOrFail();
 
-        if ($request->approval_status !== 'pending') {
-            return redirect()->route('teller.requests.show', $id)
-                ->with('error', '❌ This request cannot be edited after approval or rejection.');
-        }
-
-        $branches = Branch::where('status', 'active')->orderBy('name')->get();
+        $branches = Branch::orderBy('name')->get(); // ✅ เพิ่มบรรทัดนี้ด้วย
 
         return view('teller.requests.edit', compact('request', 'branches'));
     }
 
-    // ============================================================
-    // 🔄 อัปเดตฟอร์ม (เมื่อแก้ไข)
-    // ============================================================
+    // 🔄 อัปเดตข้อมูล
     public function update(Request $request, $id)
     {
-        $tellerId = Auth::id();
-        $data = OnboardingRequest::where('teller_id', $tellerId)->findOrFail($id);
+        $record = OnboardingRequest::findOrFail($id);
 
-        if ($data->approval_status !== 'pending') {
-            return back()->with('error', '❌ This request has already been processed and cannot be updated.');
-        }
-
-        $validated = $request->validate([
-            'store_name' => 'required|string|max:255',
-            'store_address' => 'required|string|max:500',
-            'business_type' => 'required|string|max:255',
-            'pos_serial' => 'required|string|max:255',
-            'bank_account' => 'nullable|string|max:50',
-            'installation_date' => 'required|date',
-            'branch_id' => 'required|integer|exists:branches,id',
-            'attachment' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:5120',
+        $data = $request->validate([
+    'store_name'       => 'required|string|max:255',
+    'business_type'    => 'nullable|string|max:255',
+    'store_address'    => 'nullable|string',
+    'pos_serial'       => 'nullable|string|max:255',
+    'bank_account'     => 'nullable|string|max:255',
+    'branch_id'        => 'nullable|integer',
+    'installation_date'=> 'nullable|date',
+    'attachments.*'    => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:5120',
         ]);
 
-        // ถ้ามีการแนบไฟล์ใหม่ → ลบไฟล์เก่า
-        if ($request->hasFile('attachment')) {
-            if ($data->attachment && Storage::disk('public')->exists($data->attachment)) {
-                Storage::disk('public')->delete($data->attachment);
+        $paths = json_decode($record->attachments ?? '[]', true);
+
+        if ($request->hasFile('attachments')) {
+            foreach ($request->file('attachments') as $file) {
+                $paths[] = $file->store('attachments', 'public');
             }
-            $validated['attachment'] = $request->file('attachment')->store('attachments', 'public');
         }
 
-        $data->update($validated);
+        $data['attachments'] = !empty($paths) ? json_encode($paths) : null;
+        $record->update($data);
 
-        return redirect()->route('teller.requests.show', $id)
-            ->with('success', '✅ Request updated successfully.');
+        return redirect()->route('teller.requests.show', $record->id)->with('success', 'ອັບເດດຂໍ້ມູນສຳເລັດ');
+    }
+
+    // 👁️ แสดงรายละเอียดคำขอ
+    public function show($id)
+    {
+        $request = OnboardingRequest::where('id', $id)
+            ->where('teller_id', Auth::id())
+            ->with('branch')
+            ->firstOrFail();
+
+        return view('teller.requests.show', compact('request'));
     }
 }

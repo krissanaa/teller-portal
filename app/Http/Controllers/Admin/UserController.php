@@ -106,22 +106,23 @@ class UserController extends Controller
     }
 
     public function resetPassword($id)
-    {
-        $user = User::findOrFail($id);
-        $newPassword = '123456'; // หรือใช้ Str::random(8);
+{
+    $user = User::findOrFail($id);
+    $newPassword = '123456';
 
-        $user->update(['password' => Hash::make($newPassword)]);
+    $user->update(['password' => Hash::make($newPassword)]);
 
-        UserLog::create([
-            'admin_id' => Auth::id(),
-            'action' => 'reset_password',
-            'description' => 'Reset password for Teller: ' . $user->name,
-            'ip_address' => request()->ip(),
-            'user_agent' => request()->userAgent(),
-        ]);
+    UserLog::create([
+        'admin_id' => Auth::id(),
+        'action' => 'reset_password',
+        'description' => 'Reset password for Teller: ' . $user->name,
+        'ip_address' => request()->ip(),
+        'user_agent' => request()->userAgent(),
+    ]);
 
-        return back()->with('success', "Password reset to '{$newPassword}'");
-    }
+    return back()->with('success', "🔑 Password reset to '{$newPassword}' for {$user->name}");
+}
+
     public function updateStatus(Request $request, $id)
 {
     $user = User::findOrFail($id);

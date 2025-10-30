@@ -368,6 +368,26 @@
             50% { transform: scale(1.3); opacity: 0.5; }
             100% { transform: scale(0); opacity: 0; }
         }
+        .navbar-apb .navbar-brand img {
+  height: 50px;
+  width: auto;
+  transition: transform 0.2s ease;
+}
+.navbar-apb .navbar-brand:hover img {
+  transform: scale(1.05);
+}
+.brand-text .brand-name {
+  font-weight: 700;
+  font-size: 1.05rem;
+  color: #ffffff;
+}
+.brand-text .brand-subtitle {
+  font-size: 0.8rem;
+  color: #ffffff;
+  font-size: 12px;
+
+}
+
     </style>
 </head>
 <body>
@@ -377,10 +397,14 @@
         <div class="container-fluid px-4">
             <!-- Brand -->
             <a class="navbar-brand" href="{{ route('teller.dashboard') }}">
-                <i class="bi bi-bank2"></i>
+  <img src="{{ asset('images/APB-logo.jpeg') }}" height="40">
+
+</a>
+
                 <div class="brand-text">
-                    <span class="brand-name">APB BANK</span>
-                    <span class="brand-subtitle">TELLER DASHBOARD</span>
+
+                    <span class="brand-name">ທະນາຄານ ສົ່ງເສີມກະສິກຳ ຈຳກັດ</span>
+                    <span class="brand-subtitle">AGRICULTURAL PROMOTION BANK CO., LTD</span>
                 </div>
             </a>
 

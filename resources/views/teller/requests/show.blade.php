@@ -611,16 +611,19 @@
 
         <!-- Action Buttons -->
         <div class="action-buttons">
+
             @if($request->approval_status === 'pending')
-                <a href="{{ route('teller.requests.edit', $request->id) }}" class="btn-edit">
-                    <i class="bi bi-pencil-square"></i>
-                    ແກ້ໄຂຂໍ້ມູນ
-                </a>
-            @endif
             <a href="{{ route('teller.dashboard') }}" class="btn-back">
                 <i class="bi bi-arrow-left-circle"></i>
                 ກັບຄືນ
             </a>
+
+            @endif
+                <a href="{{ route('teller.requests.edit', $request->id) }}" class="btn-edit">
+                    <i class="bi bi-pencil-square"></i>
+                    ແກ້ໄຂຂໍ້ມູນ
+                </a>
+
         </div>
     </div>
 </div>

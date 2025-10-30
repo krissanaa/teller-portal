@@ -163,8 +163,8 @@
 
     .file-upload-area {
         border: 3px dashed #B0BEC5;
-        border-radius: 12px;
-        padding: 40px 30px;
+        border-radius: 10px;
+        padding: 30px 20px;
         text-align: center;
         background: #FAFAFA;
         transition: all 0.3s ease;

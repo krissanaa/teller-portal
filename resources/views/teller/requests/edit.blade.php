@@ -300,26 +300,26 @@
     }
 
     .btn-cancel {
-        background: white;
-        border: 1px solid #ced4da;
-        color: #212529;
-        padding: 11px 28px;
-        border-radius: 8px;
-        font-weight: 600;
+        background: rgb(255, 255, 255);
+        border: 2px solid #f70000;
+        color: #000000;
+        padding: 14px 32px;
+        border-radius: 10px;
+        font-weight: 700;
         transition: all 0.3s ease;
         display: inline-flex;
         align-items: center;
-        gap: 8px;
+        gap: 10px;
         text-decoration: none;
+        font-size: 1rem;
     }
 
     .btn-cancel:hover {
-        background: #f8f9fa;
-        border-color: #adb5bd;
-        color: #212529;
-        transform: translateY(-2px);
+        background: rgb(255, 0, 0);
+        border: 2px solid #ff0000;
+        color: #ffffff;
+        transform: translateY(-3px);
     }
-
     @media (max-width: 768px) {
         .form-body, .form-actions {
             padding: 20px;
@@ -562,26 +562,7 @@
         color: #000;
     }
 
-    .btn-back {
-        background: white;
-        border: 1px solid #ced4da;
-        color: #212529;
-        padding: 11px 28px;
-        border-radius: 8px;
-        font-weight: 600;
-        transition: all 0.3s ease;
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-        text-decoration: none;
-    }
 
-    .btn-back:hover {
-        background: #f8f9fa;
-        border-color: #adb5bd;
-        color: #212529;
-        transform: translateY(-2px);
-    }
 
     .btn-pdf {
         background: linear-gradient(90deg, var(--apb-primary) 0%, var(--apb-secondary) 100%);

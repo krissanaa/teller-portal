@@ -14,18 +14,54 @@
         padding: 24px;
         margin-bottom: 24px;
         box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-        border-left: 4px solid var(--apb-accent);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 16px;
     }
 
     .page-header h4 {
         margin: 0;
-        color: #212529;
+        color: rgb(0, 0, 0);
         font-weight: 700;
         font-size: 1.5rem;
         display: flex;
         align-items: center;
         gap: 12px;
     }
+
+    .header-actions {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+    }
+    .btn-create {
+        background: rgb(255, 255, 255);
+        border: 2px solid #f70000;
+        color: #000000;
+        padding: 10px 20px;
+        border-radius: 10px;
+        font-weight: 700;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        text-decoration: none;
+        font-size: 1rem;
+    }
+
+    .btn-create:hover {
+        background: rgb(255, 0, 0);
+        border: 2px solid #ff0000;
+        color: #ffffff;
+        transform: translateY(-3px);
+    }
+
+
+
+
+
 
     /* Compact Status Cards */
 .status-card {
@@ -60,14 +96,14 @@
     text-transform: uppercase;
     letter-spacing: 0.3px;
     margin-bottom: 4px;
-    color: #6c757d;
+    color: #000000;
 }
 
 .status-count {
     font-size: 1.6rem;
     font-weight: 700;
     line-height: 1;
-    color: #212529;
+    color: #000000;
 }
 
 /* Color borders */
@@ -105,7 +141,7 @@
     }
 
     .filter-title {
-        color: #212529;
+        color: #000000;
         font-weight: 700;
         margin-bottom: 16px;
         display: flex;
@@ -134,7 +170,7 @@
     .btn-reset {
         background: white;
         border: 1px solid #ced4da;
-        color: #212529;
+        color: #000000;
         border-radius: 8px;
         padding: 11px 24px;
         font-weight: 600;
@@ -144,7 +180,7 @@
     .btn-reset:hover {
         background: #f8f9fa;
         border-color: #adb5bd;
-        color: #212529;
+        color: #000000;
     }
 
     /* Table Card */
@@ -166,7 +202,7 @@
 
     .table-header-title {
         font-weight: 700;
-        color: #212529;
+        color: #000000;
         display: flex;
         align-items: center;
         gap: 8px;
@@ -195,18 +231,20 @@
         font-weight: 600;
         border: none;
         text-transform: uppercase;
-        font-size: 0.8rem;
+        font-size: 1rem;
         letter-spacing: 0.5px;
-        color: #495057;
+        color: #000000;
     }
 
     .modern-table tbody tr {
         transition: all 0.2s ease;
         border-bottom: 1px solid #f0f0f0;
+        cursor: pointer;
     }
 
     .modern-table tbody tr:hover {
         background: #f8f9fa;
+        transform: scale(1.01);
     }
 
     .modern-table tbody td {
@@ -215,23 +253,22 @@
         font-size: 0.9rem;
     }
 
-     .store-link {
-        color: #2D5F3F;
-        font-weight: 700;
-        text-decoration: none;
-        transition: all 0.2s ease;
+    .store-name {
+        color: #000000;
+        font-weight: 600;
+    }
+
+    .reference-code {
+        background: #f8f9fa;
+        color: #000000;
+        padding: 4px 10px;
+        border-radius: 6px;
+        font-weight: 600;
         display: inline-flex;
         align-items: center;
-        gap: 6px;
-    }
-
-    .store-link:hover {
-        color: #4CAF50;
-        transform: translateX(5px);
-    }
-
-    .store-link i {
-        font-size: 0.9rem;
+        gap: 4px;
+        font-size: 0.85rem;
+        border: 1px solid #e9ecef;
     }
 
     /* Status Badges */
@@ -306,6 +343,26 @@
             font-size: 2rem;
         }
     }
+    .pagination svg {
+    width: 16px !important;
+    height: 16px !important;
+}
+.pagination {
+    display: flex;
+    justify-content: center;
+    gap: 4px;
+    margin-top: 1rem;
+}
+.pagination .page-link {
+    color: #2d5f3f;
+    border-radius: 6px;
+}
+.pagination .page-link:hover {
+    background: #2d5f3f;
+    color: white;
+}
+
+
 </style>
 
 <div class="container-fluid py-3">
@@ -315,7 +372,16 @@
             <i class="bi bi-graph-up-arrow"></i>
             ລາຍງານຮ້ານຄ້າຂອງຂ້ອຍ
         </h4>
+          <div class="header-actions">
+            <a href="{{ route('teller.dashboard')}}" class="btn-create">
+   <i class="bi bi-arrow-left"></i>
+                ກັບໜ້າຫຼັກ
+            </a>
+
+        </div>
     </div>
+
+
 
     <!-- Status Summary Cards -->
     <div class="row mb-4">
@@ -412,13 +478,15 @@
                 </thead>
                 <tbody>
                     @forelse($data as $r)
-                        <tr>
+                             <tr class="table-row-clickable" data-href="{{ route('teller.requests.show', $r->id) }}">
                             <td class="text-center fw-bold text-muted">{{ $r->id }}</td>
                             <td>
-                                <code class="text-dark">{{ $r->refer_code }}</code>
+                                <span class="reference-code">
+                                    <i class="bi bi-hash"></i>{{ $r->refer_code }}
+                                </span>
                             </td>
                             <td>
-                                <a href="{{ route('teller.requests.show', $r->id) }}" class="store-link">
+                                <span class="store-name">
                                     <i class="bi bi-shop"></i>
                                     {{ $r->store_name }}
                                 </a>
@@ -463,12 +531,21 @@
             </table>
 
             <!-- Pagination -->
-            @if($data->hasPages())
-                <div class="px-4 pb-4">
-                    {{ $data->links() }}
-                </div>
-            @endif
+@if($data->hasPages())
+    <div class="pagination-wrapper text-center mt-4">
+        {{ $data->links('pagination::bootstrap-5') }}
+    </div>
+@endif
         </div>
     </div>
 </div>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('.table-row-clickable').forEach(row => {
+        row.addEventListener('click', () => {
+            window.location.href = row.dataset.href;
+        });
+    });
+});
+</script>
 @endsection

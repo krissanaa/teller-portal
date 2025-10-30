@@ -31,7 +31,7 @@
 
     .page-header h4 {
         margin: 0;
-        color: #212529;
+        color: #050505;
         font-weight: 700;
         font-size: 1.5rem;
         display: flex;
@@ -40,7 +40,7 @@
     }
 
      .page-subtitle {
-        color: #6c757d;
+        color: #000000;
         font-size: 0.9rem;
         margin-top: 6px;
         margin-bottom: 0;
@@ -63,9 +63,9 @@
     }
 
     .section-title {
-        color: #212529;
+        color: #000000;
         font-weight: 700;
-        font-size: 1.1rem;
+        font-size: 1.2em;
         margin-bottom: 18px;
         padding-bottom: 10px;
         border-bottom: 2px solid #f0f0f0;
@@ -81,16 +81,16 @@
 
     .form-label {
         font-weight: 600;
-        color: #546E7A;
+        color: #000000;
         margin-bottom: 8px;
-        font-size: 0.9rem;
+        font-size: 1em;
         display: flex;
         align-items: center;
         gap: 6px;
     }
 
     .form-label i {
-        color: #90A4AE;
+        color: #000000;
         font-size: 1rem;
     }
 
@@ -101,7 +101,7 @@
 
      .form-label {
         font-weight: 600;
-        color: #212529;
+        color: #000000;
         margin-bottom: 6px;
         font-size: 0.9rem;
         display: flex;
@@ -350,9 +350,9 @@
     }
 
     .btn-back {
-        background: white;
-        border: 2px solid #E0E0E0;
-        color: #546E7A;
+        background: rgb(255, 255, 255);
+        border: 2px solid #f70000;
+        color: #000000;
         padding: 14px 32px;
         border-radius: 10px;
         font-weight: 700;
@@ -365,9 +365,9 @@
     }
 
     .btn-back:hover {
-        background: #F5F5F5;
-        border-color: var(--apb-accent);
-        color: var(--apb-primary);
+        background: rgb(255, 0, 0);
+        border: 2px solid #ff0000;
+        color: #ffffff;
         transform: translateY(-3px);
     }
 

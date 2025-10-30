@@ -23,7 +23,7 @@
 
     .page-header h4 {
         margin: 0;
-        color: #212529;
+        color: rgb(0, 0, 0);
         font-weight: 700;
         font-size: 1.5rem;
         display: flex;
@@ -59,9 +59,9 @@
     }
 
     .btn-report {
-        background: white;
-        border: 1px solid #ced4da;
-        color: #212529;
+        background: linear-gradient(90deg, var(--apb-primary) 0%, var(--apb-secondary) 100%);
+        border: none;
+        color: white;
         padding: 11px 24px;
         border-radius: 8px;
         font-weight: 600;
@@ -73,10 +73,10 @@
     }
 
     .btn-report:hover {
-        background: #f8f9fa;
-        border-color: #adb5bd;
-        color: #212529;
         transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(45, 95, 63, 0.3);
+        background: linear-gradient(90deg, var(--apb-secondary) 0%, var(--apb-dark) 100%);
+        color: white;
     }
 
     .dashboard-card {
@@ -97,7 +97,7 @@
 
     .card-title {
         font-weight: 700;
-        color: #212529;
+        color: #000000;
         display: flex;
         align-items: center;
         gap: 10px;
@@ -127,9 +127,9 @@
         font-weight: 600;
         border: none;
         text-transform: uppercase;
-        font-size: 0.8rem;
+        font-size: 1rem;
         letter-spacing: 0.5px;
-        color: #495057;
+        color: #000000;
     }
 
     .modern-table tbody tr {
@@ -150,7 +150,7 @@
     }
 
     .store-name {
-        color: #212529;
+        color: #000000;
         font-weight: 600;
     }
 
@@ -196,11 +196,24 @@
         margin: 0;
     }
 
-    .pagination-wrapper {
-        padding: 16px 24px;
-        background: #f8f9fa;
-        border-top: 1px solid #e9ecef;
-    }
+.pagination svg {
+    width: 16px !important;
+    height: 16px !important;
+}
+.pagination {
+    display: flex;
+    justify-content: center;
+    gap: 4px;
+    margin-top: 1rem;
+}
+.pagination .page-link {
+    color: #2d5f3f;
+    border-radius: 6px;
+}
+.pagination .page-link:hover {
+    background: #ffffff;
+    color: rgb(0, 0, 0);
+}
 
     @media (max-width: 768px) {
         .page-header {
@@ -322,15 +335,15 @@
             </table>
         </div>
 
-        @if($pending->hasPages())
-            <div class="pagination-wrapper">
-                {{ $pending->links() }}
-            </div>
-        @endif
+@if($pending->hasPages())
+    <div class="pagination-wrapper text-center mt-4">
+        {{ $pending->links('pagination::bootstrap-5') }}
+    </div>
+@endif
     </div>
 </div>
 
-{{-- ✅ ທຳໃຫ້ທັງແຖວຄລິກໄດ້ --}}
+{{-- can click all row --}}
 <script>
 document.addEventListener('DOMContentLoaded', function () {
     document.querySelectorAll('.table-row-clickable').forEach(row => {

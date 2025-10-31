@@ -470,7 +470,7 @@
                         <th width="60">ລຳດັບ</th>
                         <th>ລະຫັດອ້າງອີງ</th>
                         <th>ຊື່ຮ້ານຄ້າ</th>
-                        <th>ສາຂາ</th>
+                        <th>ເລກເຄື່ອງ pos</th>
                         <th>ວັນທີຕິດຕັ້ງ</th>
                         <th>ປະເພດທຸລະກິດ</th>
                         <th width="120" class="text-center">ສະຖານະ</th>
@@ -492,14 +492,22 @@
                                 </a>
                             </td>
                             <td>
-                                <i class="bi bi-pin-map text-muted"></i>
-                                {{ $r->branch?->name ?? '-' }}
+                                <span class="store-name">
+                                <i class="bi bi-computer text-muted" ></i>
+                                {{ $r->pos_serial}}
+                                </span>
                             </td>
                             <td>
+                                <SPAN class="store-name">
                                 <i class="bi bi-calendar3 text-muted"></i>
                                 {{ $r->installation_date }}
+                                </SPAN>
                             </td>
-                            <td>{{ $r->business_type }}</td>
+                            <td>
+                                <span class="store-name">
+                                {{ $r->business_type }}
+                            </span>
+                            </td>
                             <td class="text-center">
                                 @if($r->approval_status == 'approved')
                                     <a href="{{ route('teller.report', ['status' => 'approved']) }}"

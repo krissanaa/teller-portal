@@ -40,6 +40,6 @@ class RegisteredUserController extends Controller
         // ✅ แสดง popup แล้ว redirect ไป login
         return redirect()
             ->route('login')
-            ->with('success', 'สมัครสมาชิกสำเร็จ! กรุณารอผู้ดูแลระบบอนุมัติบัญชีก่อนเข้าสู่ระบบ');
+            ->with('success', 'ລົງທະບຽນສຳເລັດ');
     }
 }

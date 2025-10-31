@@ -496,35 +496,14 @@
     }
 </style>
 
-<!-- Animated Tech Background -->
-<div class="tech-background">
-    <div class="grid-lines"></div>
-    <div class="floating-shapes">
-        <div class="shape"></div>
-        <div class="shape"></div>
-        <div class="shape"></div>
-        <div class="shape"></div>
-    </div>
-    <div class="particles">
-        <div class="particle"></div>
-        <div class="particle"></div>
-        <div class="particle"></div>
-        <div class="particle"></div>
-        <div class="particle"></div>
-        <div class="particle"></div>
-        <div class="particle"></div>
-        <div class="particle"></div>
-        <div class="particle"></div>
-    </div>
-</div>
-
+=
 <!-- Login Container -->
 <div class="login-container">
     <div class="login-card">
         <div class="login-logo">
             <!-- OPTION 1: Use your logo image with green background -->
             <div class="logo-icon">
-<img src="{{ asset('images/APB-logo.jpeg') }}" alt="APB Bank Logo">
+                <img src="{{ asset('images/APB-logo.jpeg') }}" alt="APB Bank Logo">
             </div>
             <h3 class="login-title">APB BANK</h3>
             <p class="login-subtitle">Teller Portal System</p>

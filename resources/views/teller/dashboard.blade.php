@@ -284,10 +284,10 @@
             <table class="table modern-table">
                 <thead>
                     <tr>
-                        <th width="60">No.</th>
+                        <th width="60">ລຳດັບ</th>
                         <th>ລະຫັດອ້າງອີງ</th>
                         <th>ຊື່ຮ້ານຄ້າ</th>
-                        <th>ສາຂາ</th>
+                        <th>ເລກເຄື່ອງ POS</th>
                         <th>ວັນທີຕິດຕັ້ງ</th>
                         <th>ປະເພດທຸລະກິດ</th>
                         <th width="120" class="text-center">ສະຖານະ</th>
@@ -309,20 +309,29 @@
                                 </span>
                             </td>
                             <td>
-                                <i class="bi bi-pin-map text-muted"></i>
-                                {{ $r->branch?->name ?? '-' }}
+                                <span class="store-name">
+                                <i class="bi bi-computer text-muted" ></i>
+                                {{ $r->pos_serial}}
+                                </span>
                             </td>
                             <td>
+                                <span class="store-name">
                                 <i class="bi bi-calendar3 text-muted"></i>
                                 {{ $r->installation_date }}
+                                </span>
                             </td>
-                            <td>{{ $r->business_type }}</td>
+
+                            <td>
+                                 <span class="store-name">
+                                {{ $r->business_type }}</td>
+                                </span>
                             <td class="text-center">
                                 <span class="status-badge">
                                     Pending
                                 </span>
                             </td>
                         </tr>
+
                     @empty
                         <tr>
                             <td colspan="7" class="empty-state">

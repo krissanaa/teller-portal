@@ -119,8 +119,9 @@
 
     .detail-value {
         flex: 1;
-        color: #212529;
-        font-size: 0.9rem;
+        color: #000000;
+        font-weight: 600;
+        font-size: 1rem;   s
     }
 
     .detail-value.empty {
@@ -555,7 +556,7 @@
         <div class="drive-style-section mt-4">
             <div class="drive-header mb-3">
                 <i class="bi bi-paperclip"></i>
-                ເອກະສານແນບ (ຄລິກເພື່ອເບິ່ງ)
+                ເອກະສານແນບ (ຄລິກທີ່ໂລໂກເພື່ອເບິ່ງ)
             </div>
 
             <div class="drive-grid">

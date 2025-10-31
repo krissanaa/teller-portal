@@ -851,7 +851,7 @@
     @if(!empty($attachments))
         <div class="mb-3">
             <label class="form-label">
-                <i class="bi bi-folder-fill"></i> ໄຟລ໌ທີ່ມີຢູ່
+                <i class="bi bi-folder-fill"></i> ຟາຍທີ່ມີຢູ່ (ເລືອກຟາຍທີ່ທີ່ຕ້ອງການລົບ ແລະ ເພີ່ມຟາຍໃໝ່ກ່ອນບັນທຶກ)
             </label>
 
             <div class="row g-3">
@@ -885,7 +885,7 @@
                             <div class="text-center mt-1">
                                 <label class="form-check-label text-danger small" style="cursor:pointer;">
                                     <input type="checkbox" name="delete_attachments[]" value="{{ $index }}" class="form-check-input me-1">
-                                    ລຶບໄຟລ໌ນີ້
+                                    ລົບຟາຍນີ້
                                 </label>
                             </div>
                         </div>
@@ -899,15 +899,15 @@
     <div class="mb-3">
         <label class="form-label">
             <i class="bi bi-cloud-upload"></i>
-            ອັບໂຫລດໄຟລ໌ໃໝ່ (ຫຼາຍໄຟລ໌)
+            ອັບໂຫລດຟາຍໃໝ່
         </label>
 
         <div id="dropArea" class="file-upload-area">
             <input type="file" name="attachments[]" id="fileInput" multiple class="d-none" accept=".pdf,.jpg,.jpeg,.png">
             <div>
                 <i class="bi bi-cloud-arrow-up file-upload-icon"></i>
-                <div class="file-upload-text">ລາກໄຟລ໌ມາວາງທີ່ນີ້ ຫຼື ຄລິກເພື່ອເລືອກ</div>
-                <div class="file-upload-hint">ສາມາດອັບໂຫລດຫຼາຍໄຟລ໌ພ້ອມກັນ (ແຕ່ລະໄຟລ໌ສູງສຸດ 5MB)</div>
+                <div class="file-upload-text">ລາກຟາຍມາວາງທີ່ນີ້ ຫຼື ຄລິກເພື່ອເລືອກ</div>
+                <div class="file-upload-hint">ສາມາດອັບໂຫລດຫຼາຍຟາຍພ້ອມກັນ (ແຕ່ລະຟາຍສູງສຸດ 5MB)</div>
                   <div class="file-upload-formats">
                                 <span class="format-badge">📄 PDF</span>
                                 <span class="format-badge">🖼️ JPG</span>
@@ -1106,7 +1106,7 @@ function openPreview(fileUrl, fileName, extension) {
         container.innerHTML = `
             <div class="d-flex flex-column justify-content-center align-items-center text-center text-white-50" style="height:100vh;">
                 <i class="bi bi-file-earmark fs-1"></i>
-                <p class="mt-3">ບໍ່ສາມາດເບິ່ງໄຟລ໌ນີ້ໄດ້<br>
+                <p class="mt-3">ບໍ່ສາມາດເບິ່ງຟາຍນີ້ໄດ້<br>
                 <a href="${fileUrl}" target="_blank" class="text-success fw-bold">ດາວໂຫລດ</a></p>
             </div>`;
     }

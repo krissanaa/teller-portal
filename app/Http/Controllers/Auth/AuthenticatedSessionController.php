@@ -19,36 +19,27 @@ class AuthenticatedSessionController extends Controller
     /**
      * ประมวลผลการ login
      */
-    public function store(Request $request)
-    {
-        $credentials = $request->validate([
-            'email' => 'required|email',
-            'password' => 'required|string',
-        ]);
+public function store(Request $request)
+{
+    $credentials = $request->validate([
+        // Accept digit strings (1-10) to match registration rules
+        'teller_id' => ['required', 'digits_between:1,10'],
+        'password' => ['required'],
+    ]);
 
-        if (Auth::attempt($credentials, $request->boolean('remember'))) {
-            $request->session()->regenerate();
-            $user = Auth::user();
+    // Keep teller_id as string to preserve leading zeros
 
-            // ✅ ตรวจสิทธิ์
-            if ($user->role === 'admin') {
-                return redirect()->intended(route('admin.dashboard'));
-            } elseif ($user->role === 'teller') {
-                if ($user->status !== 'approved') {
-                    Auth::logout();
-                    return back()->withErrors([
-                        'email' => 'บัญชีของคุณยังไม่ได้รับการอนุมัติจากผู้ดูแลระบบ',
-                    ]);
-                }
-                return redirect()->intended(route('teller.dashboard'));
-            }
-
-            Auth::logout();
-            return back()->withErrors(['email' => 'ไม่พบสิทธิ์ผู้ใช้นี้ในระบบ']);
-        }
-
-        return back()->withErrors(['email' => 'อีเมลหรือรหัสผ่านไม่ถูกต้อง']);
+    if (Auth::attempt($credentials, $request->boolean('remember'))) {
+        $request->session()->regenerate();
+        // Let /dashboard route decide based on user role
+        return redirect()->intended(route('dashboard'));
     }
+
+    return back()->withErrors([
+        'teller_id' => 'Teller ID ຫຼືລະຫັດຜ່ານບໍ່ຖືກຕ້ອງ.',
+    ]);
+}
+
 
     /**
      * logout

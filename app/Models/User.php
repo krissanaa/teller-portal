@@ -11,7 +11,12 @@ class User extends Authenticatable
     use HasFactory, Notifiable;
 
     protected $fillable = [
-        'name', 'email', 'phone', 'password', 'role', 'status',
+    'teller_id',
+    'name',
+    'phone',
+    'password',
+    'role',
+    'status',
     ];
 
     protected $hidden = [
@@ -54,4 +59,5 @@ class User extends Authenticatable
         return $this->morphMany(\Illuminate\Notifications\DatabaseNotification::class, 'notifiable')
                     ->orderBy('created_at', 'desc');
     }
+
 }

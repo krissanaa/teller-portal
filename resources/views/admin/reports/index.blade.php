@@ -58,9 +58,10 @@
                 <thead class="table-dark">
                     <tr>
                         <th>ID</th>
+                        <th>Refer ID</th>
+                        <th>Teller ID</th> // add mai
                         <th>Store Name</th>
-                        <th>Teller ID</th>
-                        <th>Branch ID</th>
+
                         <th>Business Type</th>
                         <th>Status</th>
                         <th>Created At</th>
@@ -71,9 +72,9 @@
                     @forelse($data as $r)
                         <tr>
                             <td>{{ $r->id }}</td>
-                            <td>{{ $r->store_name }}</td>
+                            <td>{{ $r->refer_code }}</td>
                             <td>{{ $r->teller_id }}</td>
-                            <td>{{ $r->branch_id }}</td>
+                            <td>{{ $r->store_name }}</td>
                             <td>{{ $r->business_type }}</td>
                             <td>
                                 <span class="badge

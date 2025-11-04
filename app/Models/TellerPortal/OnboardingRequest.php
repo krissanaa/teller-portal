@@ -11,24 +11,34 @@ class OnboardingRequest extends Model
     protected $primaryKey = 'id';
     public $timestamps = true;
 
-   protected $fillable = [
-    'refer_code',
-    'teller_id',
-    'branch_id',
-    'store_name',
-    'store_address',
-    'business_type',
-    'pos_serial',
-    'bank_account',
-    'installation_date',
-    'store_status',
-    'approval_status',
-    'admin_remark',
-    'attachments',
-];
-public function branch()
+    protected $fillable = [
+        'refer_code',
+        'teller_id',
+        'branch_id',
+        'store_name',
+        'store_address',
+        'business_type',
+        'pos_serial',
+        'bank_account',
+        'installation_date',
+        'store_status',
+        'approval_status',
+        'admin_remark',
+        'attachments',
+    ];
+
+    protected $casts = [
+        'attachments' => 'array',
+    ];
+
+    public function branch()
+    {
+        return $this->belongsTo(Branch::class, 'branch_id');
+    }
+
+public function teller()
 {
-    return $this->belongsTo(Branch::class, 'branch_id');
+    return $this->belongsTo(\App\Models\User::class, 'teller_id', 'teller_id');
 }
 
 }

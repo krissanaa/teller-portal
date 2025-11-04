@@ -4,25 +4,22 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class EnsureApproved
 {
-    /**
-     * ตรวจสอบว่า user ได้รับการอนุมัติหรือไม่
-     */
     public function handle(Request $request, Closure $next)
     {
-        if (!auth()->check()) {
-            return redirect()->route('login');
+        $user = Auth::user();
+
+        // ถ้ายังไม่ approved → ออกจากระบบ + แจ้งเตือน
+        if ($user && $user->status !== 'approved') {
+            Auth::logout();
+
+            return redirect()->route('login')->withErrors([
+                'teller_id' => 'ບັນຊີຂອງທ່ານຍັງບໍ່ຖືກອະນຸມັດ ກະລຸນາລໍຖ້າ Admin ກ່ອນ.'
+            ]);
         }
-
-        // ถ้ายังไม่ approved
-       if (auth()->user()->role !== 'admin' && auth()->user()->status !== 'approved') {
-    return redirect()->route('login')->withErrors([
-        'email' => 'บัญชีของคุณยังไม่ได้รับการอนุมัติจากผู้ดูแลระบบ',
-    ]);
-}
-
 
         return $next($request);
     }

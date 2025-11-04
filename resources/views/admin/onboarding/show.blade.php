@@ -11,7 +11,11 @@
             <div class="row">
                 <div class="col-md-6">
                     <p><strong>Refer Code:</strong> {{ $req->refer_code }}</p>
-                    <p><strong>Teller ID:</strong> {{ $req->teller_id }}</p>
+<p>
+    <strong>Teller ID:</strong> {{ $request->teller_id }}
+    {{ $request->teller->name ?? '' }}
+</p>
+
                     <p><strong>Branch ID:</strong> {{ $req->branch_id }}</p>
                     <p><strong>Business Type:</strong> {{ $req->business_type }}</p>
                     <p><strong>POS Serial:</strong> {{ $req->pos_serial }}</p>

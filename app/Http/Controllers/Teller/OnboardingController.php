@@ -42,7 +42,7 @@ class OnboardingController extends Controller
         }
 
         $data['attachments'] = !empty($paths) ? json_encode($paths) : null;
-        $data['teller_id'] = Auth::id();
+        $data['teller_id'] = Auth::user()->teller_id;
         $data['approval_status'] = 'pending';
 
         // ✅ ใช้ Transaction + Lock ป้องกัน refer_code ซ้ำ
@@ -73,7 +73,7 @@ class OnboardingController extends Controller
     public function edit($id)
     {
         $request = OnboardingRequest::where('id', $id)
-            ->where('teller_id', Auth::id())
+            ->where('teller_id', Auth::user()->teller_id)
             ->firstOrFail();
 
         $branches = Branch::orderBy('name')->get();
@@ -84,7 +84,7 @@ class OnboardingController extends Controller
     // 🔄 อัปเดตข้อมูล
     public function update(Request $request, $id)
     {
-        $record = OnboardingRequest::where('teller_id', auth()->id())->findOrFail($id);
+        $record = OnboardingRequest::where('teller_id', auth()->user()->teller_id)->findOrFail($id);
 
         $data = $request->validate([
             'store_name'         => 'required|string|max:255',
@@ -133,7 +133,7 @@ class OnboardingController extends Controller
     public function show($id)
     {
         $request = OnboardingRequest::where('id', $id)
-            ->where('teller_id', Auth::id())
+            ->where('teller_id', Auth::user()->teller_id)
             ->with('branch')
             ->firstOrFail();
 

@@ -26,7 +26,7 @@ class AppServiceProvider extends ServiceProvider
     // ✅ ส่งตัวแปร $notifications ให้ทุกหน้า Teller layout โดยอัตโนมัติ
     View::composer('layouts.teller', function ($view) {
         if (Auth::check() && Auth::user()->role === 'teller') {
-            $notifications = OnboardingRequest::where('teller_id', Auth::id())
+            $notifications = OnboardingRequest::where('teller_id', Auth::user()->teller_id)
                 ->whereIn('approval_status', ['approved', 'rejected'])
                 ->whereDate('updated_at', '>=', now()->subDays(7)) // ภายใน 7 วันล่าสุด
                 ->latest()
@@ -39,5 +39,6 @@ class AppServiceProvider extends ServiceProvider
         $view->with('notifications', $notifications);
     });
 }
+
 
 }

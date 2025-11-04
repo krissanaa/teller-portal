@@ -4,13 +4,23 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\TellerPortal\OnboardingRequest;
+use Illuminate\Http\Request;
 
 class OnboardingRequestController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $requests = OnboardingRequest::orderBy('created_at', 'desc')->paginate(10);
-        return view('admin.onboarding.index', compact('requests'));
+        $status = $request->query('status');
+
+        $requests = OnboardingRequest::when(
+                $status,
+                fn ($query) => $query->where('approval_status', $status)
+            )
+            ->orderBy('created_at', 'desc')
+            ->paginate(10)
+            ->appends(['status' => $status]);
+
+        return view('admin.onboarding.index', compact('requests', 'status'));
     }
 
     public function show($id)

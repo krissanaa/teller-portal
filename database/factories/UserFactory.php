@@ -27,7 +27,7 @@ class UserFactory extends Factory
             'name' => fake()->name(),
             'email' => fake()->unique()->safeEmail(),
             'email_verified_at' => now(),
-            'password' => static::$password ??= Hash::make('password'),
+            'password' => static::$password ??= Hash::make('password'),  // Default password
             'remember_token' => Str::random(10),
         ];
     }
@@ -39,6 +39,14 @@ class UserFactory extends Factory
     {
         return $this->state(fn (array $attributes) => [
             'email_verified_at' => null,
+        ]);
+    }
+
+    // Optionally, add a method to allow setting custom passwords
+    public function withCustomPassword($password): static
+    {
+        return $this->state([
+            'password' => Hash::make($password),
         ]);
     }
 }

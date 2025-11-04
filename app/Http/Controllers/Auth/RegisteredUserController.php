@@ -17,16 +17,19 @@ class RegisteredUserController extends Controller
 
     public function store(Request $request)
     {
-        $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:'.User::class],
-            'password' => ['required', 'confirmed', 'min:6'],
-        ]);
+$request->validate([
+    'teller_id' => ['required', 'string', 'max:10', 'unique:users'],
+    'name' => ['required', 'string', 'max:255'],
+    'phone' => ['nullable', 'string', 'max:20'],
+    'password' => ['required', 'confirmed', 'min:6'],
+]);
 
-        // ✅ สร้าง user แต่สถานะเริ่มต้นคือ pending
+
+        // ✅ Create Teller (default status = pending)
         $user = User::create([
+            'teller_id' => $request->teller_id,
             'name' => $request->name,
-            'email' => $request->email,
+            'phone' => $request->phone,
             'password' => Hash::make($request->password),
             'role' => 'teller',
             'status' => 'pending',
@@ -34,12 +37,8 @@ class RegisteredUserController extends Controller
 
         event(new Registered($user));
 
-        // ❌ ไม่ login ทันที
-        // Auth::login($user);
-
-        // ✅ แสดง popup แล้ว redirect ไป login
         return redirect()
             ->route('login')
-            ->with('success', 'ລົງທະບຽນສຳເລັດ');
+            ->with('success', 'ລົງທະບຽນສຳເລັດ! ກະລຸນາລໍຖ້າການອະນຸມັດ');
     }
 }

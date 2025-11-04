@@ -526,10 +526,10 @@
             @csrf
 
             <div class="mb-3">
-                <label for="email" class="form-label">
-                    <i class="bi bi-envelope me-1"></i> Email Address
+                <label for="teller_id" class="form-label">
+                    <i class="bi bi-envelope me-1"></i> Teller_id
                 </label>
-                <input type="email" name="email" id="email" value="{{ old('email') }}"
+                <input type="teller_id" name="teller_id" id="teller_id" value="{{ old('teller_id') }}"
                        class="form-control" required autofocus placeholder="ປ້ອນອີເມວ">
             </div>
 

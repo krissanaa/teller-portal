@@ -9,7 +9,8 @@ return new class extends Migration {
         Schema::create('onboarding_requests', function (Blueprint $table) {
             $table->id();
             $table->string('refer_code')->unique();
-            $table->foreignId('teller_id')->constrained('users')->cascadeOnDelete();
+            // Use teller_id as a string to preserve leading zeros (FK added in later migration)
+            $table->string('teller_id', 10);
             $table->foreignId('branch_id')->nullable()->constrained('branches')->nullOnDelete();
 
             $table->string('store_name');
@@ -24,6 +25,9 @@ return new class extends Migration {
 
             $table->timestamps();
             $table->json('attachments')->nullable();
+
+            // index for teller_id lookups
+            $table->index('teller_id');
 
         });
     }

@@ -12,7 +12,7 @@ class TellerDashboardController extends Controller
     // 🏠 Dashboard: แสดงฟอร์ม Pending
     public function index()
     {
-        $tellerId = Auth::id();
+        $tellerId = Auth::user()->teller_id;
 
         $pending = OnboardingRequest::where('teller_id', $tellerId)
             ->where('approval_status', 'pending')
@@ -34,7 +34,7 @@ class TellerDashboardController extends Controller
     // 📊 รายงาน (Approved เท่านั้น)
     public function report()
     {
-        $tellerId = Auth::id();
+        $tellerId = Auth::user()->teller_id;
 
         $requests = OnboardingRequest::where('teller_id', $tellerId)
             ->where('approval_status', 'approved')

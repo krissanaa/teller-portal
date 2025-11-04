@@ -14,7 +14,7 @@ class ReportController extends Controller
         $search = $request->input('search');
         $status = $request->input('status');
 
-        $query = OnboardingRequest::where('teller_id', Auth::id())
+        $query = OnboardingRequest::where('teller_id', Auth::user()->teller_id)
             ->with('branch')
             ->orderByDesc('created_at');
 

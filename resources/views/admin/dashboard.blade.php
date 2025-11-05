@@ -135,8 +135,8 @@
     .stat-card.pending {
         --card-gradient: linear-gradient(90deg, #ffc107 0%, #FFD54F 100%);
         --icon-bg: #fff3cd;
-        --icon-color: #856404;
-        --count-color: #856404;
+        --icon-color: #ffc107;
+        --count-color: #ffc107;
     }
 
     /* Rejected Card */
@@ -199,8 +199,8 @@
     }
 
     .action-subtitle {
-        font-size: 0.8rem;
-        color: #6c757d;
+        font-size: 1rem;
+        color: #ffc107;
         margin: 0;
     }
 
@@ -337,6 +337,7 @@
      <a href="{{ route('admin.onboarding.index') }}" class="action-card shortcut-card">
         <div class="action-icon">
             <i class="bi bi-hourglass-split"></i>
+
         </div>
         <div class="action-info">
             <h3 class="action-title">ຄຳຂໍລໍຖ້າອະນຸມັດ</h3>

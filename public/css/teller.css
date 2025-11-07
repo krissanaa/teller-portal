@@ -1,0 +1,56 @@
+/* Teller layout styles */
+
+body {
+  background-color: #f7f9fb;
+}
+
+.navbar-brand {
+  font-weight: 600;
+}
+
+.dropdown-toggle::after {
+  display: none;
+}
+
+.user-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-right: 6px;
+}
+
+/* Dropdown fade-in animation */
+.dropdown-menu.animated--fade-in {
+  animation: fadeIn 0.2s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-5px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Navbar link hover */
+.nav-link:hover {
+  opacity: 0.9;
+}
+
+/* Profile arrow rotation on open */
+.profile-arrow {
+  display: inline-block;
+  margin-left: 6px;
+  transition: transform 0.25s ease;
+  font-size: 0.8rem;
+}
+
+.dropdown.show .profile-arrow {
+  transform: rotate(180deg);
+}
+
+/* Notification badge pop + fade (used in JS) */
+@keyframes popAndFade {
+  0% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.2); opacity: 1; }
+  100% { transform: scale(0.8); opacity: 0; }
+}
+

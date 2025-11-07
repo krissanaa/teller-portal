@@ -1,0 +1,50 @@
+version: '3.9'
+
+services:
+  # 🟢 Laravel (Apache + PHP)
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: teller_app
+    restart: unless-stopped
+    ports:
+      - "8081:80"          # ใช้ port 8081 ตามที่คุณต้องการ
+    volumes:
+      - .:/var/www/html
+    environment:
+      - APACHE_DOCUMENT_ROOT=/var/www/html/public
+    depends_on:
+      - db
+
+  # 🟣 MySQL Database
+  db:
+    image: mysql:8.0
+    container_name: teller_db
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: teller_portal
+      MYSQL_USER: teller_user
+      MYSQL_PASSWORD: teller_pass
+    volumes:
+      - db_data:/var/lib/mysql
+    ports:
+      - "3307:3306" # ใช้ port 3307 ภายนอก กันชนกับ XAMPP
+
+  # 🟡 phpMyAdmin
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: teller_phpmyadmin
+    restart: unless-stopped
+    environment:
+      PMA_HOST: db
+      PMA_USER: teller_user
+      PMA_PASSWORD: teller_pass
+    ports:
+      - "8082:80"
+    depends_on:
+      - db
+
+volumes:
+  db_data:

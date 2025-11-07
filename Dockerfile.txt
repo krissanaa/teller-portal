@@ -1,0 +1,33 @@
+# ใช้ PHP 8.2 พร้อม Apache
+FROM php:8.2-apache
+
+# เปิด mod_rewrite ให้ Laravel ใช้ .htaccess ได้
+RUN a2enmod rewrite
+
+# ติดตั้ง PHP extensions ที่ Laravel ต้องใช้
+RUN docker-php-ext-install pdo pdo_mysql
+
+# ติดตั้ง Composer
+COPY --from=composer:2.7 /usr/bin/composer /usr/bin/composer
+
+# ตั้งค่า DocumentRoot ให้ Laravel ชี้ไปที่ public/
+RUN sed -i 's!/var/www/html!/var/www/html/public!g' /etc/apache2/sites-available/000-default.conf
+
+# ตั้งค่า directory ทำงาน
+WORKDIR /var/www/html
+
+# คัดลอก composer.json และ composer.lock ก่อน เพื่อ cache layer
+COPY composer.json composer.lock ./
+RUN composer install --no-dev --optimize-autoloader
+
+# คัดลอกไฟล์โปรเจกต์ทั้งหมดเข้า container
+COPY . .
+
+# ตั้ง permission ให้โฟลเดอร์สำคัญ
+RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
+
+# เปิดพอร์ต 80
+EXPOSE 80
+
+# รัน Apache
+CMD ["apache2-foreground"]

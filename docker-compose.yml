@@ -14,6 +14,12 @@ services:
       - .:/var/www/html
     environment:
       - APACHE_DOCUMENT_ROOT=/var/www/html/public
+      - DB_CONNECTION=mysql
+      - DB_HOST=db
+      - DB_PORT=3306
+      - DB_DATABASE=teller_portal
+      - DB_USERNAME=teller_user
+      - DB_PASSWORD=teller_pass
     depends_on:
       - db
 

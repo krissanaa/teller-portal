@@ -4,7 +4,11 @@ FROM php:8.2-apache
 RUN a2enmod rewrite
 
 # Install system dependencies and PHP extensions (including ext-zip)
-RUN apt-get update && apt-get install -y \
+RUN if [ -f /etc/apt/sources.list ]; then \
+        sed -i 's|http://deb.debian.org|https://deb.debian.org|g;s|http://security.debian.org|https://security.debian.org|g' /etc/apt/sources.list; \
+    fi \
+    && sed -i 's|http://deb.debian.org|https://deb.debian.org|g;s|http://security.debian.org|https://security.debian.org|g' /etc/apt/sources.list.d/debian.sources \
+    && apt-get update && apt-get install -y \
         libzip-dev \
         unzip \
         libfreetype6-dev \
@@ -17,8 +21,10 @@ RUN apt-get update && apt-get install -y \
 # Copy Composer from the official image
 COPY --from=composer:2.7 /usr/bin/composer /usr/bin/composer
 
-# Point Apache's DocumentRoot to Laravel's public directory
-RUN sed -i 's!/var/www/html!/var/www/html/public!g' /etc/apache2/sites-available/000-default.conf
+# Point Apache's DocumentRoot to Laravel's public directory and allow storage symlinks
+RUN sed -i 's!/var/www/html!/var/www/html/public!g' /etc/apache2/sites-available/000-default.conf \
+    && printf '<Directory /var/www/html/public>\n\tAllowOverride All\n\tOptions +FollowSymLinks\n\tRequire all granted\n</Directory>\n' > /etc/apache2/conf-available/laravel.conf \
+    && a2enconf laravel
 
 WORKDIR /var/www/html
 
@@ -42,4 +48,3 @@ RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cac
 EXPOSE 80
 
 CMD ["apache2-foreground"]
-

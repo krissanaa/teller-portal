@@ -168,15 +168,65 @@
     }
 
     .status-badge {
-        padding: 6px 14px;
-        border-radius: 6px;
+        padding: 8px 16px;
+        border-radius: 10px;
         font-weight: 600;
         font-size: 0.8rem;
-        text-transform: uppercase;
         letter-spacing: 0.5px;
         background: #fff3cd;
         color: #856404;
         border: 1px solid #ffc107;
+        display: inline-flex;
+        flex-direction: column;
+        gap: 6px;
+        align-items: center;
+        text-transform: uppercase;
+        min-width: 110px;
+    }
+
+    .status-note {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        font-size: 0.72rem;
+        font-weight: 600;
+        text-transform: none;
+        color: #0d6efd;
+    }
+
+    .status-note a {
+        color: inherit;
+        text-decoration: none;
+    }
+
+    .status-note a:hover {
+        text-decoration: underline;
+    }
+
+    .status-badge.rejected {
+        background: #fdecea;
+        border-color: #f5c2c7;
+        color: #b02a37;
+    }
+
+    .remark-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 6px 12px;
+        border-radius: 20px;
+        background: #f8f9fa;
+        border: 1px dashed #ced4da;
+        font-size: 0.85rem;
+        color: #495057;
+    }
+
+    .btn-resubmit {
+        border-radius: 8px;
+        font-weight: 600;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
     }
 
     .empty-state {
@@ -268,7 +318,7 @@
         </div>
     </div>
 
-    <!-- Pending Requests Table -->
+<!-- Pending + Rejected Requests Table -->
     <div class="dashboard-card">
         <div class="card-header-custom">
             <div class="card-title">
@@ -276,7 +326,7 @@
                 ຟອມທີ່ລໍຖ້າດຳເນີນການ
             </div>
             <span class="card-badge">
-                {{ $pending->total() }} ລາຍການ
+                {{ $requests->total() }} ລາຍການ
             </span>
         </div>
 
@@ -294,7 +344,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @forelse($pending as $r)
+                    @forelse($requests as $r)
                         <tr class="table-row-clickable" data-href="{{ route('teller.requests.show', $r->id) }}">
                             <td class="text-center fw-bold text-muted">{{ $r->id }}</td>
                             <td>
@@ -322,21 +372,35 @@
                             </td>
 
                             <td>
-                                 <span class="store-name">
-                                {{ $r->business_type }}</td>
-                                </span>
-                            <td class="text-center">
-                                <span class="status-badge">
-                                    Pending
+                                <span class="store-name">
+                                    {{ $r->business_type }}
                                 </span>
                             </td>
+                            <td class="text-center">
+                                <span class="status-badge {{ $r->approval_status === 'rejected' ? 'rejected' : '' }}">
+                                    {{ ucfirst($r->approval_status) }}
+                                    @if($r->approval_status === 'rejected')
+                                        <span class="status-note">
+                                            <i class="bi bi-arrow-repeat"></i>
+                                            <a href="{{ route('teller.requests.edit', $r->id) }}" class="resubmit-link">
+                                                Resubmit
+                                            </a>
+                                        </span>
+                                    @endif
+                                </span>
+                                @if($r->approval_status === 'rejected' && $r->admin_remark)
+                                    <div class="remark-pill mt-2">
+                                        <i class="bi bi-chat-dots"></i>
+                                        {{ $r->admin_remark }}
+                                    </div>
+                                @endif
+                            </td>
                         </tr>
-
                     @empty
                         <tr>
                             <td colspan="7" class="empty-state">
                                 <i class="bi bi-inbox"></i>
-                                <p>ບໍ່ມີຟອມທີ່ລໍຖ້າດຳເນີນການ</p>
+                                <p>��s��?��^�����慧Y��-�����-��慯^�����?��-��%�����"��3��?��T��慧T��?�����T</p>
                             </td>
                         </tr>
                     @endforelse
@@ -344,12 +408,14 @@
             </table>
         </div>
 
-@if($pending->hasPages())
+@if($requests->hasPages())
     <div class="pagination-wrapper text-center mt-4">
-        {{ $pending->links('pagination::bootstrap-5') }}
+        {{ $requests->links('pagination::bootstrap-5') }}
     </div>
 @endif
     </div>
+
+
 </div>
 
 {{-- can click all row --}}
@@ -359,6 +425,10 @@ document.addEventListener('DOMContentLoaded', function () {
         row.addEventListener('click', () => {
             window.location.href = row.dataset.href;
         });
+    });
+
+    document.querySelectorAll('.resubmit-link').forEach(link => {
+        link.addEventListener('click', (event) => event.stopPropagation());
     });
 });
 </script>

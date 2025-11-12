@@ -231,6 +231,19 @@
             font-size: 0.85rem;
         }
 
+        .notification-remark {
+            font-size: 0.78rem;
+            color: #495057;
+            margin: 4px 0;
+            display: flex;
+            gap: 6px;
+            align-items: flex-start;
+        }
+
+        .notification-remark i {
+            color: #0d6efd;
+        }
+
         .notification-time {
             font-size: 0.75rem;
             color: #6c757d;
@@ -429,15 +442,21 @@
                                         {{ $n->store_name . ' (' . $n->refer_code . ')' }}
                                     </div>
                                     <div class="notification-status {{ $n->approval_status == 'approved' ? 'text-success' : 'text-danger' }}">
-                                        {{ $n->approval_status == 'approved' ? '✅ ອະນຸມັດແລ້ວ' : '❌ ຖືກປະຕິເສດ' }}
+                                        {{ $n->approval_status == 'approved' ? '✅ Approved' : '❌ Rejected' }}
                                     </div>
+                                    @if($n->approval_status == 'rejected' && $n->admin_remark)
+                                        <div class="notification-remark">
+                                            <i class="bi bi-chat-dots"></i>
+                                            <span>{{ \Illuminate\Support\Str::limit($n->admin_remark, 120) }}</span>
+                                        </div>
+                                    @endif
                                     <div class="notification-time">
-                                        🕐 {{ $n->updated_at->diffForHumans() }}
+                                        Updated {{ $n->updated_at->diffForHumans() }}
                                     </div>
                                 </div>
                             </li>
                         @empty
-                            <li><span class="dropdown-item text-muted text-center small">ບໍ່ມີການແຈ້ງເຕືອນ</span></li>
+                            <li><span class="dropdown-item text-muted text-center small">No notifications yet</span></li>
                         @endforelse
                     </ul>
                 </li>

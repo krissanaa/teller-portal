@@ -10,12 +10,9 @@ class OnboardingRequestController extends Controller
 {
     public function index(Request $request)
     {
-        $status = $request->query('status');
+        $status = $request->query('status', 'pending');
 
-        $requests = OnboardingRequest::when(
-                $status,
-                fn ($query) => $query->where('approval_status', $status)
-            )
+        $requests = OnboardingRequest::where('approval_status', $status)
             ->orderBy('created_at', 'desc')
             ->paginate(10)
             ->appends(['status' => $status]);
@@ -33,14 +30,20 @@ class OnboardingRequestController extends Controller
     {
         $req = OnboardingRequest::findOrFail($id);
         $req->approval_status = 'approved';
+        $req->admin_remark = null;
         $req->save();
         return back()->with('success', 'Request approved.');
     }
 
-    public function reject($id)
+    public function reject(Request $request, $id)
     {
+        $data = $request->validate([
+            'admin_remark' => 'required|string|max:500',
+        ]);
+
         $req = OnboardingRequest::findOrFail($id);
         $req->approval_status = 'rejected';
+        $req->admin_remark = $data['admin_remark'];
         $req->save();
         return back()->with('success', 'Request rejected.');
     }

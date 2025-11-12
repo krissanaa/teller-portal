@@ -9,7 +9,7 @@
 
     /* Page Section */
     .page-section {
-        background: rgb(244, 250, 242);
+        background: #f8fafc;
         border-radius: 12px;
         padding: 30px;
         margin-bottom: 30px;

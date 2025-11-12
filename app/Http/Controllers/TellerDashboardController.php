@@ -14,10 +14,10 @@ class TellerDashboardController extends Controller
     {
         $tellerId = Auth::user()->teller_id;
 
-        $pending = OnboardingRequest::where('teller_id', $tellerId)
-            ->where('approval_status', 'pending')
+        $requests = OnboardingRequest::where('teller_id', $tellerId)
+            ->whereIn('approval_status', ['pending', 'rejected'])
             ->with('branch')
-            ->orderByDesc('created_at')
+            ->orderByDesc('updated_at')
             ->paginate(10);
 
         // 🔔 แจ้งเตือน 7 วันล่าสุด (อนุมัติ/ปฏิเสธ)
@@ -28,7 +28,7 @@ class TellerDashboardController extends Controller
             ->take(5)
             ->get();
 
-        return view('teller.dashboard', compact('pending', 'notifications'));
+        return view('teller.dashboard', compact('requests', 'notifications'));
     }
 
     // 📊 รายงาน (Approved เท่านั้น)

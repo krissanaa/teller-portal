@@ -25,9 +25,10 @@ class BranchController extends Controller
             'name' => 'required|string|max:255',
             'address' => 'nullable|string|max:500',
             'contact' => 'nullable|string|max:255',
+            'status' => 'required|in:active,inactive',
         ]);
 
-        Branch::create($request->only('name', 'address', 'contact') + ['status' => 'active']);
+        Branch::create($request->only('name', 'address', 'contact', 'status'));
 
         return redirect()->route('admin.branches.index')->with('success', 'Branch created successfully.');
     }
@@ -41,6 +42,14 @@ class BranchController extends Controller
     public function update(Request $request, $id)
     {
         $branch = Branch::findOrFail($id);
+
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'address' => 'nullable|string|max:500',
+            'contact' => 'nullable|string|max:255',
+            'status' => 'required|in:active,inactive',
+        ]);
+
         $branch->update($request->only('name', 'address', 'contact', 'status'));
 
         return redirect()->route('admin.branches.index')->with('success', 'Branch updated successfully.');

@@ -36,7 +36,7 @@
         }
 
         body {
-            background: linear-gradient(180deg, #edf7f1 0%, #ffffff 45%);
+            background: #f4f6f3;
             min-height: 100vh;
         }
 
@@ -164,14 +164,7 @@
             margin: 0 auto;
         }
 
-        .admin-card {
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 22px;
-            border: 1px solid rgba(45, 95, 63, 0.08);
-            box-shadow: 0 18px 45px rgba(45, 95, 63, 0.08);
-            overflow: hidden;
-            backdrop-filter: blur(10px);
-        }
+
 
         .page-card {
             padding: clamp(24px, 5vw, 40px);
@@ -189,7 +182,7 @@
         .page-title {
             margin: 0;
             font-weight: 800;
-            color: var(--apb-secondary);
+            color: #000000;
         }
 
         .logout-btn {

@@ -8,8 +8,9 @@ use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\UserController as AdminUserController;
 use App\Http\Controllers\Admin\UserLogController as AdminUserLogController;
 use App\Http\Controllers\Admin\ReportController;
-use App\Http\Controllers\Admin\OnboardingRequestController;
+use App\Http\Controllers\Admin\OnboardingRequestController as AdminOnboardingRequestController;
 use App\Http\Controllers\Admin\BranchController;
+use App\Http\Controllers\OnboardingRequestController as WorkflowOnboardingRequestController;
 
 // 🧭 Teller Controllers
 use App\Http\Controllers\TellerDashboardController;
@@ -67,6 +68,14 @@ Route::middleware(['auth', 'role:teller', 'approved'])
         Route::get('/requests/{id}', [OnboardingController::class, 'show'])->name('requests.show');
         Route::get('/requests/{id}/edit', [OnboardingController::class, 'edit'])->name('requests.edit');
         Route::put('/requests/{id}', [OnboardingController::class, 'update'])->name('requests.update');
+
+        // --------------------------------------------------------
+        // dY_ Workflow กลางสำหรับ submit/resubmit (ใช้ status/remark)
+        // --------------------------------------------------------
+        Route::post('/onboarding/submit', [WorkflowOnboardingRequestController::class, 'submitForm'])
+            ->name('onboarding.submit');
+        Route::post('/onboarding/{onboardingRequest}/resubmit', [WorkflowOnboardingRequestController::class, 'resubmitForm'])
+            ->name('onboarding.resubmit');
     });
 
 // ============================================================
@@ -113,10 +122,18 @@ Route::middleware(['auth', 'role:admin'])
         // --------------------------------------------------------
         // 🏪 Onboarding Requests (POS Registration)
         // --------------------------------------------------------
-        Route::get('/onboarding', [OnboardingRequestController::class, 'index'])->name('onboarding.index');
-        Route::get('/onboarding/{id}', [OnboardingRequestController::class, 'show'])->name('onboarding.show');
-        Route::post('/onboarding/{id}/approve', [OnboardingRequestController::class, 'approve'])->name('onboarding.approve');
-        Route::post('/onboarding/{id}/reject', [OnboardingRequestController::class, 'reject'])->name('onboarding.reject');
+        Route::get('/onboarding', [AdminOnboardingRequestController::class, 'index'])->name('onboarding.index');
+        Route::get('/onboarding/{id}', [AdminOnboardingRequestController::class, 'show'])->name('onboarding.show');
+        Route::post('/onboarding/{id}/approve', [AdminOnboardingRequestController::class, 'approve'])->name('onboarding.approve');
+        Route::post('/onboarding/{id}/reject', [AdminOnboardingRequestController::class, 'reject'])->name('onboarding.reject');
+
+        // --------------------------------------------------------
+        // dY_ เส้นทางใหม่เพื่อเรียก controller กลาง (approve/reject รุ่น remark)
+        // --------------------------------------------------------
+        Route::post('/onboarding-flow/{onboardingRequest}/approve', [WorkflowOnboardingRequestController::class, 'approveForm'])
+            ->name('onboarding.flow.approve');
+        Route::post('/onboarding-flow/{onboardingRequest}/reject', [WorkflowOnboardingRequestController::class, 'rejectForm'])
+            ->name('onboarding.flow.reject');
 
         // --------------------------------------------------------
         // 🏢 Branch Management (CRUD)

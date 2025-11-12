@@ -85,6 +85,7 @@ class OnboardingController extends Controller
     public function update(Request $request, $id)
     {
         $record = OnboardingRequest::where('teller_id', auth()->user()->teller_id)->findOrFail($id);
+        $wasRejected = $record->approval_status === 'rejected';
 
         $data = $request->validate([
             'store_name'         => 'required|string|max:255',
@@ -123,6 +124,12 @@ class OnboardingController extends Controller
 
         // ✅ อัปเดตข้อมูล
         $record->update($data);
+
+        if ($wasRejected) {
+            $record->approval_status = 'pending';
+            $record->admin_remark = null;
+            $record->save();
+        }
 
         return redirect()
             ->route('teller.requests.show', $record->id)

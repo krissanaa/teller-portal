@@ -1,8 +1,6 @@
-@extends('layouts.guest')
+<?php $__env->startSection('title', 'Register - APB Bank Teller Portal'); ?>
 
-@section('title', 'Login - APB Bank Teller Portal')
-
-@section('content')
+<?php $__env->startSection('content'); ?>
 <style>
     * {
         font-family: 'Noto Sans Lao', 'Noto Sans', sans-serif;
@@ -86,14 +84,6 @@
         animation-delay: 4s;
     }
 
-    .shape:nth-child(4) {
-        width: min(250px, 25vw);
-        height: min(250px, 25vw);
-        top: 30%;
-        right: 25%;
-        animation-delay: 1s;
-    }
-
     @keyframes float {
         0%, 100% { transform: translateY(0) rotate(0deg); opacity: 0.3; }
         50% { transform: translateY(-30px) rotate(180deg); opacity: 0.6; }
@@ -131,12 +121,12 @@
         100% { transform: translateY(-100px); opacity: 0; }
     }
 
-    /* Login Card */
-    .login-container {
+    /* Register Card */
+    .register-container {
         position: relative;
         z-index: 10;
         width: 100%;
-        max-width: 450px;
+        max-width: 500px;
         padding: clamp(15px, 5vw, 20px);
         margin: clamp(20px, 5vh, 40px) auto;
     }
@@ -163,7 +153,7 @@
         }
     }
 
-    .login-logo {
+    .register-logo {
         text-align: center;
         margin-bottom: clamp(20px, 5vw, 30px);
     }
@@ -184,8 +174,7 @@
         overflow: hidden;
         position: relative;
     }
-
-    .logo-icon img {
+        .logo-icon img {
         width:150%;
         height: 150%;
         object-fit: contain;
@@ -206,31 +195,31 @@
         text-align: center;
         color: #2D5F3F;
         font-weight: 800;
-        font-size: clamp(1.3rem, 4vw, 1.8rem);
+        font-size: clamp(1.3rem, 4vw, 1.6rem);
         margin-bottom: 10px;
         line-height: 1.2;
     }
 
-    .login-subtitle {
+    .register-subtitle {
         text-align: center;
         color: #6c757d;
-        font-size: clamp(0.8rem, 2.5vw, 0.9rem);
-        margin-bottom: clamp(20px, 5vw, 30px);
+        font-size: clamp(0.8rem, 2.5vw, 0.85rem);
+        margin-bottom: clamp(20px, 5vw, 25px);
     }
 
     .form-label {
         font-weight: 600;
         color: #2D5F3F;
-        margin-bottom: 8px;
+        margin-bottom: 6px;
         font-size: clamp(0.85rem, 2.5vw, 0.9rem);
     }
 
     .form-control {
         border: 2px solid #e9ecef;
         border-radius: 10px;
-        padding: clamp(10px, 3vw, 12px) clamp(12px, 3vw, 16px);
+        padding: clamp(10px, 3vw, 11px) clamp(12px, 3vw, 14px);
         transition: all 0.3s ease;
-        font-size: clamp(0.85rem, 2.5vw, 0.95rem);
+        font-size: clamp(0.85rem, 2.5vw, 0.9rem);
         width: 100%;
     }
 
@@ -239,11 +228,11 @@
         box-shadow: 0 0 0 0.2rem rgba(76, 175, 80, 0.15);
     }
 
-    .btn-login {
+    .btn-register {
         background: linear-gradient(135deg, #2D5F3F 0%, #4CAF50 100%);
         border: none;
         color: white;
-        padding: clamp(12px, 3.5vw, 14px);
+        padding: clamp(11px, 3.5vw, 13px);
         border-radius: 10px;
         font-weight: 700;
         font-size: clamp(0.9rem, 2.5vw, 1rem);
@@ -253,17 +242,34 @@
         width: 100%;
     }
 
+    .btn-register::before {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 0;
+        height: 0;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.2);
+        transform: translate(-50%, -50%);
+        transition: width 0.6s, height 0.6s;
+    }
 
-    .btn-login:hover {
+    .btn-register:hover::before {
+        width: 300px;
+        height: 300px;
+    }
+
+    .btn-register:hover {
         transform: translateY(-2px);
         box-shadow: 0 10px 30px rgba(45, 95, 63, 0.4);
     }
 
-    .btn-register {
+    .btn-back {
         background: white;
         border: 2px solid #2D5F3F;
         color: #2D5F3F;
-        padding: clamp(12px, 3.5vw, 14px);
+        padding: clamp(11px, 3.5vw, 13px);
         border-radius: 10px;
         font-weight: 700;
         font-size: clamp(0.9rem, 2.5vw, 1rem);
@@ -274,7 +280,7 @@
         width: 100%;
     }
 
-    .btn-register:hover {
+    .btn-back:hover {
         background: #2D5F3F;
         color: white;
         transform: translateY(-2px);
@@ -284,10 +290,10 @@
     .alert {
         border-radius: 10px;
         border: none;
-        padding: clamp(10px, 3vw, 12px) clamp(12px, 3vw, 16px);
+        padding: clamp(10px, 3vw, 12px) clamp(12px, 3vw, 14px);
         margin-bottom: 20px;
         animation: alertSlide 0.4s ease-out;
-        font-size: clamp(0.8rem, 2.5vw, 0.9rem);
+        font-size: clamp(0.8rem, 2.5vw, 0.85rem);
     }
 
     @keyframes alertSlide {
@@ -314,8 +320,8 @@
     }
 
     .alert-danger li {
-        padding: 4px 0;
-        font-size: clamp(0.75rem, 2.5vw, 0.85rem);
+        padding: 3px 0;
+        font-size: clamp(0.75rem, 2.5vw, 0.82rem);
     }
 
     .alert-danger li::before {
@@ -323,49 +329,26 @@
         margin-right: 5px;
     }
 
-    .footer-text {
-        text-align: center;
-        color: #6c757d;
-        font-size: clamp(0.75rem, 2vw, 0.85rem);
-        margin-top: clamp(20px, 5vw, 25px);
-        padding-top: clamp(15px, 4vw, 20px);
-        border-top: 1px solid #e9ecef;
-        line-height: 1.5;
+    /* Form Grid for 2 columns on larger screens */
+    @media (min-width: 576px) {
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .form-row .mb-3 {
+            margin-bottom: 0 !important;
+        }
     }
 
-    /* Success Modal */
-    .modal-content {
-        border-radius: 16px;
-        border: none;
-        overflow: hidden;
-    }
-
-    .modal-header {
-        background: linear-gradient(135deg, #28a745 0%, #66BB6A 100%);
-        border: none;
-        padding: clamp(15px, 4vw, 20px);
-    }
-
-    .modal-title {
-        font-weight: 700;
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        font-size: clamp(1rem, 3vw, 1.2rem);
-    }
-
-    .modal-body {
-        padding: clamp(20px, 5vw, 25px);
-        font-size: clamp(0.85rem, 2.5vw, 0.95rem);
-    }
-
-    /* Extra Small Devices (phones, 320px - 575px) */
+    /* Small devices */
     @media (max-width: 575px) {
         body {
             padding: 10px 0;
         }
 
-        .login-container {
+        .register-container {
             padding: 10px;
             margin: 15px auto;
         }
@@ -379,48 +362,13 @@
         }
     }
 
-    /* Small Devices (landscape phones, 576px - 767px) */
-    @media (min-width: 576px) and (max-width: 767px) {
-        .login-container {
-            max-width: 500px;
-        }
-    }
-
-    /* Medium Devices (tablets, 768px - 991px) */
-    @media (min-width: 768px) and (max-width: 991px) {
-        .login-container {
-            max-width: 550px;
-        }
-    }
-
-    /* Large Devices (desktops, 992px - 1199px) */
-    @media (min-width: 992px) and (max-width: 1199px) {
-        .login-container {
-            max-width: 500px;
-        }
-    }
-
-    /* Extra Large Devices (large desktops, 1200px - 1399px) */
-    @media (min-width: 1200px) and (max-width: 1399px) {
-        .login-container {
-            max-width: 480px;
-        }
-    }
-
-    /* XXL Devices (larger desktops, 1400px and up) */
-    @media (min-width: 1400px) {
-        .login-container {
-            max-width: 500px;
-        }
-    }
-
-    /* Landscape Mobile Phones */
-    @media (max-height: 600px) and (orientation: landscape) {
+    /* Landscape phones */
+    @media (max-height: 700px) and (orientation: landscape) {
         body {
-            padding: 20px 0;
+            padding: 15px 0;
         }
 
-        .login-container {
+        .register-container {
             margin: 10px auto;
         }
 
@@ -428,7 +376,7 @@
             padding: 20px;
         }
 
-        .login-logo {
+        .register-logo {
             margin-bottom: 15px;
         }
 
@@ -444,134 +392,87 @@
             margin-bottom: 5px;
         }
 
-        .login-subtitle {
+        .register-subtitle {
             font-size: 0.75rem;
             margin-bottom: 15px;
         }
 
-        .footer-text {
-            margin-top: 15px;
-            padding-top: 10px;
-        }
-    }
-
-    /* Very Small Screens (320px) */
-    @media (max-width: 320px) {
-        .login-container {
-            padding: 8px;
-        }
-
-        .login-card {
-            padding: 15px 10px;
-            border-radius: 12px;
-        }
-    }
-
-    /* Large Screens (ensure content doesn't get too big) */
-    @media (min-width: 1920px) {
-        .login-title {
-            font-size: 2rem;
-        }
-
-        .login-subtitle {
-            font-size: 1rem;
+        .mb-3 {
+            margin-bottom: 0.8rem !important;
         }
     }
 </style>
 
-=
-<!-- Login Container -->
-<div class="login-container">
+
+
+<!-- Register Container -->
+<div class="register-container">
     <div class="login-card">
-        <div class="login-logo">
-            <!-- OPTION 1: Use your logo image with green background -->
+        <div class="register-logo">
             <div class="logo-icon">
-                <img src="{{ asset('images/APB-logo.jpeg') }}" alt="APB Bank Logo">
+                <img src="<?php echo e(asset('images/APB-logo.jpeg')); ?>" alt="APB Bank Logo">
             </div>
-            <h3 class="login-title">APB BANK</h3>
-            <p class="login-subtitle">Teller Portal System</p>
+            <h3 class="login-title">ສ້າງບັນຊີໃໝ່</h3>
+            <p class="register-subtitle">APB Bank Teller Portal</p>
         </div>
 
-        {{-- ✅ Show errors --}}
-        @if($errors->any())
+        
+        <?php if($errors->any()): ?>
             <div class="alert alert-danger">
                 <strong><i class="bi bi-exclamation-triangle me-2"></i>ເກີດຂໍ້ຜິດພາດ:</strong>
                 <ul class="mb-0 mt-2">
-                    @foreach($errors->all() as $err)
-                        <li>{{ $err }}</li>
-                    @endforeach
+                    <?php $__currentLoopData = $errors->all(); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $err): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                        <li><?php echo e($err); ?></li>
+                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                 </ul>
             </div>
-        @endif
+        <?php endif; ?>
 
-        {{-- ✅ Login Form --}}
-        <form method="POST" action="{{ route('login') }}">
-            @csrf
+        
+        <form method="POST" action="<?php echo e(route('register')); ?>">
+            <?php echo csrf_field(); ?>
 
-            <div class="mb-3">
-                <label for="teller_id" class="form-label">
-                    <i class="bi bi-envelope me-1"></i> Teller_id
-                </label>
-                <input type="teller_id" name="teller_id" id="teller_id" value="{{ old('teller_id') }}"
-                       class="form-control" required autofocus placeholder="ປ້ອນອີເມວ">
-            </div>
+           <div class="mb-3">
+    <label for="teller_id" class="form-label">
+        <i class="bi bi-person-badge"></i> Teller ID
+    </label>
+    <input type="number" name="teller_id" id="teller_id" class="form-control"
+           placeholder="ໃສ່ Teller ID ຂອງທ່ານ" required>
+</div>
 
-            <div class="mb-4">
-                <label for="password" class="form-label">
-                    <i class="bi bi-lock me-1"></i> Password
-                </label>
-                <input type="password" name="password" id="password"
-                       class="form-control" required placeholder="ປ້ອນລະຫັດຜ່ານ">
-            </div>
+<div class="mb-3">
+    <label for="name" class="form-label">ຊື່ - Name</label>
+    <input type="text" name="name" id="name" class="form-control" required>
+</div>
 
-            <button type="submit" class="btn btn-login w-100 mb-3">
-                <i class="bi bi-box-arrow-in-right me-2"></i>
-                ເຂົ້າສູ່ລະບົບ
+<div class="mb-3">
+    <label for="phone" class="form-label">ເບີໂທ</label>
+    <input type="text" name="phone" id="phone" class="form-control">
+</div>
+
+<div class="mb-3">
+    <label for="password" class="form-label">ລະຫັດຜ່ານ</label>
+    <input type="password" name="password" id="password" class="form-control" required>
+</div>
+
+<div class="mb-4">
+    <label for="password_confirmation" class="form-label">ຢືນຢັນລະຫັດຜ່ານ</label>
+    <input type="password" name="password_confirmation" id="password_confirmation" class="form-control" required>
+</div>
+
+
+            <button type="submit" class="btn-register mb-3">
+                <i class="bi bi-check-circle me-2"></i>
+                ລົງທະບຽນ
             </button>
 
-            {{-- ✅ Register Button --}}
-            <a href="{{ route('register') }}" class="btn-register">
-                <i class="bi bi-person-plus me-2"></i>
-                ສ້າງບັນຊີໃໝ່
+            <a href="<?php echo e(route('login')); ?>" class="btn-back">
+                <i class="bi bi-arrow-left me-2"></i>
+                ກັບໄປເຂົ້າສູ່ລະບົບ
             </a>
-
-            <p class="footer-text">
-                <i class="bi bi-shield-check me-1"></i>
-                © {{ date('Y') }} APB Bank Teller Portal System
-            </p>
         </form>
     </div>
 </div>
+<?php $__env->stopSection(); ?>
 
-{{-- Success Modal --}}
-@if(session('success'))
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    const msg = "{{ session('success') }}";
-    const modalHTML = `
-    <div class="modal fade" id="registerSuccessModal" tabindex="-1">
-      <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-          <div class="modal-header text-white">
-            <h5 class="modal-title">
-                <i class="bi bi-check-circle-fill"></i>
-                ລົງທະບຽນສຳເລັດ
-            </h5>
-            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-          </div>
-          <div class="modal-body">
-            <p class="mb-3"><strong>${msg}</strong></p>
-            <div class="alert alert-info mb-0">
-                <i class="bi bi-info-circle me-2"></i>
-                ກະລຸນາລໍຖ້າການອະນຸມັດຈາກ Admin ກ່ອນເຂົ້າສູ່ລະບົບ
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>`;
-    document.body.insertAdjacentHTML('beforeend', modalHTML);
-    new bootstrap.Modal(document.getElementById('registerSuccessModal')).show();
-});
-</script>
-@endif
-@endsection
+<?php echo $__env->make('layouts.guest', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH /var/www/html/resources/views/auth/register.blade.php ENDPATH**/ ?>

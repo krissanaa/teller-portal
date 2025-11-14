@@ -1,8 +1,6 @@
-@extends('layouts.teller')
+<?php $__env->startSection('title', 'Teller Dashboard'); ?>
 
-@section('title', 'Teller Dashboard')
-
-@section('content')
+<?php $__env->startSection('content'); ?>
 <style>
     * {
         font-family: 'Noto Sans Lao', 'Noto Sans', sans-serif;
@@ -307,11 +305,11 @@
             ໜ້າຫຼັກ
         </h4>
         <div class="header-actions">
-            <a href="{{ route('teller.requests.create') }}" class="btn-create">
+            <a href="<?php echo e(route('teller.requests.create')); ?>" class="btn-create">
                 <i class="bi bi-plus-circle"></i>
                 ສ້າງຟອມໃໝ່
             </a>
-            <a href="{{ route('teller.report') }}" class="btn-report">
+            <a href="<?php echo e(route('teller.report')); ?>" class="btn-report">
                 <i class="bi bi-graph-up"></i>
                 ລາຍງານ
             </a>
@@ -326,7 +324,7 @@
                 ຟອມທີ່ລໍຖ້າດຳເນີນການ
             </div>
             <span class="card-badge">
-                {{ $requests->total() }} ລາຍການ
+                <?php echo e($requests->total()); ?> ລາຍການ
             </span>
         </div>
 
@@ -347,83 +345,91 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @forelse($requests as $r)
-                        <tr class="table-row-clickable" data-href="{{ route('teller.requests.show', $r->id) }}">
+                    <?php $__empty_1 = true; $__currentLoopData = $requests; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $r): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
+                        <tr class="table-row-clickable" data-href="<?php echo e(route('teller.requests.show', $r->id)); ?>">
 
                             <td>
                                 <span class="reference-code">
-                                    <i class="bi bi-hash"></i>{{ $r->refer_code }}
+                                    <i class="bi bi-hash"></i><?php echo e($r->refer_code); ?>
+
                                 </span>
                             </td>
                              <td>
                                 <span class="store-name">
                                 <i class="bi bi-computer text-muted" ></i>
-                                {{ $r->pos_serial}}
+                                <?php echo e($r->pos_serial); ?>
+
                                 </span>
                             </td>
                             <td>
                                 <span class="store-name">
                                     <i class="bi bi-shop text-muted me-1"></i>
-                                    {{ $r->store_name }}
+                                    <?php echo e($r->store_name); ?>
+
                                 </span>
                             </td>
                             <td>
                                 <span class="store-name">
-                                    {{ $r->business_type }}
+                                    <?php echo e($r->business_type); ?>
+
                                 </span>
                             </td>
 
                             <td>
                                 <span class="store-name">
                                 <i class="bi bi-calendar3 text-muted"></i>
-                                {{ $r->installation_date }}
+                                <?php echo e($r->installation_date); ?>
+
                                 </span>
                             </td>
 
 
                             <td>
                                 <span class="store-name">
-                                    {{ $r->admin_remark }}
+                                    <?php echo e($r->admin_remark); ?>
+
                                 </span>
                             </td>
                             <td class="text-center">
-                                <span class="status-badge {{ $r->approval_status === 'rejected' ? 'rejected' : '' }}">
-                                    {{ ucfirst($r->approval_status) }}
-                                    @if($r->approval_status === 'rejected')
+                                <span class="status-badge <?php echo e($r->approval_status === 'rejected' ? 'rejected' : ''); ?>">
+                                    <?php echo e(ucfirst($r->approval_status)); ?>
+
+                                    <?php if($r->approval_status === 'rejected'): ?>
                                         <span class="status-note">
                                             <i class="bi bi-arrow-repeat"></i>
-                                            <a href="{{ route('teller.requests.edit', $r->id) }}" class="resubmit-link">
+                                            <a href="<?php echo e(route('teller.requests.edit', $r->id)); ?>" class="resubmit-link">
                                                 Resubmit
                                             </a>
                                         </span>
-                                    @endif
+                                    <?php endif; ?>
                                 </span>
                             </td>
                         </tr>
-                    @empty
+                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
                         <tr>
                             <td colspan="7" class="empty-state">
                                 <i class="bi bi-inbox"></i>
                                 <p>��s��?��^�����慧Y��-�����-��慯^�����?��-��%�����"��3��?��T��慧T��?�����T</p>
                             </td>
                         </tr>
-                    @endforelse
+                    <?php endif; ?>
 
                 </tbody>
             </table>
         </div>
 
-@if($requests->hasPages())
+<?php if($requests->hasPages()): ?>
     <div class="pagination-wrapper text-center mt-4">
-        {{ $requests->links('pagination::bootstrap-5') }}
+        <?php echo e($requests->links('pagination::bootstrap-5')); ?>
+
     </div>
-@endif
+<?php endif; ?>
     </div>
 
 
 </div>
 
-{{-- can click all row --}}
+
 <script>
 document.addEventListener('DOMContentLoaded', function () {
     document.querySelectorAll('.table-row-clickable').forEach(row => {
@@ -437,4 +443,6 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 });
 </script>
-@endsection
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('layouts.teller', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH /var/www/html/resources/views/teller/dashboard.blade.php ENDPATH**/ ?>

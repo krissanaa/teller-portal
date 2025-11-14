@@ -1,8 +1,6 @@
-@extends('layouts.guest')
+<?php $__env->startSection('title', 'Login - APB Bank Teller Portal'); ?>
 
-@section('title', 'Login - APB Bank Teller Portal')
-
-@section('content')
+<?php $__env->startSection('content'); ?>
 <style>
     * {
         font-family: 'Noto Sans Lao', 'Noto Sans', sans-serif;
@@ -486,33 +484,33 @@
         <div class="login-logo">
             <!-- OPTION 1: Use your logo image with green background -->
             <div class="logo-icon">
-                <img src="{{ asset('images/APB-logo.jpeg') }}" alt="APB Bank Logo">
+                <img src="<?php echo e(asset('images/APB-logo.jpeg')); ?>" alt="APB Bank Logo">
             </div>
             <h3 class="login-title">APB BANK</h3>
             <p class="login-subtitle">Teller Portal System</p>
         </div>
 
-        {{-- ✅ Show errors --}}
-        @if($errors->any())
+        
+        <?php if($errors->any()): ?>
             <div class="alert alert-danger">
                 <strong><i class="bi bi-exclamation-triangle me-2"></i>ເກີດຂໍ້ຜິດພາດ:</strong>
                 <ul class="mb-0 mt-2">
-                    @foreach($errors->all() as $err)
-                        <li>{{ $err }}</li>
-                    @endforeach
+                    <?php $__currentLoopData = $errors->all(); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $err): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                        <li><?php echo e($err); ?></li>
+                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                 </ul>
             </div>
-        @endif
+        <?php endif; ?>
 
-        {{-- ✅ Login Form --}}
-        <form method="POST" action="{{ route('login') }}">
-            @csrf
+        
+        <form method="POST" action="<?php echo e(route('login')); ?>">
+            <?php echo csrf_field(); ?>
 
             <div class="mb-3">
                 <label for="teller_id" class="form-label">
                     <i class="bi bi-envelope me-1"></i> Teller_id
                 </label>
-                <input type="teller_id" name="teller_id" id="teller_id" value="{{ old('teller_id') }}"
+                <input type="teller_id" name="teller_id" id="teller_id" value="<?php echo e(old('teller_id')); ?>"
                        class="form-control" required autofocus placeholder="ປ້ອນອີເມວ">
             </div>
 
@@ -529,25 +527,25 @@
                 ເຂົ້າສູ່ລະບົບ
             </button>
 
-            {{-- ✅ Register Button --}}
-            <a href="{{ route('register') }}" class="btn-register">
+            
+            <a href="<?php echo e(route('register')); ?>" class="btn-register">
                 <i class="bi bi-person-plus me-2"></i>
                 ສ້າງບັນຊີໃໝ່
             </a>
 
             <p class="footer-text">
                 <i class="bi bi-shield-check me-1"></i>
-                © {{ date('Y') }} APB Bank Teller Portal System
+                © <?php echo e(date('Y')); ?> APB Bank Teller Portal System
             </p>
         </form>
     </div>
 </div>
 
-{{-- Success Modal --}}
-@if(session('success'))
+
+<?php if(session('success')): ?>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    const msg = "{{ session('success') }}";
+    const msg = "<?php echo e(session('success')); ?>";
     const modalHTML = `
     <div class="modal fade" id="registerSuccessModal" tabindex="-1">
       <div class="modal-dialog modal-dialog-centered">
@@ -573,5 +571,7 @@ document.addEventListener('DOMContentLoaded', function() {
     new bootstrap.Modal(document.getElementById('registerSuccessModal')).show();
 });
 </script>
-@endif
-@endsection
+<?php endif; ?>
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('layouts.guest', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH /var/www/html/resources/views/auth/login.blade.php ENDPATH**/ ?>

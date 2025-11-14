@@ -1,29 +1,36 @@
 version: '3.9'
 
 services:
-  # 🟢 Laravel (Apache + PHP)
   app:
     build:
       context: .
       dockerfile: Dockerfile
     container_name: teller_app
     restart: unless-stopped
-    ports:
-      - "8081:80"          # ใช้ port 8081 ตามที่คุณต้องการ
     volumes:
       - .:/var/www/html
     environment:
-      - APACHE_DOCUMENT_ROOT=/var/www/html/public
-      - DB_CONNECTION=mysql
-      - DB_HOST=db
-      - DB_PORT=3306
-      - DB_DATABASE=teller_portal
-      - DB_USERNAME=teller_user
-      - DB_PASSWORD=teller_pass
+      DB_CONNECTION: mysql
+      DB_HOST: db
+      DB_PORT: 3306
+      DB_DATABASE: teller_portal
+      DB_USERNAME: teller_user
+      DB_PASSWORD: teller_pass
     depends_on:
       - db
 
-  # 🟣 MySQL Database
+  nginx:
+    image: nginx:1.27-alpine
+    container_name: teller_nginx
+    restart: unless-stopped
+    ports:
+      - "8081:80"
+    volumes:
+      - .:/var/www/html:ro
+      - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      - app
+
   db:
     image: mysql:8.0
     container_name: teller_db
@@ -36,9 +43,8 @@ services:
     volumes:
       - db_data:/var/lib/mysql
     ports:
-      - "3307:3306" # ใช้ port 3307 ภายนอก กันชนกับ XAMPP
+      - "3307:3306"
 
-  # 🟡 phpMyAdmin
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
     container_name: teller_phpmyadmin

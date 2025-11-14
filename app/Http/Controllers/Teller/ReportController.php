@@ -13,6 +13,9 @@ class ReportController extends Controller
     {
         $search = $request->input('search');
         $status = $request->input('status');
+        $year = $request->input('year');
+        $month = $request->input('month');
+        $day = $request->input('day');
 
         $query = OnboardingRequest::where('teller_id', Auth::user()->teller_id)
             ->with('branch')
@@ -30,8 +33,35 @@ class ReportController extends Controller
             $query->where('approval_status', $status);
         }
 
+        if ($year) {
+            $query->whereYear('created_at', $year);
+        }
+
+        if ($month) {
+            $query->whereMonth('created_at', $month);
+        }
+
+        if ($day) {
+            $query->whereDate('created_at', $day);
+        }
+
         $data = $query->paginate(10);
 
-        return view('teller.report.index', compact('data', 'search', 'status'));
+        $years = OnboardingRequest::where('teller_id', Auth::user()->teller_id)
+            ->selectRaw('YEAR(created_at) as year')
+            ->distinct()
+            ->orderByDesc('year')
+            ->pluck('year')
+            ->toArray();
+
+        return view('teller.report.index', [
+            'data' => $data,
+            'search' => $search,
+            'status' => $status,
+            'year' => $year,
+            'month' => $month,
+            'day' => $day,
+            'years' => $years,
+        ]);
     }
 }

@@ -1,16 +1,14 @@
-@extends('layouts.admin')
-
-@section('title', 'Teller Management')
+<?php $__env->startSection('title', 'Teller Management'); ?>
 
 
-@section('page-actions')
-    <a href="{{ route('admin.users.create') }}" class="btn-gradient">
+<?php $__env->startSection('page-actions'); ?>
+    <a href="<?php echo e(route('admin.users.create')); ?>" class="btn-gradient">
         <i class="bi bi-person-plus"></i>
         Create Teller
     </a>
-@endsection
+<?php $__env->stopSection(); ?>
 
-@section('content')
+<?php $__env->startSection('content'); ?>
     <div class="filter-card">
         <form method="GET" class="row g-3 align-items-end">
             <div class="col-md-6">
@@ -19,7 +17,7 @@
                     type="text"
                     id="search"
                     name="search"
-                    value="{{ $search }}"
+                    value="<?php echo e($search); ?>"
                     class="form-control"
                     placeholder="Enter keyword...">
             </div>
@@ -28,20 +26,20 @@
                     <i class="bi bi-search"></i> Search
                 </button>
             </div>
-            @if(!empty($search))
+            <?php if(!empty($search)): ?>
                 <div class="col-md-3">
-                    <a href="{{ route('admin.users.index') }}" class="btn btn-outline-secondary w-100" style="border-radius: 10px; padding: 12px 18px;">
+                    <a href="<?php echo e(route('admin.users.index')); ?>" class="btn btn-outline-secondary w-100" style="border-radius: 10px; padding: 12px 18px;">
                         Clear Filter
                     </a>
                 </div>
-            @endif
+            <?php endif; ?>
         </form>
     </div>
 
     <div class="table-card">
         <div class="table-card-header">
             <h5>All Teller Accounts</h5>
-            <span class="meta">{{ $users->total() }} total</span>
+            <span class="meta"><?php echo e($users->total()); ?> total</span>
         </div>
         <div class="table-responsive">
             <table class="table table-modern align-middle">
@@ -57,65 +55,70 @@
                 </tr>
                 </thead>
                 <tbody>
-                @forelse($users as $u)
+                <?php $__empty_1 = true; $__currentLoopData = $users; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $u): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
                     <tr>
-                        <td>{{ $u->id }}</td>
+                        <td><?php echo e($u->id); ?></td>
                         <td>
-                            <a href="{{ route('admin.users.show', $u->id) }}">
-                                {{ $u->name }}
+                            <a href="<?php echo e(route('admin.users.show', $u->id)); ?>">
+                                <?php echo e($u->name); ?>
+
                             </a>
                         </td>
-                        <td>{{ $u->email }}</td>
-                        <td>{{ $u->phone }}</td>
+                        <td><?php echo e($u->email); ?></td>
+                        <td><?php echo e($u->phone); ?></td>
                         <td>
-                            <span class="status-pill {{ $u->status }}">
-                                @if($u->status === 'approved')
+                            <span class="status-pill <?php echo e($u->status); ?>">
+                                <?php if($u->status === 'approved'): ?>
                                     <i class="bi bi-check-circle"></i>
-                                @elseif($u->status === 'pending')
+                                <?php elseif($u->status === 'pending'): ?>
                                     <i class="bi bi-clock-history"></i>
-                                @else
+                                <?php else: ?>
                                     <i class="bi bi-x-circle"></i>
-                                @endif
-                                {{ ucfirst($u->status) }}
+                                <?php endif; ?>
+                                <?php echo e(ucfirst($u->status)); ?>
+
                             </span>
                         </td>
-                        <td>{{ $u->created_at->format('Y-m-d') }}</td>
+                        <td><?php echo e($u->created_at->format('Y-m-d')); ?></td>
                         <td>
                             <div class="action-buttons justify-content-center">
-                                @if($u->status !== 'approved')
-                                    <form action="{{ route('admin.users.updateStatus', $u->id) }}" method="POST">
-                                        @csrf
+                                <?php if($u->status !== 'approved'): ?>
+                                    <form action="<?php echo e(route('admin.users.updateStatus', $u->id)); ?>" method="POST">
+                                        <?php echo csrf_field(); ?>
                                         <input type="hidden" name="status" value="approved">
                                         <button type="submit" class="btn-action approve">
                                             <i class="bi bi-check-lg"></i> Approve
                                         </button>
                                     </form>
-                                @endif
+                                <?php endif; ?>
 
-                                @if($u->status !== 'rejected')
-                                    <form action="{{ route('admin.users.updateStatus', $u->id) }}" method="POST">
-                                        @csrf
+                                <?php if($u->status !== 'rejected'): ?>
+                                    <form action="<?php echo e(route('admin.users.updateStatus', $u->id)); ?>" method="POST">
+                                        <?php echo csrf_field(); ?>
                                         <input type="hidden" name="status" value="rejected">
                                         <button type="submit" class="btn-action reject">
                                             <i class="bi bi-x-lg"></i> Reject
                                         </button>
                                     </form>
-                                @endif
+                                <?php endif; ?>
                             </div>
                         </td>
                     </tr>
-                @empty
+                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
                     <tr>
                         <td colspan="7" class="text-center text-muted py-4">
                             No teller accounts found.
                         </td>
                     </tr>
-                @endforelse
+                <?php endif; ?>
                 </tbody>
             </table>
         </div>
         <div class="mt-3">
-            {{ $users->links() }}
+            <?php echo e($users->links()); ?>
+
         </div>
     </div>
-@endsection
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('layouts.admin', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH /var/www/html/resources/views/admin/users/index.blade.php ENDPATH**/ ?>

@@ -1,8 +1,6 @@
-@extends('layouts.teller')
+<?php $__env->startSection('title', 'ລາຍລະອຽດຄຳຂໍເປີດບັນຊີ'); ?>
 
-@section('title', 'ລາຍລະອຽດຄຳຂໍເປີດບັນຊີ')
-
-@section('content')
+<?php $__env->startSection('content'); ?>
 <style>
     * {
         font-family: 'Noto Sans Lao', 'Noto Sans', sans-serif;
@@ -413,7 +411,8 @@
         <div class="card-header-custom">
             <h5>
                 <i class="bi bi-shop-window"></i>
-                {{ $request->store_name }}
+                <?php echo e($request->store_name); ?>
+
             </h5>
         </div>
 
@@ -433,7 +432,8 @@
                     <div class="detail-value">
                         <span class="info-badge">
                             <i class="bi bi-tag"></i>
-                            {{ $request->refer_code }}
+                            <?php echo e($request->refer_code); ?>
+
                         </span>
                     </div>
                 </div>
@@ -443,7 +443,7 @@
                         <i class="bi bi-briefcase"></i>
                         ປະເພດທຸລະກິດ
                     </div>
-                    <div class="detail-value">{{ $request->business_type }}</div>
+                    <div class="detail-value"><?php echo e($request->business_type); ?></div>
                 </div>
 
                 <div class="detail-row">
@@ -451,7 +451,7 @@
                         <i class="bi bi-geo-alt"></i>
                         ທີ່ຢູ່
                     </div>
-                    <div class="detail-value">{{ $request->store_address }}</div>
+                    <div class="detail-value"><?php echo e($request->store_address); ?></div>
                 </div>
             </div>
 
@@ -468,7 +468,7 @@
                         ລະຫັດເຄື່ອງ POS
                     </div>
                     <div class="detail-value">
-                        <span class="info-badge">{{ $request->pos_serial }}</span>
+                        <span class="info-badge"><?php echo e($request->pos_serial); ?></span>
                     </div>
                 </div>
 
@@ -477,8 +477,9 @@
                         <i class="bi bi-bank"></i>
                         ເລກບັນຊີທະນາຄານ
                     </div>
-                    <div class="detail-value {{ !$request->bank_account ? 'empty' : '' }}">
-                        {{ $request->bank_account ?? 'ບໍ່ມີຂໍ້ມູນ' }}
+                    <div class="detail-value <?php echo e(!$request->bank_account ? 'empty' : ''); ?>">
+                        <?php echo e($request->bank_account ?? 'ບໍ່ມີຂໍ້ມູນ'); ?>
+
                     </div>
                 </div>
             </div>
@@ -497,7 +498,8 @@
                     </div>
                     <div class="detail-value">
                         <i class="bi bi-calendar-event text-primary me-2"></i>
-                        {{ \Carbon\Carbon::parse($request->installation_date)->format('d/m/Y') }}
+                        <?php echo e(\Carbon\Carbon::parse($request->installation_date)->format('d/m/Y')); ?>
+
                     </div>
                 </div>
 
@@ -506,8 +508,9 @@
                         <i class="bi bi-pin-map"></i>
                         ສາຂາ
                     </div>
-                    <div class="detail-value {{ !$request->branch ? 'empty' : '' }}">
-                        {{ $request->branch->name ?? 'ບໍ່ມີຂໍ້ມູນ' }}
+                    <div class="detail-value <?php echo e(!$request->branch ? 'empty' : ''); ?>">
+                        <?php echo e($request->branch->name ?? 'ບໍ່ມີຂໍ້ມູນ'); ?>
+
                     </div>
                 </div>
             </div>
@@ -525,22 +528,22 @@
                         ສະຖານະ
                     </div>
                     <div class="detail-value">
-                        @if($request->approval_status == 'approved')
+                        <?php if($request->approval_status == 'approved'): ?>
                             <span class="status-badge-large approved">
                                 <i class="bi bi-check-circle-fill"></i>
                                 ອະນຸມັດແລ້ວ
                             </span>
-                        @elseif($request->approval_status == 'pending')
+                        <?php elseif($request->approval_status == 'pending'): ?>
                             <span class="status-badge-large pending">
                                 <i class="bi bi-clock-fill"></i>
                                 ລໍຖ້າອະນຸມັດ
                             </span>
-                        @else
+                        <?php else: ?>
                             <span class="status-badge-large rejected">
                                 <i class="bi bi-x-circle-fill"></i>
                                 ປະຕິເສດ
                             </span>
-                        @endif
+                        <?php endif; ?>
                     </div>
                 </div>
 
@@ -549,20 +552,21 @@
                         <i class="bi bi-chat-dots"></i>
                         ໝາຍເຫດ
                     </div>
-                    <div class="detail-value {{ !$request->admin_remark ? 'empty' : '' }}">
-                        {{ $request->admin_remark ?? '' }}
+                    <div class="detail-value <?php echo e(!$request->admin_remark ? 'empty' : ''); ?>">
+                        <?php echo e($request->admin_remark ?? ''); ?>
+
                     </div>
                 </div>
             </div>
 
 
 <!-- Attachment Section -->
-@if(!empty($request->attachments))
-    @php
+<?php if(!empty($request->attachments)): ?>
+    <?php
         $attachments = json_decode($request->attachments ?? '[]', true);
-    @endphp
+    ?>
 
-    @if(!empty($attachments))
+    <?php if(!empty($attachments)): ?>
         <div class="drive-style-section mt-4">
             <div class="drive-header mb-3">
                 <i class="bi bi-paperclip"></i>
@@ -570,38 +574,38 @@
             </div>
 
             <div class="drive-grid">
-                @foreach($attachments as $filePath)
-                    @php
+                <?php $__currentLoopData = $attachments; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $filePath): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                    <?php
                         $fileUrl = asset('storage/' . $filePath);
                         $fileName = basename($filePath);
                         $extension = strtolower(pathinfo($filePath, PATHINFO_EXTENSION));
-                    @endphp
+                    ?>
 
-                    <div class="drive-card" onclick="openPreview('{{ $fileUrl }}', '{{ $fileName }}', '{{ $extension }}')">
+                    <div class="drive-card" onclick="openPreview('<?php echo e($fileUrl); ?>', '<?php echo e($fileName); ?>', '<?php echo e($extension); ?>')">
                         <div class="drive-thumb">
-                            @if(in_array($extension, ['jpg','jpeg','png']))
-                                <img src="{{ $fileUrl }}" alt="{{ $fileName }}">
-                            @elseif($extension === 'pdf')
-                                <iframe src="{{ $fileUrl }}" title="{{ $fileName }}"></iframe>
-                            @else
+                            <?php if(in_array($extension, ['jpg','jpeg','png'])): ?>
+                                <img src="<?php echo e($fileUrl); ?>" alt="<?php echo e($fileName); ?>">
+                            <?php elseif($extension === 'pdf'): ?>
+                                <iframe src="<?php echo e($fileUrl); ?>" title="<?php echo e($fileName); ?>"></iframe>
+                            <?php else: ?>
                                 <div class="drive-icon">
                                     <i class="bi bi-file-earmark-text"></i>
                                 </div>
-                            @endif
-                            <div class="drive-type {{ $extension }}">{{ strtoupper($extension) }}</div>
+                            <?php endif; ?>
+                            <div class="drive-type <?php echo e($extension); ?>"><?php echo e(strtoupper($extension)); ?></div>
                         </div>
-                        <div class="drive-name">{{ $fileName }}</div>
+                        <div class="drive-name"><?php echo e($fileName); ?></div>
                     </div>
-                @endforeach
+                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
             </div>
         </div>
-    @else
+    <?php else: ?>
         <div class="alert alert-warning mt-3">
             <i class="bi bi-exclamation-triangle me-2"></i>
             ບໍ່ພົບໄຟລ໌ແນບໃນລາຍການນີ້
         </div>
-    @endif
-@endif
+    <?php endif; ?>
+<?php endif; ?>
 
 <!-- 🔍 Preview Modal -->
 <div class="modal fade" id="previewModal" tabindex="-1" aria-labelledby="previewTitle" aria-hidden="true">
@@ -625,13 +629,13 @@
         <div class="action-buttons">
 
 
-            <a href="{{ route('teller.dashboard') }}" class="btn-back">
+            <a href="<?php echo e(route('teller.dashboard')); ?>" class="btn-back">
                 <i class="bi bi-arrow-left-circle"></i>
                 ກັບຄືນ
             </a>
 
 
-                <a href="{{ route('teller.requests.edit', $request->id) }}" class="btn-edit">
+                <a href="<?php echo e(route('teller.requests.edit', $request->id)); ?>" class="btn-edit">
                     <i class="bi bi-pencil-square"></i>
                     ແກ້ໄຂຂໍ້ມູນ
                 </a>
@@ -639,7 +643,7 @@
         </div>
     </div>
 </div>
-@endsection
+<?php $__env->stopSection(); ?>
 <script>
 function openPreview(fileUrl, fileName, extension) {
     const modal = new bootstrap.Modal(document.getElementById('previewModal'));
@@ -682,3 +686,5 @@ function openPreview(fileUrl, fileName, extension) {
 
 
 
+
+<?php echo $__env->make('layouts.teller', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH /var/www/html/resources/views/teller/requests/show.blade.php ENDPATH**/ ?>

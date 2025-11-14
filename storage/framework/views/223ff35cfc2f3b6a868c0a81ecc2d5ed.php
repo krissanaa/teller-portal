@@ -1,4 +1,4 @@
-@php
+<?php
     $pending_count = \Cache::remember('pending_onboarding_count', 30, function () {
         try {
             return \App\Models\TellerPortal\OnboardingRequest::where('approval_status', 'pending')->count();
@@ -8,14 +8,14 @@
     });
 
     $authUser = auth()->user();
-@endphp
+?>
 
 <!DOCTYPE html>
 <html lang="lo">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@yield('title', 'APB Bank - Admin Dashboard')</title>
+    <title><?php echo $__env->yieldContent('title', 'APB Bank - Admin Dashboard'); ?></title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
 
@@ -492,15 +492,15 @@
             }
         }
     </style>
-    @stack('styles')
+    <?php echo $__env->yieldPushContent('styles'); ?>
 </head>
 <body>
     <!-- 🏦 Modern Navbar -->
     <nav class="navbar navbar-expand-lg navbar-apb">
         <div class="container-fluid px-4">
             <!-- Brand -->
-            <a class="navbar-brand" href="{{ route('admin.dashboard') }}">
-  <img src="{{ asset('images/APB-logo.jpeg') }}" height="40">
+            <a class="navbar-brand" href="<?php echo e(route('admin.dashboard')); ?>">
+  <img src="<?php echo e(asset('images/APB-logo.jpeg')); ?>" height="40">
 
 </a>
 
@@ -513,11 +513,11 @@
 
         <ul class="navbar-nav ms-auto d-flex flex-row align-items-center gap-3">
             <li class="nav-item">
-                <a href="{{ route('admin.onboarding.index') }}" class="notification-btn" title="Pending onboarding requests">
+                <a href="<?php echo e(route('admin.onboarding.index')); ?>" class="notification-btn" title="Pending onboarding requests">
                     <i class="bi bi-bell-fill"></i>
-                    @if($pending_count > 0)
-                        <span class="notification-badge">{{ $pending_count }}</span>
-                    @endif
+                    <?php if($pending_count > 0): ?>
+                        <span class="notification-badge"><?php echo e($pending_count); ?></span>
+                    <?php endif; ?>
                 </a>
             </li>
             <li class="nav-item dropdown">
@@ -527,22 +527,23 @@
                     </div>
                     <div class="d-none d-md-block">
                         <p class="profile-name">
-                            {{ $authUser?->teller_id ? 'APB' . $authUser->teller_id : ($authUser?->name ?? 'Administrator') }}
+                            <?php echo e($authUser?->teller_id ? 'APB' . $authUser->teller_id : ($authUser?->name ?? 'Administrator')); ?>
+
                         </p>
                         <p class="profile-role">Admin</p>
                     </div>
                     <span class="profile-arrow"><i class="bi bi-chevron-down"></i></span>
                 </a>
                 <ul class="dropdown-menu dropdown-menu-end animated--fade-in" aria-labelledby="adminUserDropdown">
-                    <li class="dropdown-header">{{ $authUser?->email ?? 'admin@apb-bank.test' }}</li>
+                    <li class="dropdown-header"><?php echo e($authUser?->email ?? 'admin@apb-bank.test'); ?></li>
                     <li>
-                        <a class="dropdown-item" href="{{ route('profile.edit') }}">
+                        <a class="dropdown-item" href="<?php echo e(route('profile.edit')); ?>">
                             <i class="bi bi-gear"></i>Account Settings
                         </a>
                     </li>
                     <li><hr class="dropdown-divider"></li>
                     <li>
-                        <a class="dropdown-item logout-btn" href="{{ route('logout') }}"
+                        <a class="dropdown-item logout-btn" href="<?php echo e(route('logout')); ?>"
                            onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
                             <i class="bi bi-box-arrow-right"></i>Logout
                         </a>
@@ -553,36 +554,37 @@
     </div>
 </nav>
 
-<form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
-    @csrf
+<form id="logout-form" action="<?php echo e(route('logout')); ?>" method="POST" class="d-none">
+    <?php echo csrf_field(); ?>
 </form>
 
 <div class="app-body container-fluid py-4">
     <div class="admin-card page-card">
         <div class="page-header">
             <div class="page-heading">
-                @hasSection('page-eyebrow')
-                    <p class="page-eyebrow">@yield('page-eyebrow')</p>
-                @endif
-                <h3 class="page-title">@yield('title', 'Admin Dashboard')</h3>
-                @hasSection('page-subtitle')
-                    <p class="page-subtitle">@yield('page-subtitle')</p>
-                @endif
+                <?php if (! empty(trim($__env->yieldContent('page-eyebrow')))): ?>
+                    <p class="page-eyebrow"><?php echo $__env->yieldContent('page-eyebrow'); ?></p>
+                <?php endif; ?>
+                <h3 class="page-title"><?php echo $__env->yieldContent('title', 'Admin Dashboard'); ?></h3>
+                <?php if (! empty(trim($__env->yieldContent('page-subtitle')))): ?>
+                    <p class="page-subtitle"><?php echo $__env->yieldContent('page-subtitle'); ?></p>
+                <?php endif; ?>
             </div>
-            @hasSection('page-actions')
+            <?php if (! empty(trim($__env->yieldContent('page-actions')))): ?>
                 <div class="page-actions">
-                    @yield('page-actions')
+                    <?php echo $__env->yieldContent('page-actions'); ?>
                 </div>
-            @endif
+            <?php endif; ?>
         </div>
 
         <div class="page-body">
-            @yield('content')
+            <?php echo $__env->yieldContent('content'); ?>
         </div>
     </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-@stack('scripts')
+<?php echo $__env->yieldPushContent('scripts'); ?>
 </body>
 </html>
+<?php /**PATH /var/www/html/resources/views/layouts/admin.blade.php ENDPATH**/ ?>

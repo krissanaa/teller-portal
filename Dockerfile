@@ -1,13 +1,12 @@
-FROM php:8.2-apache
+FROM php:8.2-fpm
 
-# Enable Apache modules needed by Laravel's .htaccess
-RUN a2enmod rewrite
-
-# Install system dependencies and PHP extensions (including ext-zip)
+# Install system dependencies and PHP extensions
 RUN if [ -f /etc/apt/sources.list ]; then \
         sed -i 's|http://deb.debian.org|https://deb.debian.org|g;s|http://security.debian.org|https://security.debian.org|g' /etc/apt/sources.list; \
     fi \
-    && sed -i 's|http://deb.debian.org|https://deb.debian.org|g;s|http://security.debian.org|https://security.debian.org|g' /etc/apt/sources.list.d/debian.sources \
+    && if [ -f /etc/apt/sources.list.d/debian.sources ]; then \
+        sed -i 's|http://deb.debian.org|https://deb.debian.org|g;s|http://security.debian.org|https://security.debian.org|g' /etc/apt/sources.list.d/debian.sources; \
+    fi \
     && apt-get update && apt-get install -y \
         libzip-dev \
         unzip \
@@ -21,30 +20,20 @@ RUN if [ -f /etc/apt/sources.list ]; then \
 # Copy Composer from the official image
 COPY --from=composer:2.7 /usr/bin/composer /usr/bin/composer
 
-# Point Apache's DocumentRoot to Laravel's public directory and allow storage symlinks
-RUN sed -i 's!/var/www/html!/var/www/html/public!g' /etc/apache2/sites-available/000-default.conf \
-    && printf '<Directory /var/www/html/public>\n\tAllowOverride All\n\tOptions +FollowSymLinks\n\tRequire all granted\n</Directory>\n' > /etc/apache2/conf-available/laravel.conf \
-    && a2enconf laravel
-
 WORKDIR /var/www/html
 
-# Copy composer manifests separately for better Docker caching
+# Install PHP dependencies
 COPY composer.json composer.lock ./
-
 ENV COMPOSER_ALLOW_SUPERUSER=1
-
-# Install PHP dependencies for production (skip scripts until code is copied)
 RUN composer install --no-dev --optimize-autoloader --no-interaction --prefer-dist --no-scripts
 
-# Copy the full application codebase
+# Copy application code
 COPY . .
-
-# Run Composer scripts now that artisan is available
 RUN composer run-script post-autoload-dump
 
-# Ensure Laravel can write to its storage directories
-RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
+# Ensure writable directories for Laravel
+RUN chown -R www-data:www-data storage bootstrap/cache
 
-EXPOSE 80
+EXPOSE 9000
 
-CMD ["apache2-foreground"]
+CMD ["php-fpm", "-F"]

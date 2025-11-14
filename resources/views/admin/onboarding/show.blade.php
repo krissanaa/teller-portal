@@ -362,15 +362,6 @@
             <a href="{{ route('admin.onboarding.index') }}" class="btn btn-outline-secondary">
                 Back to requests
             </a>
-            @if($req->approval_status === 'pending')
-                <form action="{{ route('admin.onboarding.approve', $req->id) }}" method="POST">
-                    @csrf
-                    <button class="btn btn-success" type="submit">Approve</button>
-                </form>
-                <button class="btn btn-danger" type="button" id="openRejectModal" data-bs-toggle="modal" data-bs-target="#rejectModal">
-                    Reject
-                </button>
-            @endif
         </div>
     </div>
 </div>
@@ -380,67 +371,6 @@
         <div class="lightbox-body" id="lightboxBody"></div>
     </div>
 </div>
-
-<!-- Reject Confirmation Modal -->
-<div class="modal fade" id="rejectModal" tabindex="-1" aria-labelledby="rejectModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header bg-danger text-white">
-                <h5 class="modal-title" id="rejectModalLabel">
-                    <i class="bi bi-x-octagon me-2"></i> Reject Request
-                </h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <form method="POST" action="{{ route('admin.onboarding.reject', $req->id) }}">
-                @csrf
-                <div class="modal-body">
-                    <p class="text-muted mb-3">Please tell the teller why this request is rejected.</p>
-                    <label for="modal_admin_remark" class="form-label fw-semibold text-danger small">
-                        Reject remark
-                    </label>
-                    <textarea
-                        name="admin_remark"
-                        id="modal_admin_remark"
-                        class="form-control @error('admin_remark') is-invalid @enderror"
-                        rows="3"
-                        required
-                        placeholder="Example: Missing POS serial or incorrect bank account">{{ old('admin_remark') }}</textarea>
-                    @error('admin_remark')
-                        <div class="invalid-feedback d-block">{{ $message }}</div>
-                    @enderror
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn btn-danger">Confirm Reject</button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
-
-@if($errors->has('admin_remark'))
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            var rejectModal = new bootstrap.Modal(document.getElementById('rejectModal'));
-            rejectModal.show();
-        });
-    </script>
-@endif
-
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const triggerRejectBtn = document.getElementById('openRejectModal');
-        const rejectModalEl = document.getElementById('rejectModal');
-
-        if (triggerRejectBtn && rejectModalEl && window.bootstrap) {
-            const rejectModal = new bootstrap.Modal(rejectModalEl);
-            triggerRejectBtn.addEventListener('click', function (event) {
-                event.preventDefault();
-                rejectModal.show();
-            });
-        }
-    });
-</script>
 
 <script>
     function openAdminPreview(fileUrl, fileName, extension) {

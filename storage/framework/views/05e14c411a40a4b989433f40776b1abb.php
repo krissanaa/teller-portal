@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@yield('title', 'APB Bank - Teller Dashboard')</title>
+    <title><?php echo $__env->yieldContent('title', 'APB Bank - Teller Dashboard'); ?></title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
 
@@ -409,8 +409,8 @@
     <nav class="navbar navbar-expand-lg navbar-apb">
         <div class="container-fluid px-4">
             <!-- Brand -->
-            <a class="navbar-brand" href="{{ route('teller.dashboard') }}">
-  <img src="{{ asset('images/APB-logo.jpeg') }}" height="40">
+            <a class="navbar-brand" href="<?php echo e(route('teller.dashboard')); ?>">
+  <img src="<?php echo e(asset('images/APB-logo.jpeg')); ?>" height="40">
 
 </a>
 
@@ -427,37 +427,40 @@
                 <li class="nav-item dropdown">
                     <a class="notification-btn" href="#" id="notifDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                         <i class="bi bi-bell-fill"></i>
-                        @if(isset($notifications) && count($notifications) > 0)
-                            <span class="notification-badge">{{ count($notifications) }}</span>
-                        @endif
+                        <?php if(isset($notifications) && count($notifications) > 0): ?>
+                            <span class="notification-badge"><?php echo e(count($notifications)); ?></span>
+                        <?php endif; ?>
                     </a>
                     <ul class="dropdown-menu dropdown-menu-end animated--fade-in" aria-labelledby="notifDropdown">
                         <li class="dropdown-header">
                             📢 ການແຈ້ງເຕືອນລ່າສຸດ
                         </li>
-                        @forelse($notifications as $n)
+                        <?php $__empty_1 = true; $__currentLoopData = $notifications; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $n): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
                             <li>
-                                <div class="notification-item {{ $n->approval_status == 'approved' ? 'approved' : 'rejected' }}">
+                                <div class="notification-item <?php echo e($n->approval_status == 'approved' ? 'approved' : 'rejected'); ?>">
                                     <div class="notification-store">
-                                        {{ $n->store_name . ' (' . $n->refer_code . ')' }}
+                                        <?php echo e($n->store_name . ' (' . $n->refer_code . ')'); ?>
+
                                     </div>
-                                    <div class="notification-status {{ $n->approval_status == 'approved' ? 'text-success' : 'text-danger' }}">
-                                        {{ $n->approval_status == 'approved' ? '✅ Approved' : '❌ Rejected' }}
+                                    <div class="notification-status <?php echo e($n->approval_status == 'approved' ? 'text-success' : 'text-danger'); ?>">
+                                        <?php echo e($n->approval_status == 'approved' ? '✅ Approved' : '❌ Rejected'); ?>
+
                                     </div>
-                                    @if($n->approval_status == 'rejected' && $n->admin_remark)
+                                    <?php if($n->approval_status == 'rejected' && $n->admin_remark): ?>
                                         <div class="notification-remark">
                                             <i class="bi bi-chat-dots"></i>
-                                            <span>{{ \Illuminate\Support\Str::limit($n->admin_remark, 120) }}</span>
+                                            <span><?php echo e(\Illuminate\Support\Str::limit($n->admin_remark, 120)); ?></span>
                                         </div>
-                                    @endif
+                                    <?php endif; ?>
                                     <div class="notification-time">
-                                        Updated {{ $n->updated_at->diffForHumans() }}
+                                        Updated <?php echo e($n->updated_at->diffForHumans()); ?>
+
                                     </div>
                                 </div>
                             </li>
-                        @empty
+                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
                             <li><span class="dropdown-item text-muted text-center small">No notifications yet</span></li>
-                        @endforelse
+                        <?php endif; ?>
                     </ul>
                 </li>
 
@@ -469,7 +472,8 @@
                         </div>
                         <div class="d-none d-md-block">
                             <p class="profile-name">
-                                {{ Auth::user()->teller_id ? 'APB' . Auth::user()->teller_id : Auth::user()->name }}
+                                <?php echo e(Auth::user()->teller_id ? 'APB' . Auth::user()->teller_id : Auth::user()->name); ?>
+
                             </p>
                         </div>
                         <span class="profile-arrow">▼</span>
@@ -485,8 +489,8 @@
                         </li>
                         <li><hr class="dropdown-divider"></li>
                         <li>
-                            <form method="POST" action="{{ route('logout') }}">
-                                @csrf
+                            <form method="POST" action="<?php echo e(route('logout')); ?>">
+                                <?php echo csrf_field(); ?>
                                 <button type="submit" class="dropdown-item logout-btn">
                                     <i class="bi bi-box-arrow-right"></i> ອອກຈາກລະບົບ
                                 </button>
@@ -499,39 +503,41 @@
     </nav>
 
     <!-- ✅ Toast Messages -->
-    @if(session('success'))
+    <?php if(session('success')): ?>
         <div class="toast align-items-center text-bg-success border-0 position-fixed bottom-0 end-0 m-3 show" role="alert">
             <div class="d-flex">
                 <div class="toast-body">
-                    <i class="bi bi-check-circle-fill me-2"></i>{{ session('success') }}
+                    <i class="bi bi-check-circle-fill me-2"></i><?php echo e(session('success')); ?>
+
                 </div>
                 <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
             </div>
         </div>
-    @endif
+    <?php endif; ?>
 
-    @if($errors->any())
+    <?php if($errors->any()): ?>
         <div class="toast align-items-center text-bg-danger border-0 position-fixed bottom-0 end-0 m-3 show" role="alert">
             <div class="d-flex">
                 <div class="toast-body">
-                    <i class="bi bi-exclamation-circle-fill me-2"></i>{{ $errors->first() }}
+                    <i class="bi bi-exclamation-circle-fill me-2"></i><?php echo e($errors->first()); ?>
+
                 </div>
                 <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
             </div>
         </div>
-    @endif
+    <?php endif; ?>
 
     <!-- 🧱 Main Content -->
     <div class="container py-4">
-        @yield('content')
+        <?php echo $__env->yieldContent('content'); ?>
     </div>
 
     <!-- 🔐 Change Password Modal -->
     <div class="modal fade" id="changePasswordModal" tabindex="-1" aria-labelledby="changePasswordLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
-                <form method="POST" action="{{ route('teller.changePassword') }}">
-                    @csrf
+                <form method="POST" action="<?php echo e(route('teller.changePassword')); ?>">
+                    <?php echo csrf_field(); ?>
                     <div class="modal-header text-white">
                         <h5 class="modal-title" id="changePasswordLabel">
                             <i class="bi bi-shield-lock-fill"></i> ປ່ຽນລະຫັດຜ່ານ
@@ -603,3 +609,4 @@
 
 </body>
 </html>
+<?php /**PATH /var/www/html/resources/views/layouts/teller.blade.php ENDPATH**/ ?>

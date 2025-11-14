@@ -1,8 +1,6 @@
-@extends('layouts.teller')
+<?php $__env->startSection('title', 'ລາຍງານຮ້ານຄ້າຂອງຂ້ອຍ'); ?>
 
-@section('title', 'ລາຍງານຮ້ານຄ້າຂອງຂ້ອຍ')
-
-@section('content')
+<?php $__env->startSection('content'); ?>
 <style>
     * {
         font-family: 'Noto Sans Lao', 'Noto Sans', sans-serif;
@@ -411,7 +409,7 @@
             ລາຍງານຮ້ານຄ້າຂອງຂ້ອຍ
         </h4>
           <div class="header-actions">
-            <a href="{{ route('teller.dashboard')}}" class="btn-create">
+            <a href="<?php echo e(route('teller.dashboard')); ?>" class="btn-create">
    <i class="bi bi-arrow-left"></i>
                 ກັບໜ້າຫຼັກ
             </a>
@@ -419,41 +417,44 @@
         </div>
     </div>
 
-    @php
+    <?php
         $tellerIdentifier = Auth::user()->teller_id ?? Auth::id();
-    @endphp
+    ?>
 
     <!-- Status Summary Cards -->
     <div class="row mb-4">
         <div class="col-md-4 mb-3">
-            <a href="{{ route('teller.report', ['status' => 'pending']) }}" class="status-card pending">
+            <a href="<?php echo e(route('teller.report', ['status' => 'pending'])); ?>" class="status-card pending">
                 <div class="status-card-body">
                     <span class="status-icon">⏳</span>
                     <div class="status-label">ລໍຖ້າອະນຸມັດ</div>
                     <div class="status-count">
-                        {{ \App\Models\TellerPortal\OnboardingRequest::where('teller_id', $tellerIdentifier)->where('approval_status','pending')->count() }}
+                        <?php echo e(\App\Models\TellerPortal\OnboardingRequest::where('teller_id', $tellerIdentifier)->where('approval_status','pending')->count()); ?>
+
                     </div>
                 </div>
             </a>
         </div>
         <div class="col-md-4 mb-3">
-            <a href="{{ route('teller.report', ['status' => 'approved']) }}" class="status-card approved">
+            <a href="<?php echo e(route('teller.report', ['status' => 'approved'])); ?>" class="status-card approved">
                 <div class="status-card-body">
                     <span class="status-icon">✅</span>
                     <div class="status-label">ອະນຸມັດແລ້ວ</div>
                     <div class="status-count">
-                        {{ \App\Models\TellerPortal\OnboardingRequest::where('teller_id', $tellerIdentifier)->where('approval_status','approved')->count() }}
+                        <?php echo e(\App\Models\TellerPortal\OnboardingRequest::where('teller_id', $tellerIdentifier)->where('approval_status','approved')->count()); ?>
+
                     </div>
                 </div>
             </a>
         </div>
         <div class="col-md-4 mb-3">
-            <a href="{{ route('teller.report', ['status' => 'rejected']) }}" class="status-card rejected">
+            <a href="<?php echo e(route('teller.report', ['status' => 'rejected'])); ?>" class="status-card rejected">
                 <div class="status-card-body">
                     <span class="status-icon">❌</span>
                     <div class="status-label">ປະຕິເສດ</div>
                     <div class="status-count">
-                        {{ \App\Models\TellerPortal\OnboardingRequest::where('teller_id', $tellerIdentifier)->where('approval_status','rejected')->count() }}
+                        <?php echo e(\App\Models\TellerPortal\OnboardingRequest::where('teller_id', $tellerIdentifier)->where('approval_status','rejected')->count()); ?>
+
                     </div>
                 </div>
             </a>
@@ -471,7 +472,7 @@
                 <label class="form-label fw-semibold text-muted small mb-2">
                     <i class="bi bi-search"></i> ຄົ້ນຫາ
                 </label>
-<input type="text" name="search" value="{{ $search }}"
+<input type="text" name="search" value="<?php echo e($search); ?>"
        class="form-control search-input filter-size-unify fw-semibold"
                        placeholder="ຊື່ຮ້ານ / ລະຫັດອ້າງອີງ / ປະເພດທຸລະກິດ"
                        onkeydown="if(event.key==='Enter'){this.form.submit();}">
@@ -483,9 +484,9 @@
 <select name="status" class="form-select filter-select text-muted fw-semibold filter-size-unify"
         onchange="this.form.submit()">
                     <option value="">-- ສະຖານະທັງໝົດ --</option>
-                    <option value="pending" {{ $status=='pending' ? 'selected' : '' }}>⏳ ລໍຖ້າອະນຸມັດ</option>
-                    <option value="approved" {{ $status=='approved' ? 'selected' : '' }}>✅ ອະນຸມັດແລ້ວ</option>
-                    <option value="rejected" {{ $status=='rejected' ? 'selected' : '' }}>❌ ປະຕິເສດ</option>
+                    <option value="pending" <?php echo e($status=='pending' ? 'selected' : ''); ?>>⏳ ລໍຖ້າອະນຸມັດ</option>
+                    <option value="approved" <?php echo e($status=='approved' ? 'selected' : ''); ?>>✅ ອະນຸມັດແລ້ວ</option>
+                    <option value="rejected" <?php echo e($status=='rejected' ? 'selected' : ''); ?>>❌ ປະຕິເສດ</option>
                 </select>
             </div>
             <div class="col-md-3">
@@ -513,9 +514,9 @@
                 </label>
                 <select name="year" class="form-select filter-select" onchange="this.form.submit()">
                     <option value="">All Years</option>
-                    @foreach($years as $y)
-                        <option value="{{ $y }}" {{ $year == $y ? 'selected' : '' }}>{{ $y }}</option>
-                    @endforeach
+                    <?php $__currentLoopData = $years; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $y): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                        <option value="<?php echo e($y); ?>" <?php echo e($year == $y ? 'selected' : ''); ?>><?php echo e($y); ?></option>
+                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                 </select>
             </div>
 
@@ -526,11 +527,12 @@
                 </label>
                 <select name="month" class="form-select filter-select" onchange="this.form.submit()">
                     <option value="">All Months</option>
-                    @foreach(range(1, 12) as $m)
-                        <option value="{{ $m }}" {{ $month == $m ? 'selected' : '' }}>
-                            {{ \Carbon\Carbon::create()->month($m)->format('F') }}
+                    <?php $__currentLoopData = range(1, 12); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $m): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                        <option value="<?php echo e($m); ?>" <?php echo e($month == $m ? 'selected' : ''); ?>>
+                            <?php echo e(\Carbon\Carbon::create()->month($m)->format('F')); ?>
+
                         </option>
-                    @endforeach
+                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                 </select>
             </div>
 
@@ -539,7 +541,7 @@
                 <label class="form-label fw-semibold small mb-1">
                     <i class="bi bi-calendar-day"></i> Day
                 </label>
-                <input type="date" name="day" value="{{ $day }}"
+                <input type="date" name="day" value="<?php echo e($day); ?>"
                        class="form-control filter-select"
                        onchange="this.form.submit()">
             </div>
@@ -548,7 +550,7 @@
     </div>
 </div>
             <div class="col-md-3">
-                <a href="{{ route('teller.report') }}" class="btn btn-reset w-100">
+                <a href="<?php echo e(route('teller.report')); ?>" class="btn btn-reset w-100">
                     <i class="bi bi-arrow-clockwise"></i> ລ້າງຕົວກອງ
                 </a>
             </div>
@@ -561,7 +563,7 @@
             <span class="table-header-title">
                 <i class="bi bi-table"></i> ຂໍ້ມູນທັງໝົດ
             </span>
-            <span class="table-count">{{ $data->total() }} ລາຍການ</span>
+            <span class="table-count"><?php echo e($data->total()); ?> ລາຍການ</span>
         </div>
         <div class="table-responsive">
             <table class="table modern-table">
@@ -578,75 +580,82 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @forelse($data as $r)
-                             <tr class="table-row-clickable" data-href="{{ route('teller.requests.show', $r->id) }}">
+                    <?php $__empty_1 = true; $__currentLoopData = $data; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $r): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
+                             <tr class="table-row-clickable" data-href="<?php echo e(route('teller.requests.show', $r->id)); ?>">
                             <td class="text-center fw-bold text-muted">
-                                {{ ($data->firstItem() ?? 0) + $loop->index }}
+                                <?php echo e(($data->firstItem() ?? 0) + $loop->index); ?>
+
                             </td>
                             <td>
                                 <span class="reference-code">
-                                    <i class="bi bi-hash"></i>{{ $r->refer_code }}
+                                    <i class="bi bi-hash"></i><?php echo e($r->refer_code); ?>
+
                                 </span>
                             </td>
                             <td>
                                 <span class="store-name">
                                     <i class="bi bi-shop"></i>
-                                    {{ $r->store_name }}
+                                    <?php echo e($r->store_name); ?>
+
                                 </a>
                             </td>
                             <td>
                                 <span class="store-name">
                                 <i class="bi bi-computer text-muted" ></i>
-                                {{ $r->pos_serial}}
+                                <?php echo e($r->pos_serial); ?>
+
                                 </span>
                             </td>
                             <td>
                                 <SPAN class="store-name">
                                 <i class="bi bi-calendar3 text-muted"></i>
-                                {{ $r->installation_date }}
+                                <?php echo e($r->installation_date); ?>
+
                                 </SPAN>
                             </td>
                             <td>
                                 <span class="store-name">
-                                {{ $r->business_type }}
+                                <?php echo e($r->business_type); ?>
+
                             </span>
                             </td>
                             <td class="text-center">
-                                @if($r->approval_status == 'approved')
-                                    <a href="{{ route('teller.report', ['status' => 'approved']) }}"
+                                <?php if($r->approval_status == 'approved'): ?>
+                                    <a href="<?php echo e(route('teller.report', ['status' => 'approved'])); ?>"
                                        class="badge-status approved">
                                         Approved
                                     </a>
-                                @elseif($r->approval_status == 'pending')
-                                    <a href="{{ route('teller.report', ['status' => 'pending']) }}"
+                                <?php elseif($r->approval_status == 'pending'): ?>
+                                    <a href="<?php echo e(route('teller.report', ['status' => 'pending'])); ?>"
                                        class="badge-status pending">
                                         Pending
                                     </a>
-                                @else
-                                    <a href="{{ route('teller.report', ['status' => 'rejected']) }}"
+                                <?php else: ?>
+                                    <a href="<?php echo e(route('teller.report', ['status' => 'rejected'])); ?>"
                                        class="badge-status rejected">
                                         Rejected
                                     </a>
-                                @endif
+                                <?php endif; ?>
                             </td>
                         </tr>
-                    @empty
+                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
                         <tr>
                             <td colspan="7" class="empty-state">
                                 <i class="bi bi-inbox"></i>
                                 <p>ບໍ່ມີຂໍ້ມູນສຳລັບລາຍງານ</p>
                             </td>
                         </tr>
-                    @endforelse
+                    <?php endif; ?>
                 </tbody>
             </table>
 
             <!-- Pagination -->
-@if($data->hasPages())
+<?php if($data->hasPages()): ?>
     <div class="pagination-wrapper text-center mt-4">
-        {{ $data->links('pagination::bootstrap-5') }}
+        <?php echo e($data->links('pagination::bootstrap-5')); ?>
+
     </div>
-@endif
+<?php endif; ?>
         </div>
     </div>
 </div>
@@ -659,4 +668,6 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 });
 </script>
-@endsection
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('layouts.teller', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH /var/www/html/resources/views/teller/report/index.blade.php ENDPATH**/ ?>

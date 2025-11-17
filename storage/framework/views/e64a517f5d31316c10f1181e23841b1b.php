@@ -432,33 +432,24 @@
         <form method="POST" action="<?php echo e(route('register')); ?>">
             <?php echo csrf_field(); ?>
 
-           <div class="mb-3">
-    <label for="teller_id" class="form-label">
-        <i class="bi bi-person-badge"></i> Teller ID
-    </label>
-    <input type="number" name="teller_id" id="teller_id" class="form-control"
-           placeholder="ໃສ່ Teller ID ຂອງທ່ານ" required>
-</div>
+            <div class="mb-3">
+                <label for="teller_id" class="form-label">
+                    <i class="bi bi-person-badge"></i> ລະຫັດພະນັກງານ
+                </label>
+                <input type="number" name="teller_id" id="teller_id" class="form-control"
+                       value="<?php echo e(old('teller_id')); ?>"
 
-<div class="mb-3">
-    <label for="name" class="form-label">ຊື່ - Name</label>
-    <input type="text" name="name" id="name" class="form-control" required>
-</div>
+            </div>
 
-<div class="mb-3">
-    <label for="phone" class="form-label">ເບີໂທ</label>
-    <input type="text" name="phone" id="phone" class="form-control">
-</div>
 
-<div class="mb-3">
-    <label for="password" class="form-label">ລະຫັດຜ່ານ</label>
-    <input type="password" name="password" id="password" class="form-control" required>
-</div>
-
-<div class="mb-4">
-    <label for="password_confirmation" class="form-label">ຢືນຢັນລະຫັດຜ່ານ</label>
-    <input type="password" name="password_confirmation" id="password_confirmation" class="form-control" required>
-</div>
+            <div class="mb-3">
+                <label for="password" class="form-label">ລະຫັດຜ່ານ</label>
+                <input type="password" name="password" id="password" class="form-control" required>
+            </div>
+            <div class="mb-4">
+                <label for="password_confirmation" class="form-label">ຢັ້ງຢືນລະຫັດຜ່ານ</label>
+                <input type="password" name="password_confirmation" id="password_confirmation" class="form-control" required>
+            </div>
 
 
             <button type="submit" class="btn-register mb-3">
@@ -474,5 +465,7 @@
     </div>
 </div>
 <?php $__env->stopSection(); ?>
+
+
 
 <?php echo $__env->make('layouts.guest', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH /var/www/html/resources/views/auth/register.blade.php ENDPATH**/ ?>

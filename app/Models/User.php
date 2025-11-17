@@ -11,12 +11,13 @@ class User extends Authenticatable
     use HasFactory, Notifiable;
 
     protected $fillable = [
-    'teller_id',
-    'name',
-    'phone',
-    'password',
-    'role',
-    'status',
+        'teller_id',
+        'name',
+        'phone',
+        'password',
+        'role',
+        'status',
+        'profile_completed_at',
     ];
 
     protected $hidden = [
@@ -25,6 +26,7 @@ class User extends Authenticatable
 
     protected $casts = [
         'email_verified_at' => 'datetime',
+        'profile_completed_at' => 'datetime',
     ];
 
     // 🔹 Helper functions

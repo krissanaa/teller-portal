@@ -60,6 +60,9 @@ Route::middleware(['auth', 'role:teller', 'approved'])
         Route::post('/change-password', [TellerDashboardController::class, 'changePassword'])
             ->name('changePassword');
 
+        Route::post('/profile/complete', [TellerDashboardController::class, 'completeProfile'])
+            ->name('profile.complete');
+
         // --------------------------------------------------------
         // 🧾 Onboarding Requests (สมัครร้านค้า POS)
         // --------------------------------------------------------

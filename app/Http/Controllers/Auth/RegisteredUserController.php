@@ -17,28 +17,26 @@ class RegisteredUserController extends Controller
 
     public function store(Request $request)
     {
-$request->validate([
-    'teller_id' => ['required', 'string', 'max:10', 'unique:users'],
-    'name' => ['required', 'string', 'max:255'],
-    'phone' => ['nullable', 'string', 'max:20'],
-    'password' => ['required', 'confirmed', 'min:6'],
-]);
+        $request->validate([
+            'teller_id' => ['required', 'string', 'max:10', 'unique:users,teller_id'],
+            'password' => ['required', 'confirmed', 'min:6'],
+        ]);
 
-
-        // ✅ Create Teller (default status = pending)
+        // Create Teller (default status = pending)
         $user = User::create([
             'teller_id' => $request->teller_id,
-            'name' => $request->name,
-            'phone' => $request->phone,
+            'name' => 'APB ' . $request->teller_id,
+            'phone' => null,
             'password' => Hash::make($request->password),
             'role' => 'teller',
             'status' => 'pending',
+            'profile_completed_at' => null,
         ]);
 
         event(new Registered($user));
 
         return redirect()
             ->route('login')
-            ->with('success', 'ລົງທະບຽນສຳເລັດ! ກະລຸນາລໍຖ້າການອະນຸມັດ');
+            ->with('success', 'Registration successful! Please login and complete your teller profile before using the portal.');
     }
 }

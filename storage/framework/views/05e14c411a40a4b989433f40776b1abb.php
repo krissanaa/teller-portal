@@ -404,6 +404,28 @@
     </style>
 </head>
 <body>
+<?php
+    $tellerAuthUser = auth()->user();
+    $profileErrorBag = session('errors') instanceof \Illuminate\Support\ViewErrorBag
+        ? session('errors')->getBag('profileSetup')
+        : null;
+    $shouldShowProfileSetupModal = $tellerAuthUser && (
+        is_null($tellerAuthUser->profile_completed_at) ||
+        ($profileErrorBag?->any() ?? false)
+    );
+    $profilePrefillName = old('name');
+    if ($profilePrefillName === null) {
+        $profilePrefillName = $tellerAuthUser && $tellerAuthUser->profile_completed_at
+            ? $tellerAuthUser->name
+            : '';
+    }
+    $profilePrefillPhone = old('phone');
+    if ($profilePrefillPhone === null) {
+        $profilePrefillPhone = $tellerAuthUser && $tellerAuthUser->profile_completed_at
+            ? $tellerAuthUser->phone
+            : '';
+    }
+?>
 
     <!-- 🏦 Modern Navbar -->
     <nav class="navbar navbar-expand-lg navbar-apb">
@@ -503,6 +525,17 @@
     </nav>
 
     <!-- ✅ Toast Messages -->
+    <?php if(session('profileSetupSuccess')): ?>
+        <div class="toast align-items-center text-bg-success border-0 position-fixed bottom-0 end-0 m-3 show" role="alert">
+            <div class="d-flex">
+                <div class="toast-body">
+                    <i class="bi bi-check-circle-fill me-2"></i><?php echo e(session('profileSetupSuccess')); ?>
+
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+            </div>
+        </div>
+    <?php endif; ?>
     <?php if(session('success')): ?>
         <div class="toast align-items-center text-bg-success border-0 position-fixed bottom-0 end-0 m-3 show" role="alert">
             <div class="d-flex">
@@ -577,6 +610,79 @@
         </div>
     </div>
 
+    <!-- Profile Setup Modal -->
+    <div class="modal fade" id="profileSetupModal" tabindex="-1" aria-labelledby="profileSetupLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <form method="POST" action="<?php echo e(route('teller.profile.complete')); ?>">
+                    <?php echo csrf_field(); ?>
+                    <div class="modal-header text-white">
+                        <h5 class="modal-title" id="profileSetupLabel">
+                            <i class="bi bi-person-lines-fill me-2"></i> Complete Teller Profile
+                        </h5>
+                    </div>
+                    <div class="modal-body">
+                        <p class="text-muted small mb-3">
+                            Provide your name and phone number so we can personalize your teller account before you start working.
+                        </p>
+                        <div class="mb-3">
+                            <label for="profile_name" class="form-label">Full Name</label>
+                            <input type="text" name="name" id="profile_name"
+                                   class="form-control <?php $__errorArgs = ['name', 'profileSetup'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>"
+                                   value="<?php echo e($profilePrefillName); ?>" required>
+                            <?php $__errorArgs = ['name', 'profileSetup'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                                <div class="invalid-feedback"><?php echo e($message); ?></div>
+                            <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
+                        </div>
+                        <div class="mb-3">
+                            <label for="profile_phone" class="form-label">Phone Number</label>
+                            <input type="text" name="phone" id="profile_phone"
+                                   class="form-control <?php $__errorArgs = ['phone', 'profileSetup'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>"
+                                   value="<?php echo e($profilePrefillPhone); ?>" required>
+                            <?php $__errorArgs = ['phone', 'profileSetup'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                                <div class="invalid-feedback"><?php echo e($message); ?></div>
+                            <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <span class="text-muted small me-auto">This step is required the first time you log in.</span>
+                        <button type="submit" class="btn btn-success">
+                            Save Information
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
@@ -604,9 +710,21 @@
                 if (bsToast) bsToast.hide();
             }, 5000);
         });
+
+        const shouldShowProfileModal = <?php echo e($shouldShowProfileSetupModal ? 'true' : 'false'); ?>;
+        if (shouldShowProfileModal) {
+            const profileModalEl = document.getElementById('profileSetupModal');
+            if (profileModalEl) {
+                const profileModal = bootstrap.Modal.getOrCreateInstance(profileModalEl);
+                profileModal.show();
+            }
+        }
     });
     </script>
 
 </body>
 </html>
+
+
+
 <?php /**PATH /var/www/html/resources/views/layouts/teller.blade.php ENDPATH**/ ?>

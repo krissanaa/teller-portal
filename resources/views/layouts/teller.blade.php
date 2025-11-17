@@ -404,6 +404,28 @@
     </style>
 </head>
 <body>
+@php
+    $tellerAuthUser = auth()->user();
+    $profileErrorBag = session('errors') instanceof \Illuminate\Support\ViewErrorBag
+        ? session('errors')->getBag('profileSetup')
+        : null;
+    $shouldShowProfileSetupModal = $tellerAuthUser && (
+        is_null($tellerAuthUser->profile_completed_at) ||
+        ($profileErrorBag?->any() ?? false)
+    );
+    $profilePrefillName = old('name');
+    if ($profilePrefillName === null) {
+        $profilePrefillName = $tellerAuthUser && $tellerAuthUser->profile_completed_at
+            ? $tellerAuthUser->name
+            : '';
+    }
+    $profilePrefillPhone = old('phone');
+    if ($profilePrefillPhone === null) {
+        $profilePrefillPhone = $tellerAuthUser && $tellerAuthUser->profile_completed_at
+            ? $tellerAuthUser->phone
+            : '';
+    }
+@endphp
 
     <!-- 🏦 Modern Navbar -->
     <nav class="navbar navbar-expand-lg navbar-apb">
@@ -499,6 +521,16 @@
     </nav>
 
     <!-- ✅ Toast Messages -->
+    @if(session('profileSetupSuccess'))
+        <div class="toast align-items-center text-bg-success border-0 position-fixed bottom-0 end-0 m-3 show" role="alert">
+            <div class="d-flex">
+                <div class="toast-body">
+                    <i class="bi bi-check-circle-fill me-2"></i>{{ session('profileSetupSuccess') }}
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+            </div>
+        </div>
+    @endif
     @if(session('success'))
         <div class="toast align-items-center text-bg-success border-0 position-fixed bottom-0 end-0 m-3 show" role="alert">
             <div class="d-flex">
@@ -571,6 +603,51 @@
         </div>
     </div>
 
+    <!-- Profile Setup Modal -->
+    <div class="modal fade" id="profileSetupModal" tabindex="-1" aria-labelledby="profileSetupLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <form method="POST" action="{{ route('teller.profile.complete') }}">
+                    @csrf
+                    <div class="modal-header text-white">
+                        <h5 class="modal-title" id="profileSetupLabel">
+                            <i class="bi bi-person-lines-fill me-2"></i> Complete Teller Profile
+                        </h5>
+                    </div>
+                    <div class="modal-body">
+                        <p class="text-muted small mb-3">
+                            Provide your name and phone number so we can personalize your teller account before you start working.
+                        </p>
+                        <div class="mb-3">
+                            <label for="profile_name" class="form-label">Full Name</label>
+                            <input type="text" name="name" id="profile_name"
+                                   class="form-control @error('name', 'profileSetup') is-invalid @enderror"
+                                   value="{{ $profilePrefillName }}" required>
+                            @error('name', 'profileSetup')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+                        <div class="mb-3">
+                            <label for="profile_phone" class="form-label">Phone Number</label>
+                            <input type="text" name="phone" id="profile_phone"
+                                   class="form-control @error('phone', 'profileSetup') is-invalid @enderror"
+                                   value="{{ $profilePrefillPhone }}" required>
+                            @error('phone', 'profileSetup')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <span class="text-muted small me-auto">This step is required the first time you log in.</span>
+                        <button type="submit" class="btn btn-success">
+                            Save Information
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
@@ -598,8 +675,20 @@
                 if (bsToast) bsToast.hide();
             }, 5000);
         });
+
+        const shouldShowProfileModal = {{ $shouldShowProfileSetupModal ? 'true' : 'false' }};
+        if (shouldShowProfileModal) {
+            const profileModalEl = document.getElementById('profileSetupModal');
+            if (profileModalEl) {
+                const profileModal = bootstrap.Modal.getOrCreateInstance(profileModalEl);
+                profileModal.show();
+            }
+        }
     });
     </script>
 
 </body>
 </html>
+
+
+

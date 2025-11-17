@@ -2,14 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\TellerPortal\OnboardingRequest;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
 class TellerDashboardController extends Controller
 {
-    // 🏠 Dashboard: แสดงฟอร์ม Pending
     public function index()
     {
         $tellerId = Auth::user()->teller_id;
@@ -20,7 +19,6 @@ class TellerDashboardController extends Controller
             ->orderByDesc('updated_at')
             ->paginate(10);
 
-        // 🔔 แจ้งเตือน 7 วันล่าสุด (อนุมัติ/ปฏิเสธ)
         $notifications = OnboardingRequest::where('teller_id', $tellerId)
             ->whereIn('approval_status', ['approved', 'rejected'])
             ->whereDate('updated_at', '>=', now()->subDays(7))
@@ -31,7 +29,6 @@ class TellerDashboardController extends Controller
         return view('teller.dashboard', compact('requests', 'notifications'));
     }
 
-    // 📊 รายงาน (Approved เท่านั้น)
     public function report()
     {
         $tellerId = Auth::user()->teller_id;
@@ -51,7 +48,6 @@ class TellerDashboardController extends Controller
         return view('teller.reports.index', compact('requests', 'notifications'));
     }
 
-    // 🔐 เปลี่ยนรหัสผ่าน
     public function changePassword(Request $request)
     {
         $request->validate([
@@ -62,12 +58,28 @@ class TellerDashboardController extends Controller
         $user = Auth::user();
 
         if (!Hash::check($request->current_password, $user->password)) {
-            return back()->withErrors(['current_password' => '❌ รหัสผ่านปัจจุบันไม่ถูกต้อง']);
+            return back()->withErrors(['current_password' => '�?O �,��,��,�,��,o�1^�,��,T�,>�,�,^�,^�,,�,s�,�,T�1,�,��1^�,-�,1�,?�,�1%�,-�,�']);
         }
 
         $user->password = Hash::make($request->new_password);
         $user->save();
 
-        return back()->with('success', '✅ เปลี่ยนรหัสผ่านสำเร็จแล้ว');
+        return back()->with('success', '�o. �1?�,>�,��,�1^�,��,T�,��,��,�,��,o�1^�,��,T�,��,3�1?�,��1؅,^�1?�,��1%�,');
+    }
+
+    public function completeProfile(Request $request)
+    {
+        $request->validateWithBag('profileSetup', [
+            'name' => ['required', 'string', 'max:255'],
+            'phone' => ['required', 'string', 'max:20'],
+        ]);
+
+        $user = $request->user();
+        $user->name = $request->name;
+        $user->phone = $request->phone;
+        $user->profile_completed_at = now();
+        $user->save();
+
+        return back()->with('profileSetupSuccess', 'Profile information saved successfully.');
     }
 }

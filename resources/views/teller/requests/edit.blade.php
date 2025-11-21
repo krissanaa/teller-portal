@@ -617,7 +617,7 @@
     display: flex;
     align-items: center;
     gap: 8px;
-    color: #2D5F3F;
+        color: #0f766e;
     font-size: 1.1rem;
 }
 .drive-grid {
@@ -678,6 +678,47 @@
     text-overflow: ellipsis;
     text-align: center;
 }
+
+.teller-branch-card {
+    background: linear-gradient(115deg, rgba(20, 184, 166, 0.12), rgba(15, 118, 110, 0.02));
+    border: 1px solid rgba(15, 118, 110, 0.15);
+    border-radius: 18px;
+    padding: 18px;
+    display: flex;
+    gap: 16px;
+    align-items: stretch;
+    flex-wrap: wrap;
+}
+
+.teller-branch-box {
+    flex: 1;
+    min-width: 180px;
+    background: white;
+    border-radius: 14px;
+    padding: 12px 16px;
+    border: 1px solid rgba(15, 118, 110, 0.12);
+}
+
+.teller-branch-box span {
+    display: block;
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    color: #94a3b8;
+}
+
+.teller-branch-box strong {
+    display: block;
+    margin-top: 5px;
+    font-size: 1rem;
+    color: #0f172a;
+}
+
+.branch-hint {
+    font-size: 0.85rem;
+    color: #64748b;
+    margin-top: 10px;
+}
 .modal-xl {
     max-width: 98vw !important;
 }
@@ -693,263 +734,7 @@
 
 </style>
 
-<div class="container-fluid">
-    <!-- Page Header -->
-    <div class="page-header">
-        <h4>
-            <i class="bi bi-pencil-square"></i>
-            ແກ້ໄຂຄຳຂໍເປີດບັນຊີ
-        </h4>
-        <p class="page-subtitle">ແກ້ໄຂຂໍ້ມູນຮ້ານຄ້າ ແລະ ປັບປຸງລາຍລະອຽດ</p>
-    </div>
 
-    <!-- Error Message -->
-    @if(session('error'))
-        <div class="alert-custom alert-danger">
-            <i class="bi bi-exclamation-triangle-fill"></i>
-            <span>{{ session('error') }}</span>
-        </div>
-    @endif
-
-    <!-- Warning Box -->
-    <div class="warning-box">
-        <i class="bi bi-info-circle-fill"></i>
-        <div class="warning-box-content">
-            <div class="warning-box-title">ຂໍ້ມູນສຳຄັນ</div>
-            <p class="warning-box-text">ທ່ານສາມາດແກ້ໄຂຂໍ້ມູນໄດ້ເມື່ອສະຖານະຍັງເປັນ "ລໍຖ້າອະນຸມັດ" ເທົ່ານັ້ນ</p>
-        </div>
-    </div>
-
-    <!-- Edit Form Card -->
-    <div class="form-card">
-        <form method="POST" action="{{ route('teller.requests.update', $request->id) }}" enctype="multipart/form-data">
-            @csrf
-            @method('PUT')
-
-            <div class="form-body">
-                <!-- Help Text -->
-                <div class="help-text">
-                    <i class="bi bi-lightbulb-fill"></i>
-                    <strong>ໝາຍເຫດ:</strong> ກະລຸນາກວດສອບຂໍ້ມູນໃຫ້ຖືກຕ້ອງກ່ອນບັນທຶກ. ຊ່ອງທີ່ມີເຄື່ອງໝາຍ <span class="required">*</span> ແມ່ນຈຳເປັນ
-                </div>
-
-                <!-- Section 1: Store Information -->
-                <div class="form-section">
-                    <div class="section-title">
-                        <i class="bi bi-shop"></i>
-                        ຂໍ້ມູນຮ້ານຄ້າ
-                    </div>
-
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label">
-                                <i class="bi bi-building"></i>
-                                ຊື່ຮ້ານຄ້າ <span class="required">*</span>
-                            </label>
-                            <input type="text" name="store_name" class="form-control"
-                                   value="{{ old('store_name', $request->store_name) }}"
-                                   required placeholder="ປ້ອນຊື່ຮ້ານຄ້າ">
-                        </div>
-
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label">
-                                <i class="bi bi-briefcase"></i>
-                                ປະເພດທຸລະກິດ <span class="required">*</span>
-                            </label>
-                            <input type="text" name="business_type" class="form-control"
-                                   value="{{ old('business_type', $request->business_type) }}"
-                                   required placeholder="ເຊັ່ນ: ຮ້ານອາຫານ, ຮ້ານຂາຍເຄື່ອງ">
-                        </div>
-                    </div>
-
-                    <div class="mb-3">
-                        <label class="form-label">
-                            <i class="bi bi-geo-alt"></i>
-                            ທີ່ຢູ່ຮ້ານຄ້າ <span class="required">*</span>
-                        </label>
-                        <textarea name="store_address" class="form-control" rows="3"
-                                  required placeholder="ປ້ອນທີ່ຢູ່ຮ້ານຄ້າແບບລະອຽດ">{{ old('store_address', $request->store_address) }}</textarea>
-                    </div>
-                </div>
-
-                <!-- Section 2: POS & Banking -->
-                <div class="form-section">
-                    <div class="section-title">
-                        <i class="bi bi-credit-card"></i>
-                        ຂໍ້ມູນ POS ແລະ ທະນາຄານ
-                    </div>
-
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label">
-                                <i class="bi bi-upc-scan"></i>
-                                ໝາຍເລກເຄື່ອງ POS <span class="required">*</span>
-                            </label>
-                            <input type="text" name="pos_serial" class="form-control"
-                                   value="{{ old('pos_serial', $request->pos_serial) }}"
-                                   required placeholder="ເຊັ່ນ: POS-2024-001">
-                        </div>
-
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label">
-                                <i class="bi bi-bank"></i>
-                                ເລກບັນຊີທະນາຄານ <span class="required">*</span>
-                            </label>
-                            <input type="text" name="bank_account" class="form-control"
-                                   value="{{ old('bank_account', $request->bank_account) }}"
-                                   required placeholder="ປ້ອນເລກບັນຊີ">
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Section 3: Installation Details -->
-                <div class="form-section">
-                    <div class="section-title">
-                        <i class="bi bi-calendar-check"></i>
-                        ຂໍ້ມູນການຕິດຕັ້ງ
-                    </div>
-
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label">
-                                <i class="bi bi-calendar3"></i>
-                                ວັນທີຕິດຕັ້ງ <span class="required">*</span>
-                            </label>
-                            <input type="date" name="installation_date" class="form-control"
-                                   value="{{ old('installation_date', $request->installation_date) }}"
-                                   required>
-                        </div>
-
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label">
-                                <i class="bi bi-pin-map"></i>
-                                ສາຂາ <span class="required">*</span>
-                            </label>
-                            <select name="branch_id" class="form-select" required>
-                                @foreach($branches as $branch)
-                                    <option value="{{ $branch->id }}"
-                                            {{ old('branch_id', $request->branch_id) == $branch->id ? 'selected' : '' }}>
-                                        {{ $branch->name }}
-                                    </option>
-                                @endforeach
-                            </select>
-                        </div>
-                    </div>
-                </div>
-<!-- Section 4: Multiple File Upload with Drag & Drop -->
-<div class="form-section">
-    <div class="section-title">
-        <i class="bi bi-paperclip"></i>
-        ເອກະສານແນບ
-    </div>
-
-    @php
-        $attachments = json_decode($request->attachments ?? '[]', true);
-    @endphp
-
-    <!-- Existing Attachments -->
-    @if(!empty($attachments))
-        <div class="mb-3">
-            <label class="form-label">
-                <i class="bi bi-folder-fill"></i> ຟາຍທີ່ມີຢູ່ (ເລືອກຟາຍທີ່ທີ່ຕ້ອງການລົບ ແລະ ເພີ່ມຟາຍໃໝ່ກ່ອນບັນທຶກ)
-            </label>
-
-            <div class="row g-3">
-                @foreach($attachments as $index => $filePath)
-                    @php
-                        $fileUrl = asset('storage/' . $filePath);
-                        $extension = strtolower(pathinfo($filePath, PATHINFO_EXTENSION));
-                        $fileName = basename($filePath);
-                    @endphp
-
-                    <div class="col-md-3 col-sm-6">
-                        <div class="card border-0 shadow-sm h-100 text-center p-2 position-relative drive-card">
-                            <div class="position-relative drive-thumb"
-                                 onclick="openPreview('{{ $fileUrl }}','{{ $fileName }}','{{ $extension }}')">
-                                @if(in_array($extension, ['jpg','jpeg','png']))
-                                    <img src="{{ $fileUrl }}" alt="{{ $fileName }}"
-                                         class="img-fluid w-100 h-100" style="object-fit:cover;">
-                                @elseif($extension === 'pdf')
-                                    <iframe src="{{ $fileUrl }}" title="{{ $fileName }}"></iframe>
-                                @else
-                                    <div class="d-flex flex-column justify-content-center align-items-center bg-light h-100">
-                                        <i class="bi bi-file-earmark fs-1 text-secondary"></i>
-                                        <small>{{ strtoupper($extension) }}</small>
-                                    </div>
-                                @endif
-                                <span class="drive-type">{{ strtoupper($extension) }}</span>
-                            </div>
-                            <div class="mt-2 small text-truncate">{{ $fileName }}</div>
-
-                            <!-- Delete checkbox -->
-                            <div class="text-center mt-1">
-                                <label class="form-check-label text-danger small" style="cursor:pointer;">
-                                    <input type="checkbox" name="delete_attachments[]" value="{{ $index }}" class="form-check-input me-1">
-                                    ລົບຟາຍນີ້
-                                </label>
-                            </div>
-                        </div>
-                    </div>
-                @endforeach
-            </div>
-        </div>
-    @endif
-
-    <!-- 📂 Drag & Drop Upload Area -->
-    <div class="mb-3">
-        <label class="form-label">
-            <i class="bi bi-cloud-upload"></i>
-            ອັບໂຫລດຟາຍໃໝ່
-        </label>
-
-        <div id="dropArea" class="file-upload-area">
-            <input type="file" name="attachments[]" id="fileInput" multiple class="d-none" accept=".pdf,.jpg,.jpeg,.png">
-            <div>
-                <i class="bi bi-cloud-arrow-up file-upload-icon"></i>
-                <div class="file-upload-text">ລາກຟາຍມາວາງທີ່ນີ້ ຫຼື ຄລິກເພື່ອເລືອກ</div>
-                <div class="file-upload-hint">ສາມາດອັບໂຫລດຫຼາຍຟາຍພ້ອມກັນ (ແຕ່ລະຟາຍສູງສຸດ 5MB)</div>
-                  <div class="file-upload-formats">
-                                <span class="format-badge">📄 PDF</span>
-                                <span class="format-badge">🖼️ JPG</span>
-                                <span class="format-badge">🖼️ PNG</span>
-                            </div>
-            </div>
-        </div>
-
-        <div class="file-list" id="fileList"></div>
-    </div>
-</div>
-
-<!-- 🔍 Preview Modal -->
-<div class="modal fade" id="previewModal" tabindex="-1" aria-labelledby="previewTitle" aria-hidden="true">
-    <div class="modal-dialog modal-fullscreen"> <!-- 👈 ใช้ fullscreen modal -->
-        <div class="modal-content bg-dark text-white border-0">
-            <div class="modal-header border-0 bg-success py-2">
-                <h5 class="modal-title text-white" id="previewTitle"></h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body p-0" id="previewContainer">
-                <!-- Preview will load dynamically -->
-            </div>
-        </div>
-    </div>
-</div>
-
-
-            <!-- Action Buttons -->
-            <div class="form-actions">
-                <a href="{{ route('teller.requests.show', $request->id) }}" class="btn-cancel">
-                    <i class="bi bi-x-circle"></i>
-                    ຍົກເລີກ
-                </a>
-                <button type="submit" class="btn-update">
-                    <i class="bi bi-check-circle-fill"></i>
-                    ບັນທຶກການແກ້ໄຂ
-                </button>
-            </div>
-        </form>
-    </div>
-</div>
 
 <script>
 // Multiple file upload with drag & drop functionality
@@ -1115,3 +900,9 @@ function openPreview(fileUrl, fileName, extension) {
 }
 </script>
 @endsection
+
+
+
+
+
+

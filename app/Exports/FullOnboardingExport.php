@@ -23,6 +23,7 @@ class FullOnboardingExport implements FromCollection, WithHeadings
                 $r->refer_code,
                 $r->teller_id,
                 $r->branch_id,
+                $r->unit_id,
                 $r->store_name,
                 $r->store_address,
                 $r->business_type,
@@ -45,6 +46,7 @@ class FullOnboardingExport implements FromCollection, WithHeadings
             'Refer Code',
             'Teller ID',
             'Branch ID',
+            'Unit ID',
             'Store Name',
             'Store Address',
             'Business Type',
@@ -59,4 +61,3 @@ class FullOnboardingExport implements FromCollection, WithHeadings
         ];
     }
 }
-

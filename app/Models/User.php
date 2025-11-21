@@ -5,15 +5,21 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Laravel\Sanctum\HasApiTokens;
+use App\Models\TellerPortal\Branch;
+use App\Models\TellerPortal\BranchUnit;
 
 class User extends Authenticatable
 {
-    use HasFactory, Notifiable;
+    use HasApiTokens, HasFactory, Notifiable;
 
     protected $fillable = [
         'teller_id',
         'name',
+        'email',
         'phone',
+        'branch_id',
+        'unit_id',
         'password',
         'role',
         'status',
@@ -60,6 +66,16 @@ class User extends Authenticatable
     {
         return $this->morphMany(\Illuminate\Notifications\DatabaseNotification::class, 'notifiable')
                     ->orderBy('created_at', 'desc');
+    }
+
+    public function branch()
+    {
+        return $this->belongsTo(Branch::class, 'branch_id');
+    }
+
+    public function unit()
+    {
+        return $this->belongsTo(BranchUnit::class, 'unit_id');
     }
 
 }

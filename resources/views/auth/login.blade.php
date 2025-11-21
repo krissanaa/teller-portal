@@ -1,4 +1,4 @@
-@extends('layouts.guest')
+﻿@extends('layouts.guest')
 
 @section('title', 'Login - APB Bank Teller Portal')
 
@@ -15,7 +15,7 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        background: linear-gradient(135deg, #1a3321 0%, #2D5F3F 50%, #4CAF50 100%);
+        background: linear-gradient(135deg, #0f766e 0%, #14b8a6 40%, #5eead4 100%);
         position: relative;
         overflow-x: hidden;
         overflow-y: auto;
@@ -37,8 +37,8 @@
         width: 100%;
         height: 100%;
         background-image:
-            linear-gradient(rgba(76, 175, 80, 0.1) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(76, 175, 80, 0.1) 1px, transparent 1px);
+            linear-gradient(rgba(20, 184, 166, 0.12) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(20, 184, 166, 0.12) 1px, transparent 1px);
         background-size: 50px 50px;
         animation: gridMove 20s linear infinite;
     }
@@ -57,7 +57,7 @@
 
     .shape {
         position: absolute;
-        border: 2px solid rgba(76, 175, 80, 0.3);
+        border: 2px solid rgba(20, 184, 166, 0.3);
         border-radius: 50%;
         animation: float 15s infinite ease-in-out;
     }
@@ -171,7 +171,7 @@
     .logo-icon {
         width: clamp(60px, 15vw, 80px);
         height: clamp(60px, 15vw, 80px);
-        background: linear-gradient(135deg, #2D5F3F 0%, #4CAF50 100%);
+        background: linear-gradient(135deg, #0f766e 0%, #14b8a6 100%);
         border-radius: 50%;
         display: inline-flex;
         align-items: center;
@@ -179,7 +179,7 @@
         font-size: clamp(2rem, 5vw, 2.5rem);
         color: white;
         margin-bottom: 15px;
-        box-shadow: 0 10px 30px rgba(45, 95, 63, 0.3);
+        box-shadow: 0 10px 30px rgba(20, 184, 166, 0.35);
         animation: logoFloat 3s ease-in-out infinite;
         overflow: hidden;
         position: relative;
@@ -204,7 +204,7 @@
 
     .login-title {
         text-align: center;
-        color: #2D5F3F;
+        color: #0f766e;
         font-weight: 800;
         font-size: clamp(1.3rem, 4vw, 1.8rem);
         margin-bottom: 10px;
@@ -220,29 +220,36 @@
 
     .form-label {
         font-weight: 600;
-        color: #2D5F3F;
+        color: #0f766e;
         margin-bottom: 8px;
         font-size: clamp(0.85rem, 2.5vw, 0.9rem);
     }
 
     .form-control {
-        border: 2px solid #e9ecef;
+        border: 2px solid #e0f2f1;
         border-radius: 10px;
         padding: clamp(10px, 3vw, 12px) clamp(12px, 3vw, 16px);
         transition: all 0.3s ease;
         font-size: clamp(0.85rem, 2.5vw, 0.95rem);
         width: 100%;
+        background: rgba(255, 255, 255, 0.9);
+    }
+
+    .form-control:hover {
+        border-color: #99f6e4;
+        box-shadow: 0 0 0 0.1rem rgba(20, 184, 166, 0.15);
     }
 
     .form-control:focus {
-        border-color: #4CAF50;
-        box-shadow: 0 0 0 0.2rem rgba(76, 175, 80, 0.15);
+        border-color: #14b8a6;
+        box-shadow: 0 0 0 0.2rem rgba(20, 184, 166, 0.2);
+        background: #f0fdfa;
     }
 
     .btn-login {
-        background: linear-gradient(135deg, #2D5F3F 0%, #4CAF50 100%);
-        border: none;
-        color: white;
+        background: linear-gradient(135deg, #0f766e 0%, #14b8a6 100%);
+        border: 2px solid transparent;
+        color: #fff;
         padding: clamp(12px, 3.5vw, 14px);
         border-radius: 10px;
         font-weight: 700;
@@ -253,16 +260,159 @@
         width: 100%;
     }
 
+    .success-circle-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(6, 18, 11, 0.75);
+        backdrop-filter: blur(8px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+        z-index: 2000;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.35s ease;
+    }
 
-    .btn-login:hover {
+    .success-circle-overlay.show {
+        opacity: 1;
+        pointer-events: auto;
+    }
+
+    .success-circle-card {
+        width: min(260px, 65vw);
+        aspect-ratio: 1 / 1;
+        border-radius: 999px;
+        background-image:
+            linear-gradient(135deg, rgba(6, 18, 11, 0.82), rgba(9, 31, 19, 0.88)),
+            url('{{ asset('images/APB-logo.jpeg') }}');
+        background-size: cover;
+        background-position: center;
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        box-shadow: 0 25px 80px rgba(0, 0, 0, 0.5);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: clamp(20px, 6vw, 28px);
+        text-align: center;
+        color: #f8fff5;
+        position: relative;
+        transform: scale(0.85);
+        transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .success-circle-overlay.show .success-circle-card {
+        transform: scale(1);
+    }
+
+    .success-circle-card::after,
+    .success-circle-card::before {
+        content: '';
+        position: absolute;
+        border-radius: 50%;
+        opacity: 0.4;
+        z-index: 0;
+    }
+
+    .success-circle-card::before {
+        width: 110%;
+        height: 110%;
+        border: 1px dashed rgba(255, 255, 255, 0.2);
+    }
+
+    .success-circle-card::after {
+        width: 125%;
+        height: 125%;
+        border: 1px solid rgba(20, 184, 166, 0.2);
+    }
+
+    .success-circle-icon {
+        width: clamp(60px, 18vw, 80px);
+        height: clamp(60px, 18vw, 80px);
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.08);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 18px;
+        position: relative;
+        z-index: 1;
+    }
+
+    .success-circle-check {
+        width: clamp(48px, 14vw, 68px);
+        height: clamp(48px, 14vw, 68px);
+        border-radius: 50%;
+        background: rgba(0, 0, 0, 0.35);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 10px 22px rgba(0, 0, 0, 0.45);
+    }
+
+    .success-circle-check img {
+        width: 75%;
+        height: 75%;
+        object-fit: contain;
+        border-radius: 50%;
+        filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.35));
+    }
+
+    .success-circle-text {
+        z-index: 1;
+        padding: 0;
+        border-radius: 0;
+        backdrop-filter: none;
+        background: transparent;
+        box-shadow: none;
+    }
+
+    .success-circle-text h5 {
+        font-size: clamp(1rem, 3vw, 1.25rem);
+        margin-bottom: 8px;
+        letter-spacing: 0.5px;
+    }
+
+    .success-circle-message {
+        font-size: clamp(0.9rem, 2.5vw, 1rem);
+        margin-bottom: 12px;
+        color: #ffffff;
+    }
+
+    .success-circle-note {
+        font-size: clamp(0.8rem, 2.3vw, 0.9rem);
+        color: rgba(255, 255, 255, 0.85);
+        margin: 0 auto;
+        max-width: 80%;
+    }
+
+    @media (max-width: 480px) {
+        .success-circle-card {
+            padding: 24px;
+        }
+
+        .success-circle-note {
+            max-width: 100%;
+        }
+    }
+
+
+    .btn-login:hover,
+    .btn-login:focus,
+    .btn-login:active {
+        background: #fff;
+        color: #0f766e;
+        border-color: #0f766e;
         transform: translateY(-2px);
-        box-shadow: 0 10px 30px rgba(45, 95, 63, 0.4);
+        box-shadow: 0 10px 30px rgba(20, 184, 166, 0.35);
     }
 
     .btn-register {
         background: white;
-        border: 2px solid #2D5F3F;
-        color: #2D5F3F;
+        border: 2px solid #0f766e;
+        color: #0f766e;
         padding: clamp(12px, 3.5vw, 14px);
         border-radius: 10px;
         font-weight: 700;
@@ -275,10 +425,10 @@
     }
 
     .btn-register:hover {
-        background: #2D5F3F;
+        background: #0f766e;
         color: white;
         transform: translateY(-2px);
-        box-shadow: 0 10px 30px rgba(45, 95, 63, 0.2);
+        box-shadow: 0 10px 30px rgba(20, 184, 166, 0.25);
     }
 
     .alert {
@@ -478,8 +628,6 @@
         }
     }
 </style>
-
-=
 <!-- Login Container -->
 <div class="login-container">
     <div class="login-card">
@@ -510,18 +658,18 @@
 
             <div class="mb-3">
                 <label for="teller_id" class="form-label">
-                    <i class="bi bi-envelope me-1"></i> Teller_id
+                    <i class="bi bi-envelope me-1"></i> ລະຫັດພະນັກງານ
                 </label>
                 <input type="teller_id" name="teller_id" id="teller_id" value="{{ old('teller_id') }}"
-                       class="form-control" required autofocus placeholder="ປ້ອນອີເມວ">
+                       class="form-control" required autofocus placeholder="">
             </div>
 
             <div class="mb-4">
                 <label for="password" class="form-label">
-                    <i class="bi bi-lock me-1"></i> Password
+                    <i class="bi bi-lock me-1"></i> ລະຫັດຜ່ານ
                 </label>
                 <input type="password" name="password" id="password"
-                       class="form-control" required placeholder="ປ້ອນລະຫັດຜ່ານ">
+                       class="form-control" required placeholder="">
             </div>
 
             <button type="submit" class="btn btn-login w-100 mb-3">
@@ -546,31 +694,39 @@
 {{-- Success Modal --}}
 @if(session('success'))
 <script>
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', () => {
     const msg = "{{ session('success') }}";
     const modalHTML = `
-    <div class="modal fade" id="registerSuccessModal" tabindex="-1">
-      <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-          <div class="modal-header text-white">
-            <h5 class="modal-title">
-                <i class="bi bi-check-circle-fill"></i>
-                ລົງທະບຽນສຳເລັດ
-            </h5>
-            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-          </div>
-          <div class="modal-body">
-            <p class="mb-3"><strong>${msg}</strong></p>
-            <div class="alert alert-info mb-0">
-                <i class="bi bi-info-circle me-2"></i>
-                ກະລຸນາລໍຖ້າການອະນຸມັດຈາກ Admin ກ່ອນເຂົ້າສູ່ລະບົບ
+    <div class="success-circle-overlay" id="registerSuccessModal">
+        <div class="success-circle-card">
+
+            <div class="success-circle-text">
+
+                <p class="success-circle-message"><strong>${msg}</strong></p>
+                <p class="success-circle-note">
+                    <i class="bi bi-info-circle me-1"></i>
+                    ກະລຸນາລໍຖ້າການອະນຸມັດຈາກ Admin ກ່ອນເຂົ້າສູ່ລະບົບ
+                </p>
             </div>
-          </div>
         </div>
-      </div>
     </div>`;
     document.body.insertAdjacentHTML('beforeend', modalHTML);
-    new bootstrap.Modal(document.getElementById('registerSuccessModal')).show();
+    const overlay = document.getElementById('registerSuccessModal');
+
+    const hideOverlay = () => overlay.classList.remove('show');
+    overlay.addEventListener('click', (event) => {
+        if (event.target === overlay) {
+            hideOverlay();
+        }
+    });
+
+    requestAnimationFrame(() => overlay.classList.add('show'));
+
+    overlay.addEventListener('transitionend', (event) => {
+        if (event.propertyName === 'opacity' && !overlay.classList.contains('show')) {
+            overlay.remove();
+        }
+    });
 });
 </script>
 @endif

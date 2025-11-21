@@ -42,23 +42,12 @@
         <form method="POST" action="{{ route('admin.branches.store') }}">
             @csrf
             <div class="mb-3">
+                <label class="form-label">Branch Code *</label>
+                <input type="text" name="branch_code" class="form-control" value="{{ old('branch_code') }}" required>
+            </div>
+            <div class="mb-3">
                 <label class="form-label">Branch Name *</label>
-                <input type="text" name="name" class="form-control" required>
-            </div>
-            <div class="mb-3">
-                <label class="form-label">Address</label>
-                <textarea name="address" class="form-control" rows="2"></textarea>
-            </div>
-            <div class="mb-3">
-                <label class="form-label">Contact</label>
-                <input type="text" name="contact" class="form-control">
-            </div>
-            <div class="mb-3">
-                <label class="form-label">Status *</label>
-                <select name="status" class="form-select" required>
-                    <option value="active">Active</option>
-                    <option value="inactive">Inactive</option>
-                </select>
+                <input type="text" name="branch_name" class="form-control" value="{{ old('branch_name') }}" required>
             </div>
             <div class="d-flex gap-2 mt-4">
                 <button type="submit" class="btn btn-success">

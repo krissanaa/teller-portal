@@ -148,6 +148,9 @@ Route::middleware(['auth', 'role:admin'])
             Route::get('/{id}/edit', [BranchController::class, 'edit'])->name('edit');
             Route::put('/{id}', [BranchController::class, 'update'])->name('update');
             Route::delete('/{id}', [BranchController::class, 'destroy'])->name('destroy');
+            Route::post('/{id}/units', [BranchController::class, 'storeUnit'])->name('units.store');
+            Route::put('/{branch}/units/{unit}', [BranchController::class, 'updateUnit'])->name('units.update');
+            Route::delete('/{branch}/units/{unit}', [BranchController::class, 'destroyUnit'])->name('units.destroy');
         });
     });
 

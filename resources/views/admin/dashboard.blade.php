@@ -27,21 +27,21 @@
     }
 
     .section-title i {
-        color: #4CAF50;
+        color: #14b8a6;
     }
 
     /* Enhanced Stats Cards */
     .stats-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-        gap: 20px;
+        grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+        gap: 16px;
     }
 
     .stat-card {
         background: white;
-        border-radius: 12px;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-        border: 1px solid #e9ecef;
+        border-radius: 10px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+        border: 1px solid #e4e8ee;
         transition: all 0.3s ease;
         overflow: hidden;
         position: relative;
@@ -63,7 +63,7 @@
     }
 
     .stat-card-body {
-        padding: 28px 24px;
+        padding: 18px 16px;
     }
 
     .stat-header {
@@ -78,20 +78,20 @@
     }
 
     .stat-icon-box {
-        width: 56px;
-        height: 56px;
-        border-radius: 12px;
+        width: 44px;
+        height: 44px;
+        border-radius: 10px;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 1.8rem;
+        font-size: 1.4rem;
         background: var(--icon-bg);
         color: var(--icon-color);
         flex-shrink: 0;
     }
 
     .stat-label {
-        font-size: 0.8rem;
+        font-size: 0.7rem;
         font-weight: 600;
         text-transform: uppercase;
         letter-spacing: 0.5px;
@@ -100,7 +100,7 @@
     }
 
     .stat-count {
-        font-size: 2.6rem;
+        font-size: 1.9rem;
         font-weight: 800;
         line-height: 1;
         color: var(--count-color);
@@ -108,7 +108,7 @@
     }
 
     .stat-description {
-        font-size: 0.8rem;
+        font-size: 0.7rem;
         color: #6c757d;
         display: flex;
         align-items: center;
@@ -117,10 +117,10 @@
 
     /* Total Card - Green Theme */
     .stat-card.total {
-        --card-gradient: linear-gradient(90deg, #2D5F3F 0%, #4CAF50 100%);
-        --icon-bg: #e8f5ec;
-        --icon-color: #2D5F3F;
-        --count-color: #2D5F3F;
+        --card-gradient: linear-gradient(90deg, #0f766e 0%, #14b8a6 100%);
+        --icon-bg: #ecfdf5;
+        --icon-color: #0f766e;
+        --count-color: #0f766e;
     }
 
     /* Approved Card */
@@ -150,40 +150,41 @@
     /* Quick Actions */
     .quick-actions-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-        gap: 16px;
+        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+        gap: 14px;
         margin-top: 20px;
     }
 
     .action-card {
         background: white;
-        border: 2px solid #e9ecef;
-        border-radius: 10px;
-        padding: 18px;
+        border: 1px solid #e0e6ef;
+        border-radius: 14px;
+        padding: 12px 18px;
         transition: all 0.3s ease;
         text-decoration: none;
         display: flex;
         align-items: center;
-        gap: 14px;
+        gap: 18px;
+        min-height: 74px;
     }
 
     .action-card:hover {
-        border-color: #4CAF50;
-        background: #f8fef9;
+        border-color: #14b8a6;
+        background: #ecfdf5;
         transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        box-shadow: 0 4px 12px rgba(20, 184, 166, 0.2);
     }
 
     .action-icon {
-        width: 48px;
-        height: 48px;
-        border-radius: 10px;
+        width: 44px;
+        height: 44px;
+        border-radius: 12px;
         background: #e8f5ec;
-        color: #2D5F3F;
+        color: #0f766e;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 1.5rem;
+        font-size: 1.2rem;
         flex-shrink: 0;
     }
 
@@ -194,13 +195,13 @@
     .action-title {
         font-weight: 700;
         color: #212529;
-        margin: 0 0 4px 0;
-        font-size: 0.95rem;
+        margin: 0 0 2px 0;
+        font-size: 0.9rem;
     }
 
     .action-subtitle {
-        font-size: 1rem;
-        color: #ffc107;
+        font-size: 0.78rem;
+        color: #6c757d;
         margin: 0;
     }
 
@@ -394,4 +395,10 @@
 
     </div>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    setInterval(() => window.location.reload(),  300000);
+});
+</script>
 @endsection

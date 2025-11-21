@@ -5,18 +5,19 @@ namespace App\Http\Controllers\Teller;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\TellerPortal\OnboardingRequest;
-use App\Models\TellerPortal\Branch;
+use App\Models\TellerPortal\BranchUnit;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\ValidationException;
 
 class OnboardingController extends Controller
 {
     // 🧾 ฟอร์มสร้างคำขอใหม่
     public function create()
     {
-        $branches = Branch::orderBy('name')->get();
-        return view('teller.requests.create', compact('branches'));
+        $tellerProfile = Auth::user()->loadMissing(['branch', 'unit']);
+        return view('teller.requests.create', compact('tellerProfile'));
     }
 
     // 💾 บันทึกคำขอใหม่
@@ -28,10 +29,15 @@ class OnboardingController extends Controller
             'store_address'     => 'nullable|string',
             'pos_serial'        => 'nullable|string|max:255',
             'bank_account'      => 'nullable|string|max:255',
-            'branch_id'         => 'nullable|integer',
             'installation_date' => 'nullable|date',
             'attachments.*'     => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:5120',
         ]);
+
+        $tellerProfile = Auth::user()->loadMissing(['branch', 'unit']);
+        $data['branch_id'] = $tellerProfile->branch_id;
+        $data['unit_id'] = $tellerProfile->unit_id;
+
+        $this->ensureUnitMatchesBranch($data['branch_id'], $data['unit_id']);
 
         // ✅ อัปโหลดไฟล์แนบ
         $paths = [];
@@ -76,9 +82,9 @@ class OnboardingController extends Controller
             ->where('teller_id', Auth::user()->teller_id)
             ->firstOrFail();
 
-        $branches = Branch::orderBy('name')->get();
+        $tellerProfile = Auth::user()->loadMissing(['branch', 'unit']);
 
-        return view('teller.requests.edit', compact('request', 'branches'));
+        return view('teller.requests.edit', compact('request', 'tellerProfile'));
     }
 
     // 🔄 อัปเดตข้อมูล
@@ -93,7 +99,6 @@ class OnboardingController extends Controller
             'store_address'      => 'nullable|string',
             'pos_serial'         => 'nullable|string|max:255',
             'bank_account'       => 'nullable|string|max:50',
-            'branch_id'          => 'nullable|integer',
             'installation_date'  => 'nullable|date',
             'attachments.*'      => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:5120',
             'delete_attachments' => 'array',
@@ -122,6 +127,12 @@ class OnboardingController extends Controller
 
         $data['attachments'] = !empty($existing) ? json_encode($existing) : null;
 
+        $tellerProfile = Auth::user()->loadMissing(['branch', 'unit']);
+        $data['branch_id'] = $tellerProfile->branch_id;
+        $data['unit_id'] = $tellerProfile->unit_id;
+
+        $this->ensureUnitMatchesBranch($data['branch_id'], $data['unit_id']);
+
         // ✅ อัปเดตข้อมูล
         $record->update($data);
 
@@ -141,9 +152,36 @@ class OnboardingController extends Controller
     {
         $request = OnboardingRequest::where('id', $id)
             ->where('teller_id', Auth::user()->teller_id)
-            ->with('branch')
+            ->with(['branch', 'unit'])
             ->firstOrFail();
 
         return view('teller.requests.show', compact('request'));
+    }
+
+    protected function ensureUnitMatchesBranch(?int $branchId, ?int $unitId): void
+    {
+        if (!$unitId) {
+            return;
+        }
+
+        if (!$branchId) {
+            throw ValidationException::withMessages([
+                'branch_id' => __('�����T��^��?��?�����%��������,���'),
+            ]);
+        }
+
+        $unit = BranchUnit::find($unitId);
+
+        if (!$unit) {
+            throw ValidationException::withMessages([
+                'unit_id' => __('ຫນ່ວຍຍ່ອຍທີ່ເລືອກບໍ່ຖືກຕ້ອງ'),
+            ]);
+        }
+
+        if ($branchId && (int) $unit->branch_id !== (int) $branchId) {
+            throw ValidationException::withMessages([
+                'unit_id' => __('ຫນ່ວຍຍ່ອຍບໍ່ກົງກັບສາຂາທີ່ເລືອກ'),
+            ]);
+        }
     }
 }

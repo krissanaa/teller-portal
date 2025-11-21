@@ -37,6 +37,6 @@ class RegisteredUserController extends Controller
 
         return redirect()
             ->route('login')
-            ->with('success', 'Registration successful! Please login and complete your teller profile before using the portal.');
+            ->with('success', 'ລົງທະບຽນສຳເລັດ');
     }
 }

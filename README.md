@@ -1,62 +1,124 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Teller Portal API
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Modern REST API for onboarding requests, teller management, and workflow approvals that powers the Teller Portal admin and teller dashboards. The HTTP layer now mirrors the web UI so you can integrate mobile apps, partner systems, or QA tooling without touching Blade views.
 
-## About Laravel
+## Stack & Requirements
+- PHP 8.2+, Composer, Node 18+ (for UI builds)
+- MySQL / MariaDB for the primary data store
+- Laravel 12 with Sanctum for token based auth
+- Local storage disk for attachments (`storage/app/public`)
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Local Setup
+1. `cp .env.example .env` and update DB + OLD_DB_* credentials.
+2. `composer install && npm install`
+3. `php artisan key:generate`
+4. `php artisan migrate` (runs both core and teller specific tables)
+5. `php artisan db:seed --class=TellerPortalBranchSeeder` (rebuilds branches + units from the legacy `unit` table)
+6. `php artisan storage:link`
+7. `npm run dev` (or `build`) and `php artisan serve`
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+### Docker Workflow
+If you prefer running everything inside the provided containers:
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+1. `cp .env.example .env` and tweak DB credentials if needed (the defaults already line up with `docker-compose.yml`).
+2. `docker compose up -d --build` (starts PHP-FPM, Nginx, MySQL, phpMyAdmin).
+3. Install PHP dependencies inside the container: `docker compose exec app composer install`.
+4. Run migrations/key generation/storage link inside the container:
+   - `docker compose exec app php artisan key:generate`
+   - `docker compose exec app php artisan migrate`
+   - `docker compose exec app php artisan storage:link`
+5. Frontend assets still run on the host (Node isn’t baked into the PHP image):
+   - `npm install`
+   - `npm run dev` (or `npm run build` for production)
+6. Browse the app at http://localhost:8081 once the containers finish booting. phpMyAdmin lives at http://localhost:8082 (user `teller_user`, password `teller_pass`).
 
-## Learning Laravel
+Admin accounts can be seeded manually or through the UI. Tellers created through the API/web need the `status` field set to `approved` before they can log in.
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+## API Authentication
+All endpoints live under `/api/...` and are guarded by Laravel Sanctum.
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+| Endpoint | Description |
+| --- | --- |
+| `POST /api/auth/login` | Accepts `identifier` (teller_id or email) + `password`, returns Bearer token + user payload. |
+| `POST /api/auth/logout` | Revokes the current token. |
+| `GET /api/auth/me` | Returns the authenticated profile (branch/unit eager loaded). |
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+Add the `Authorization: Bearer {token}` header to every subsequent request.
 
-## Laravel Sponsors
+## Teller Endpoints
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+### Branch metadata
+`GET /api/meta/branches` (auth required). Returns active branches with nested units so clients can build cascading dropdowns.
 
-### Premium Partners
+### Teller onboarding requests
+All routes require a teller (approved) token.
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+| Method & Path | Purpose |
+| --- | --- |
+| `GET /api/teller/requests?status=pending&per_page=15` | Paginated list filtered by status (pending, approved, rejected). |
+| `POST /api/teller/requests` | Create a request. Accepts JSON/multipart fields such as `store_name`, `branch_id`, optional `attachments[]` (pdf/jpg/png up to 5 MB each). |
+| `GET /api/teller/requests/{id}` | View a single request including branch/unit and attachment URLs. |
+| `PUT /api/teller/requests/{id}` | Update a request; include `delete_attachments[]` indexes to remove uploaded files. Rejected forms automatically revert to pending on edit. |
+| `POST /api/teller/requests/{id}/resubmit` | Resets a rejected form back to `pending`. |
 
-## Contributing
+Sample multipart call:
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+```bash
+curl -X POST http://localhost:8000/api/teller/requests \
+  -H "Authorization: Bearer $TOKEN" \
+  -F store_name="Night Market" \
+  -F branch_id=12 \
+  -F unit_id=3 \
+  -F attachments[]=@/path/site_photo.jpg
+```
 
-## Code of Conduct
+## Admin Endpoints
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+### Teller management
 
-## Security Vulnerabilities
+| Method & Path | Purpose |
+| --- | --- |
+| `GET /api/admin/tellers?search=APB&status=approved` | Paginated teller list. |
+| `POST /api/admin/tellers` | Create a teller (`teller_id`, `name`, optional contact info, plaintext `password`). |
+| `GET /api/admin/tellers/{id}` | Show teller profile. |
+| `PUT /api/admin/tellers/{id}` | Update name/email/phone/status/password/branch/unit. |
+| `DELETE /api/admin/tellers/{id}` | Remove teller. |
+| `PATCH /api/admin/tellers/{id}/status` | Quick status toggle (`pending`, `approved`, `rejected`). |
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+Every action writes to `user_logs` with IP & user agent details.
 
-## License
+### Workflow approvals
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
-"# teller-portal" 
+| Method & Path | Purpose |
+| --- | --- |
+| `GET /api/admin/requests?status=pending` | Paginated filterable onboarding queue. |
+| `GET /api/admin/requests/{id}` | Detailed view including teller profile + attachments. |
+| `POST /api/admin/requests/{id}/approve` | Marks request as approved (optional `admin_remark`). |
+| `POST /api/admin/requests/{id}/reject` | Requires `admin_remark`, sets status to rejected. |
+
+### Logs
+`GET /api/admin/logs?search=create` lists audit trail entries with actor + target users.
+
+## Automated Testing Guide
+
+API contracts ship with dedicated feature tests so you can guard against regressions:
+
+```bash
+# run the focused API suite
+php artisan test --filter=Tests\\Feature\\Api
+
+# or execute the entire test matrix
+php artisan test
+```
+
+Under the hood we fake the public disk for uploads and seed stub branch/unit data so tests stay hermetic. When running the default suite you may still see Breeze scaffolding tests; feel free to tailor or disable them if your app no longer relies on the stock auth views.
+
+## Manual QA / Postman Tutorial
+1. Hit `POST /api/auth/login` with a known teller_id/password pair (or create one via `POST /api/admin/tellers` using an admin token).
+2. Save the returned Bearer token in an environment variable.
+3. Query metadata (`GET /api/meta/branches`) to populate dropdowns in your client.
+4. Create onboarding requests with multipart payloads. Verify that attachments come back with signed URLs in `GET /api/teller/requests/{id}`.
+5. As an admin, approve/reject using the respective endpoints and confirm that the teller’s notifications (`GET /api/teller/requests`) reflect the new status.
+6. Exercise the log endpoint to ensure every CRUD action is tracked.
+
+Repeat these steps whenever you roll out schema or workflow changes—the combination of automated tests plus this manual checklist keeps both portals in sync.

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Teller;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\TellerPortal\OnboardingRequest;
+use App\Models\TellerPortal\Branch;
 use Illuminate\Support\Facades\Auth;
 
 class ReportController extends Controller
@@ -16,9 +17,11 @@ class ReportController extends Controller
         $year = $request->input('year');
         $month = $request->input('month');
         $day = $request->input('day');
+        $branchId = $request->input('branch_id');
+        $unitId = $request->input('unit_id');
 
         $query = OnboardingRequest::where('teller_id', Auth::user()->teller_id)
-            ->with('branch')
+            ->with(['branch', 'unit'])
             ->orderByDesc('created_at');
 
         if ($search) {
@@ -45,6 +48,14 @@ class ReportController extends Controller
             $query->whereDate('created_at', $day);
         }
 
+        if ($branchId) {
+            $query->where('branch_id', $branchId);
+        }
+
+        if ($unitId) {
+            $query->where('unit_id', $unitId);
+        }
+
         $data = $query->paginate(10);
 
         $years = OnboardingRequest::where('teller_id', Auth::user()->teller_id)
@@ -54,6 +65,8 @@ class ReportController extends Controller
             ->pluck('year')
             ->toArray();
 
+        $branches = Branch::with('units')->orderBy('BRANCH_NAME')->get();
+
         return view('teller.report.index', [
             'data' => $data,
             'search' => $search,
@@ -62,6 +75,9 @@ class ReportController extends Controller
             'month' => $month,
             'day' => $day,
             'years' => $years,
+            'branchId' => $branchId,
+            'unitId' => $unitId,
+            'branches' => $branches,
         ]);
     }
 }

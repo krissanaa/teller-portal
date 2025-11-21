@@ -15,6 +15,7 @@ class OnboardingRequest extends Model
         'refer_code',
         'teller_id',
         'branch_id',
+        'unit_id',
         'store_name',
         'store_address',
         'business_type',
@@ -31,9 +32,23 @@ class OnboardingRequest extends Model
         'attachments' => 'array',
     ];
 
+    public function getConnectionName()
+    {
+        if (app()->environment('testing')) {
+            return config('database.default');
+        }
+
+        return $this->connection;
+    }
+
     public function branch()
     {
         return $this->belongsTo(Branch::class, 'branch_id');
+    }
+
+    public function unit()
+    {
+        return $this->belongsTo(BranchUnit::class, 'unit_id');
     }
 
 public function teller()

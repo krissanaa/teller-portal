@@ -25,10 +25,10 @@
 
     <style>
         :root {
-            --apb-primary: #2D5F3F;
-            --apb-secondary: #1e4229;
-            --apb-accent: #4CAF50;
-            --apb-dark: #1a3321;
+            --apb-primary: #14b8a6;
+            --apb-secondary: #0f766e;
+            --apb-accent: #2dd4bf;
+            --apb-dark: #0d5c56;
         }
 
         * {

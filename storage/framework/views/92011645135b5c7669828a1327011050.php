@@ -6,6 +6,12 @@
         font-family: 'Noto Sans Lao', 'Noto Sans', sans-serif;
     }
 
+    :root {
+        --apb-primary: #14b8a6; /* Tailwind Teal 500 */
+        --apb-secondary: #0f766e; /* darker teal */
+        --apb-dark: #0d5c56;
+    }
+
     .page-header {
         background: white;
         border-radius: 12px;
@@ -57,9 +63,9 @@
     }
 
     .btn-report {
-        background: linear-gradient(90deg, var(--apb-primary) 0%, var(--apb-secondary) 100%);
+        background: linear-gradient(90deg, var(--apb-accent) 0%, rgba(20, 184, 166, 0.8) 100%);
         border: none;
-        color: white;
+        color: #ffffff;
         padding: 11px 24px;
         border-radius: 8px;
         font-weight: 600;
@@ -72,9 +78,9 @@
 
     .btn-report:hover {
         transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(45, 95, 63, 0.3);
-        background: linear-gradient(90deg, var(--apb-secondary) 0%, var(--apb-dark) 100%);
-        color: white;
+        box-shadow: 0 4px 12px rgba(20, 184, 166, 0.35);
+        background: linear-gradient(90deg, rgba(45, 212, 191, 0.9) 0%, rgba(14, 165, 156, 0.95) 100%);
+        color: #ffffff;
     }
 
     .dashboard-card {
@@ -235,7 +241,7 @@
 
     .empty-state i {
         font-size: 4rem;
-        color: #dee2e6;
+        color: #6c757d;
         margin-bottom: 16px;
     }
 
@@ -409,7 +415,7 @@
                         <tr>
                             <td colspan="7" class="empty-state">
                                 <i class="bi bi-inbox"></i>
-                                <p>��s��?��^�����慧Y��-�����-��慯^�����?��-��%�����"��3��?��T��慧T��?�����T</p>
+                                <p>ບໍ່ມີຂໍ້ມູນ
                             </td>
                         </tr>
                     <?php endif; ?>
@@ -432,6 +438,8 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function () {
+    setInterval(() => window.location.reload(),  300000);
+
     document.querySelectorAll('.table-row-clickable').forEach(row => {
         row.addEventListener('click', () => {
             window.location.href = row.dataset.href;

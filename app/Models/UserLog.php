@@ -30,4 +30,12 @@ class UserLog extends Model
     {
         return $this->belongsTo(User::class, 'user_id');
     }
+
+    /**
+     * Backwards-compatible alias matching existing view expectations.
+     */
+    public function targetUser()
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
 }

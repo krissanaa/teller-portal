@@ -1,5 +1,3 @@
-version: '3.9'
-
 services:
   app:
     build:
@@ -16,6 +14,12 @@ services:
       DB_DATABASE: teller_portal
       DB_USERNAME: teller_user
       DB_PASSWORD: teller_pass
+      OLD_DB_CONNECTION: mysql
+      OLD_DB_HOST: db
+      OLD_DB_PORT: 3306
+      OLD_DB_DATABASE: teller_portal
+      OLD_DB_USERNAME: teller_user
+      OLD_DB_PASSWORD: teller_pass
     depends_on:
       - db
 

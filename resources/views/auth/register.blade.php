@@ -15,7 +15,7 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        background: linear-gradient(135deg, #1a3321 0%, #2D5F3F 50%, #4CAF50 100%);
+        background: linear-gradient(135deg, #0b3f3a 0%, #0f766e 45%, #14b8a6 100%);
         position: relative;
         overflow-x: hidden;
         overflow-y: auto;
@@ -37,8 +37,8 @@
         width: 100%;
         height: 100%;
         background-image:
-            linear-gradient(rgba(76, 175, 80, 0.1) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(76, 175, 80, 0.1) 1px, transparent 1px);
+            linear-gradient(rgba(20, 184, 166, 0.12) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(20, 184, 166, 0.12) 1px, transparent 1px);
         background-size: 50px 50px;
         animation: gridMove 20s linear infinite;
     }
@@ -57,7 +57,7 @@
 
     .shape {
         position: absolute;
-        border: 2px solid rgba(76, 175, 80, 0.3);
+        border: 2px solid rgba(20, 184, 166, 0.25);
         border-radius: 50%;
         animation: float 15s infinite ease-in-out;
     }
@@ -163,7 +163,7 @@
     .logo-icon {
         width: clamp(60px, 15vw, 80px);
         height: clamp(60px, 15vw, 80px);
-        background: linear-gradient(135deg, #2D5F3F 0%, #4CAF50 100%);
+        background: linear-gradient(135deg, #0f766e 0%, #14b8a6 100%);
         border-radius: 50%;
         display: inline-flex;
         align-items: center;
@@ -171,7 +171,7 @@
         font-size: clamp(2rem, 5vw, 2.5rem);
         color: white;
         margin-bottom: 15px;
-        box-shadow: 0 10px 30px rgba(45, 95, 63, 0.3);
+        box-shadow: 0 10px 30px rgba(20, 184, 166, 0.35);
         animation: logoFloat 3s ease-in-out infinite;
         overflow: hidden;
         position: relative;
@@ -195,7 +195,7 @@
 
     .login-title {
         text-align: center;
-        color: #2D5F3F;
+        color: #0f766e;
         font-weight: 800;
         font-size: clamp(1.3rem, 4vw, 1.6rem);
         margin-bottom: 10px;
@@ -211,29 +211,31 @@
 
     .form-label {
         font-weight: 600;
-        color: #2D5F3F;
+        color: #0f766e;
         margin-bottom: 6px;
         font-size: clamp(0.85rem, 2.5vw, 0.9rem);
     }
 
     .form-control {
-        border: 2px solid #e9ecef;
+        border: 2px solid #e0f2f1;
         border-radius: 10px;
         padding: clamp(10px, 3vw, 11px) clamp(12px, 3vw, 14px);
         transition: all 0.3s ease;
         font-size: clamp(0.85rem, 2.5vw, 0.9rem);
         width: 100%;
+        background: rgba(255, 255, 255, 0.9);
     }
 
     .form-control:focus {
-        border-color: #4CAF50;
-        box-shadow: 0 0 0 0.2rem rgba(76, 175, 80, 0.15);
+        border-color: #14b8a6;
+        box-shadow: 0 0 0 0.2rem rgba(20, 184, 166, 0.2);
+        background: #f0fdfa;
     }
 
     .btn-register {
-        background: linear-gradient(135deg, #2D5F3F 0%, #4CAF50 100%);
-        border: none;
-        color: white;
+        background: linear-gradient(135deg, #0f766e 0%, #14b8a6 100%);
+        border: 2px solid transparent;
+        color: #fff;
         padding: clamp(11px, 3.5vw, 13px);
         border-radius: 10px;
         font-weight: 700;
@@ -257,20 +259,22 @@
         transition: width 0.6s, height 0.6s;
     }
 
-    .btn-register:hover::before {
-        width: 300px;
-        height: 300px;
-    }
 
-    .btn-register:hover {
+
+    .btn-register:hover,
+    .btn-register:focus,
+    .btn-register:active {
+        background: #fff;
+        color: #0f766e;
+        border-color: #0f766e;
         transform: translateY(-2px);
-        box-shadow: 0 10px 30px rgba(45, 95, 63, 0.4);
+        box-shadow: 0 10px 30px rgba(20, 184, 166, 0.4);
     }
 
     .btn-back {
-        background: white;
-        border: 2px solid #2D5F3F;
-        color: #2D5F3F;
+        background: #fff;
+        border: 2px solid #0f766e;
+        color: #0f766e;
         padding: clamp(11px, 3.5vw, 13px);
         border-radius: 10px;
         font-weight: 700;
@@ -282,11 +286,14 @@
         width: 100%;
     }
 
-    .btn-back:hover {
-        background: #2D5F3F;
-        color: white;
+    .btn-back:hover,
+    .btn-back:focus,
+    .btn-back:active {
+        background: linear-gradient(135deg, #0f766e 0%, #14b8a6 100%);
+        color: #fff;
+        border-color: transparent;
         transform: translateY(-2px);
-        box-shadow: 0 10px 30px rgba(45, 95, 63, 0.2);
+        box-shadow: 0 10px 30px rgba(20, 184, 166, 0.25);
     }
 
     .alert {
@@ -467,5 +474,3 @@
     </div>
 </div>
 @endsection
-
-

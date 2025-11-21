@@ -3,9 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\TellerPortal\OnboardingRequest;
+use App\Models\TellerPortal\Branch;
+use App\Models\TellerPortal\BranchUnit;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\ValidationException;
 
 class TellerDashboardController extends Controller
 {
@@ -69,14 +72,44 @@ class TellerDashboardController extends Controller
 
     public function completeProfile(Request $request)
     {
-        $request->validateWithBag('profileSetup', [
+        $data = $request->validateWithBag('profileSetup', [
             'name' => ['required', 'string', 'max:255'],
             'phone' => ['required', 'string', 'max:20'],
+            'branch_id' => ['required', 'integer'],
+            'unit_id' => ['nullable', 'integer'],
         ]);
 
+        $branch = Branch::with('units')->find($data['branch_id']);
+        if (!$branch) {
+            throw ValidationException::withMessages([
+                'branch_id' => __('ສາຂາທີ່ເລືອກບໍ່ຖືກຕ້ອງ'),
+            ])->errorBag('profileSetup');
+        }
+
+        $selectedUnitId = $data['unit_id'] ?? null;
+        $branchHasUnits = $branch->units->isNotEmpty();
+        $unitModel = null;
+
+        if ($branchHasUnits && !$selectedUnitId) {
+            throw ValidationException::withMessages([
+                'unit_id' => __('ກະລຸນາເລືອກຫນ່ວຍຍ່ອຍຂອງສາຂານີ້'),
+            ])->errorBag('profileSetup');
+        }
+
+        if ($selectedUnitId) {
+            $unitModel = BranchUnit::where('branch_id', $branch->id)->find($selectedUnitId);
+            if (!$unitModel) {
+                throw ValidationException::withMessages([
+                    'unit_id' => __('ຫນ່ວຍຍ່ອຍບໍ່ກົງກັບສາຂາທີ່ເລືອກ'),
+                ])->errorBag('profileSetup');
+            }
+        }
+
         $user = $request->user();
-        $user->name = $request->name;
-        $user->phone = $request->phone;
+        $user->name = $data['name'];
+        $user->phone = $data['phone'];
+        $user->branch_id = $branch->id;
+        $user->unit_id = $unitModel?->id;
         $user->profile_completed_at = now();
         $user->save();
 

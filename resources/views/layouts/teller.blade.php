@@ -14,10 +14,10 @@
 
     <style>
         :root {
-            --apb-primary: #2D5F3F;
-            --apb-secondary: #1e4229;
-            --apb-accent: #4CAF50;
-            --apb-dark: #1a3321;
+            --apb-primary: #0f766e;
+            --apb-secondary: #0d5c56;
+            --apb-accent: #14b8a6;
+            --apb-dark: #0b3f3a;
         }
 
         * {
@@ -341,6 +341,132 @@
             font-weight: 600;
         }
 
+        .profile-unit-preview {
+            border: 1px dashed rgba(45, 95, 63, 0.35);
+            border-radius: 12px;
+            padding: 12px;
+            background: rgba(248, 255, 251, 0.65);
+        }
+
+        .profile-unit-preview-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .profile-unit-preview-item {
+            flex: 1 1 45%;
+            min-width: 140px;
+            background: white;
+            border-radius: 10px;
+            padding: 10px;
+            border: 1px solid rgba(45, 95, 63, 0.2);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        .profile-unit-preview-item strong {
+            display: block;
+            color: #1a3321;
+        }
+
+        .profile-unit-preview-item span {
+            display: block;
+            color: #5c6d63;
+            font-size: 0.82rem;
+        }
+
+        .profile-id-modal .modal-dialog {
+            max-width: 560px;
+        }
+
+        .profile-card {
+            border-radius: 28px;
+            border: 1px solid rgba(15, 118, 110, 0.18);
+            background: #f4fffb;
+            overflow: hidden;
+            box-shadow: 0 20px 50px rgba(15, 118, 110, 0.2);
+        }
+
+        .profile-card-header {
+            background: linear-gradient(115deg, #0f766e, #14b8a6);
+            color: #fff;
+            padding: 18px 28px;
+            display: flex;
+            align-items: center;
+            gap: 18px;
+        }
+
+        .profile-card-avatar {
+            width: 70px;
+            height: 70px;
+            border-radius: 18px;
+            background: rgba(255, 255, 255, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.4rem;
+            font-weight: 700;
+        }
+
+        .profile-card-title h5 {
+            margin: 0;
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+
+        .profile-card-title span {
+            font-size: 0.85rem;
+            opacity: 0.8;
+        }
+
+        .profile-card-body {
+            padding: 18px 24px 24px;
+            background: linear-gradient(115deg, rgba(20, 184, 166, 0.08), rgba(15, 118, 110, 0.01));
+        }
+
+        .profile-card-grid {
+            display: flex;
+            gap: 16px;
+        }
+
+        .profile-card-field {
+            flex: 1;
+            background: white;
+            border-radius: 16px;
+            padding: 12px 16px;
+            border: 1px solid rgba(15, 118, 110, 0.12);
+        }
+
+        .profile-card-field span {
+            display: block;
+            font-size: 0.78rem;
+            text-transform: uppercase;
+            color: #96a3b5;
+            letter-spacing: 0.4px;
+        }
+
+        .profile-card-field strong {
+            display: block;
+            margin-top: 5px;
+            font-size: 1rem;
+            color: #0f172a;
+        }
+
+        @media (max-width: 576px) {
+            .profile-card-grid {
+                flex-direction: column;
+            }
+        }
+
+        .profile-unit-preview-empty {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            color: #6c757d;
+            font-size: 0.9rem;
+        }
+
         .logout-btn:hover {
             background: #fee !important;
         }
@@ -406,6 +532,9 @@
 <body>
 @php
     $tellerAuthUser = auth()->user();
+    if ($tellerAuthUser) {
+        $tellerAuthUser->loadMissing(['branch', 'unit']);
+    }
     $profileErrorBag = session('errors') instanceof \Illuminate\Support\ViewErrorBag
         ? session('errors')->getBag('profileSetup')
         : null;
@@ -424,6 +553,16 @@
         $profilePrefillPhone = $tellerAuthUser && $tellerAuthUser->profile_completed_at
             ? $tellerAuthUser->phone
             : '';
+    }
+    $profileBranches = isset($profileBranches) ? $profileBranches : collect();
+    $profileBranchUnitsPayload = $profileBranchUnitsPayload ?? [];
+    $profilePrefillBranch = old('branch_id');
+    if ($profilePrefillBranch === null) {
+        $profilePrefillBranch = $tellerAuthUser?->branch_id;
+    }
+    $profilePrefillUnit = old('unit_id');
+    if ($profilePrefillUnit === null) {
+        $profilePrefillUnit = $tellerAuthUser?->unit_id;
     }
 @endphp
 
@@ -497,8 +636,16 @@
                         <span class="profile-arrow">▼</span>
                     </a>
                     <ul class="dropdown-menu dropdown-menu-end animated--fade-in" aria-labelledby="userDropdown">
-                        <li class="dropdown-header">
-                            👤 ບັນຊີຂອງຂ້ອຍ
+
+                        <li>
+                            <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#profileOverviewModal">
+                                <i class="bi bi-person-badge"></i> ບັນຊີຂອງຂ້ອຍ
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#profileSetupModal">
+                                <i class="bi bi-pencil-square"></i> ແກ້ໄຂຂໍ້ມູນ
+                            </a>
                         </li>
                         <li>
                             <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#changePasswordModal">
@@ -604,6 +751,69 @@
     </div>
 
     <!-- Profile Setup Modal -->
+    <div class="modal fade profile-id-modal" id="profileOverviewModal" tabindex="-1" aria-labelledby="profileOverviewLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="profileOverviewLabel">
+                        <i class="bi bi-person-lines-fill me-2"></i> ລາຍລະອຽດບັນຊີ
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body bg-light">
+                    <div class="profile-card">
+                        <div class="profile-card-header">
+                            <div class="profile-card-avatar">
+                                {{ \Illuminate\Support\Str::of($tellerAuthUser?->name ?? 'A')->substr(0,1)->upper() }}
+                            </div>
+                            <div class="profile-card-title">
+                                <h5>{{ $tellerAuthUser?->name ?? '—' }}</h5>
+                                <span>ID: {{ $tellerAuthUser?->teller_id ?? '—' }}</span>
+                            </div>
+                        </div>
+                        <div class="profile-card-body">
+                            <div class="profile-card-grid">
+                                <div class="profile-card-field">
+                                    <span>ເບີໂທ</span>
+                                    <strong>{{ $tellerAuthUser?->phone ?? '—' }}</strong>
+                                </div>
+                                <div class="profile-card-field">
+                                    <span>ສາຂາ</span>
+                                    <strong>
+                                        @if($tellerAuthUser?->branch)
+                                            {{ $tellerAuthUser->branch->code }} - {{ $tellerAuthUser->branch->name }}
+                                        @else
+                                            —
+                                        @endif
+                                    </strong>
+                                </div>
+                                <div class="profile-card-field">
+                                    <span>ຫນ່ວຍບໍລິການ</span>
+                                    <strong>
+                                        @if($tellerAuthUser?->unit)
+                                            {{ $tellerAuthUser->unit->unit_code }} - {{ $tellerAuthUser->unit->unit_name }}
+                                        @else
+                                            —
+                                        @endif
+                                    </strong>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                        <i class="bi bi-x-circle"></i> ປິດ
+                    </button>
+                    <button type="button" class="btn btn-success" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#profileSetupModal">
+                        <i class="bi bi-pencil-square"></i> ແກ້ໄຂຂໍ້ມູນ
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="modal fade" id="profileSetupModal" tabindex="-1" aria-labelledby="profileSetupLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
@@ -616,7 +826,7 @@
                     </div>
                     <div class="modal-body">
                         <p class="text-muted small mb-3">
-                            Provide your name and phone number so we can personalize your teller account before you start working.
+                            Tell us who you are and which branch/unit you belong to. We’ll reuse this info for every workflow.
                         </p>
                         <div class="mb-3">
                             <label for="profile_name" class="form-label">Full Name</label>
@@ -636,6 +846,37 @@
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
+                        <div class="mb-3">
+                            <label for="profile_branch" class="form-label">ສາຂາ</label>
+                            <select name="branch_id" id="profile_branch"
+                                    class="form-select @error('branch_id', 'profileSetup') is-invalid @enderror"
+                                    required>
+                                <option value="">-- ເລືອກສາຂາ --</option>
+                                @foreach($profileBranches as $branch)
+                                    <option value="{{ $branch->id }}"
+                                        {{ (string)$profilePrefillBranch === (string)$branch->id ? 'selected' : '' }}>
+                                        {{ $branch->code }} - {{ $branch->name }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            @error('branch_id', 'profileSetup')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+                        @php
+                            $prefillBranchModel = $profileBranches->firstWhere('id', $profilePrefillBranch);
+                            $prefillHasUnits = $prefillBranchModel ? $prefillBranchModel->units->isNotEmpty() : false;
+                        @endphp
+                        <div class="mb-3" id="profile_unit_wrapper"
+                             style="{{ $prefillHasUnits ? '' : 'display:none;' }}">
+                            <label for="profile_unit" class="form-label">ຫນ່ວຍຍ່ອຍຂອງສາຂາ</label>
+                            <select name="unit_id" id="profile_unit"
+                                    class="form-select @error('unit_id', 'profileSetup') is-invalid @enderror"
+                                    data-selected="{{ $profilePrefillUnit ?? '' }}"
+                                    {{ $prefillHasUnits ? '' : 'disabled' }}>
+                                <option value="">-- ເລືອກຫນ່ວຍຍ່ອຍ --</option>
+                            </select>
+
                     </div>
                     <div class="modal-footer">
                         <span class="text-muted small me-auto">This step is required the first time you log in.</span>
@@ -676,6 +917,90 @@
             }, 5000);
         });
 
+        const branchUnitsMap = @json($profileBranchUnitsPayload);
+        const profileBranchSelect = document.getElementById('profile_branch');
+        const profileUnitWrapper = document.getElementById('profile_unit_wrapper');
+        const profileUnitSelect = document.getElementById('profile_unit');
+        const profileUnitPreview = document.getElementById('profile_unit_preview');
+
+        const renderProfileUnitPreview = (units) => {
+            if (!profileUnitPreview) {
+                return;
+            }
+
+            if (!units.length) {
+                profileUnitPreview.style.display = 'none';
+                profileUnitPreview.innerHTML = '';
+                return;
+            }
+
+            profileUnitPreview.style.display = '';
+
+            const list = document.createElement('div');
+            list.className = 'profile-unit-preview-list';
+            units.forEach(unit => {
+                const item = document.createElement('div');
+                item.className = 'profile-unit-preview-item';
+                item.innerHTML = `<strong>${unit.code}</strong><span>${unit.name}</span>`;
+                list.appendChild(item);
+            });
+            profileUnitPreview.innerHTML = '';
+            profileUnitPreview.appendChild(list);
+        };
+
+        const populateProfileUnits = (branchId, preserveSelection = true) => {
+            if (!profileUnitSelect || !profileUnitWrapper) {
+                return;
+            }
+
+            const units = branchUnitsMap[branchId] || [];
+            profileUnitSelect.innerHTML = `<option value="">-- ເລືອກຫນ່ວຍຍ່ອຍ --</option>`;
+
+            if (!units.length) {
+                profileUnitWrapper.style.display = 'none';
+                profileUnitSelect.disabled = true;
+                if (!preserveSelection) {
+                    profileUnitSelect.dataset.selected = '';
+                }
+                renderProfileUnitPreview([]);
+                return;
+            }
+
+            profileUnitWrapper.style.display = '';
+            profileUnitSelect.disabled = false;
+
+            units.forEach(unit => {
+                const option = document.createElement('option');
+                option.value = unit.id;
+                option.textContent = `${unit.code} - ${unit.name}`;
+                profileUnitSelect.appendChild(option);
+            });
+
+            const desired = preserveSelection ? (profileUnitSelect.dataset.selected || '') : '';
+            if (desired) {
+                profileUnitSelect.value = desired;
+            } else {
+                profileUnitSelect.value = '';
+            }
+
+            renderProfileUnitPreview(units);
+        };
+
+        if (profileBranchSelect && profileUnitSelect) {
+            profileBranchSelect.addEventListener('change', (event) => {
+                profileUnitSelect.dataset.selected = '';
+                populateProfileUnits(event.target.value, false);
+            });
+
+            if (profileBranchSelect.value) {
+                populateProfileUnits(profileBranchSelect.value, true);
+            } else if (profileUnitWrapper) {
+                profileUnitWrapper.style.display = 'none';
+                profileUnitSelect.disabled = true;
+                renderProfileUnitPreview([]);
+            }
+        }
+
         const shouldShowProfileModal = {{ $shouldShowProfileSetupModal ? 'true' : 'false' }};
         if (shouldShowProfileModal) {
             const profileModalEl = document.getElementById('profileSetupModal');
@@ -689,6 +1014,3 @@
 
 </body>
 </html>
-
-
-

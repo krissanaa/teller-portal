@@ -10,14 +10,24 @@ return new class extends Migration
 
     public function up(): void
     {
-        Schema::table('branches', function (Blueprint $table) {
+        if (! Schema::connection($this->connection)->hasTable('branches') ||
+            Schema::connection($this->connection)->hasColumn('branches', 'status')) {
+            return;
+        }
+
+        Schema::connection($this->connection)->table('branches', function (Blueprint $table) {
             $table->string('status')->default('active')->after('name');
         });
     }
 
     public function down(): void
     {
-        Schema::table('branches', function (Blueprint $table) {
+        if (! Schema::connection($this->connection)->hasTable('branches') ||
+            ! Schema::connection($this->connection)->hasColumn('branches', 'status')) {
+            return;
+        }
+
+        Schema::connection($this->connection)->table('branches', function (Blueprint $table) {
             $table->dropColumn('status');
         });
     }

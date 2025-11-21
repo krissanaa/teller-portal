@@ -208,8 +208,8 @@
     }
 
     .table-count {
-        background: var(--apb-accent);
-        color: white;
+        background: #ffc107;
+        color: #1f2933;
         padding: 4px 12px;
         border-radius: 20px;
         font-weight: 600;

@@ -1,4 +1,4 @@
-@extends('layouts.teller')
+﻿@extends('layouts.teller')
 
 @section('title', 'ສ້າງຄຳຂໍເປີດບັນຊີໃໝ່')
 
@@ -106,12 +106,9 @@
 
             <!-- POS & Bank -->
             <div class="form-section">
-                <div class="section-title"><i class="bi bi-credit-card"></i> ຂໍ້ມູນ POS ແລະ ບັນຊີທະນາຄານ</div>
+               <div class="section-title"><i class="bi bi-credit-card"></i> ຂໍ້ມູນ POS ແລະ ບັນຊີທະນາຄານ</div>
                 <div class="row">
-                    <div class="col-md-6 mb-3">
-                        <label class="form-label"><i class="bi bi-upc-scan"></i> ໝາຍເລກເຄື່ອງ POS <span class="required">*</span></label>
-                        <input type="text" name="pos_serial" class="form-control" required placeholder="ເຊັ່ນ: POS-2024-001" value="{{ old('pos_serial') }}">
-                    </div>
+
                     <div class="col-md-6 mb-3">
                         <label class="form-label"><i class="bi bi-bank"></i> ເລກບັນຊີທະນາຄານ</label>
                         <input type="text" name="bank_account" class="form-control" placeholder="ປ້ອນເລກບັນຊີ (ຖ້າມີ)" value="{{ old('bank_account') }}">

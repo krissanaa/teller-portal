@@ -53,11 +53,8 @@ class TellerRequestController extends Controller
 
         $creator = function () use ($data, $connectionName, $connection) {
             $payload = $data;
-            $today = now()->format('Ymd');
 
             $latestQuery = OnboardingRequest::on($connectionName)
-                ->whereDate('created_at', today())
-                ->where('refer_code', 'like', 'REF-' . $today . '-%')
                 ->orderByDesc('id');
 
             if ($connection->getDriverName() !== 'sqlite') {
@@ -67,11 +64,13 @@ class TellerRequestController extends Controller
             $latest = $latestQuery->first();
 
             $nextNumber = 1;
-            if ($latest && preg_match('/REF-' . $today . '-(\d+)/', $latest->refer_code, $matches)) {
-                $nextNumber = ((int) $matches[1]) + 1;
+            if ($latest && preg_match('/(\\d+)/', $latest->refer_code, $matches)) {
+                $nextNumber = intval(substr($matches[1], -8)) + 1;
+            } elseif ($latest) {
+                $nextNumber = $latest->id + 1;
             }
 
-            $payload['refer_code'] = sprintf('REF-%s-%03d', $today, $nextNumber);
+            $payload['refer_code'] = str_pad($nextNumber, 8, '0', STR_PAD_LEFT);
 
             return OnboardingRequest::on($connectionName)->create($payload);
         };

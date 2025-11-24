@@ -408,10 +408,15 @@
 
                 <?php if($req->approval_status === 'pending'): ?>
                     <div class="card-footer d-flex gap-2">
-                        <form action="<?php echo e(route('admin.onboarding.approve', $req->id)); ?>" method="POST">
-                            <?php echo csrf_field(); ?>
-                            <button class="btn btn-success btn-sm" type="submit">Approve</button>
-                        </form>
+                        <button class="btn btn-success btn-sm" type="button"
+                                data-bs-toggle="modal"
+                                data-bs-target="#approveModal"
+                                data-request-id="<?php echo e($req->id); ?>"
+                                data-store="<?php echo e($req->store_name); ?>"
+                                data-refer="<?php echo e($req->refer_code); ?>"
+                                data-pos-serial="<?php echo e($req->pos_serial ?? ''); ?>">
+                            Approve & assign POS
+                        </button>
                         <button class="btn btn-danger btn-sm" type="button"
                                 data-bs-toggle="modal"
                                 data-bs-target="#rejectModal"
@@ -449,6 +454,42 @@
     </div>
 </div>
 
+<!-- Approve Modal -->
+<div class="modal fade" id="approveModal" tabindex="-1" aria-labelledby="approveModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-success text-white">
+                <h5 class="modal-title" id="approveModalLabel">
+                    <i class="bi bi-check2-circle me-2"></i>
+                    Approve request & add POS serial
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <form method="POST"
+                  action="<?php echo e(route('admin.onboarding.approve', '__REQUEST_ID__')); ?>"
+                  data-base-action="<?php echo e(route('admin.onboarding.approve', '__REQUEST_ID__')); ?>"
+                  id="approveForm">
+                <?php echo csrf_field(); ?>
+                <div class="modal-body">
+                    <p class="text-muted mb-3" id="approve_request_info"></p>
+                    <label for="modal_pos_serial" class="form-label fw-semibold text-success small">POS Serial (required)</label>
+                    <input
+                        type="text"
+                        name="pos_serial"
+                        id="modal_pos_serial"
+                        class="form-control"
+                        required
+                        placeholder="Example: POS-2024-001">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-success">Confirm Approve</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
 <!-- Reject Modal -->
 <div class="modal fade" id="rejectModal" tabindex="-1" aria-labelledby="rejectModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
@@ -460,7 +501,10 @@
                 </h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
-            <form method="POST" action="" id="rejectForm">
+            <form method="POST"
+                  action="<?php echo e(route('admin.onboarding.reject', '__REQUEST_ID__')); ?>"
+                  data-base-action="<?php echo e(route('admin.onboarding.reject', '__REQUEST_ID__')); ?>"
+                  id="rejectForm">
                 <?php echo csrf_field(); ?>
                 <div class="modal-body">
                     <input type="hidden" name="request_id" id="modal_request_id">
@@ -525,6 +569,23 @@
         }
     });
 
+    const approveModal = document.getElementById('approveModal');
+    if (approveModal) {
+        approveModal.addEventListener('show.bs.modal', event => {
+            const button = event.relatedTarget;
+            const requestId = button.getAttribute('data-request-id');
+            const store = button.getAttribute('data-store') || '';
+            const refer = button.getAttribute('data-refer') || '';
+            const serial = button.getAttribute('data-pos-serial') || '';
+
+            approveModal.querySelector('#approve_request_info').textContent = `${store} (${refer})`;
+            approveModal.querySelector('#modal_pos_serial').value = serial;
+
+            const form = document.getElementById('approveForm');
+            form.action = form.dataset.baseAction.replace('__REQUEST_ID__', requestId);
+        });
+    }
+
     const rejectModal = document.getElementById('rejectModal');
     if (rejectModal) {
         rejectModal.addEventListener('show.bs.modal', event => {
@@ -537,7 +598,7 @@
             rejectModal.querySelector('#modal_request_info').textContent = `${store} (${refer})`;
 
             const form = document.getElementById('rejectForm');
-            form.action = form.action.replace(/\/\d+$/, '/' + requestId);
+            form.action = form.dataset.baseAction.replace('__REQUEST_ID__', requestId);
         });
     }
 </script>

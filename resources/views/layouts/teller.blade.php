@@ -642,11 +642,7 @@
                                 <i class="bi bi-person-badge"></i> ບັນຊີຂອງຂ້ອຍ
                             </a>
                         </li>
-                        <li>
-                            <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#profileSetupModal">
-                                <i class="bi bi-pencil-square"></i> ແກ້ໄຂຂໍ້ມູນ
-                            </a>
-                        </li>
+
                         <li>
                             <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#changePasswordModal">
                                 <i class="bi bi-shield-lock-fill"></i> ປ່ຽນລະຫັດຜ່ານ

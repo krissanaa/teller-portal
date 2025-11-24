@@ -364,7 +364,7 @@
                              <td>
                                 <span class="store-name">
                                 <i class="bi bi-computer text-muted" ></i>
-                                {{ $r->pos_serial}}
+                                {{ $r->pos_serial ?: '-' }}
                                 </span>
                             </td>
                             <td>
@@ -388,7 +388,7 @@
 
 
                             <td>
-                                <span class="store-name">
+                                <span class="store-name text-danger fw-semibold">
                                     {{ $r->admin_remark }}
                                 </span>
                             </td>

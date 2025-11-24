@@ -13,14 +13,14 @@ use Illuminate\Validation\ValidationException;
 
 class OnboardingController extends Controller
 {
-    // 🧾 ฟอร์มสร้างคำขอใหม่
+    // Ã°Å¸Â§Â¾ Ã Â¸Å¸Ã Â¸Â­Ã Â¸Â£Ã Â¹Å’Ã Â¸Â¡Ã Â¸ÂªÃ Â¸Â£Ã Â¹â€°Ã Â¸Â²Ã Â¸â€¡Ã Â¸â€žÃ Â¸Â³Ã Â¸â€šÃ Â¸Â­Ã Â¹Æ’Ã Â¸Â«Ã Â¸Â¡Ã Â¹Ë†
     public function create()
     {
         $tellerProfile = Auth::user()->loadMissing(['branch', 'unit']);
         return view('teller.requests.create', compact('tellerProfile'));
     }
 
-    // 💾 บันทึกคำขอใหม่
+    // Ã°Å¸â€™Â¾ Ã Â¸Å¡Ã Â¸Â±Ã Â¸â„¢Ã Â¸â€”Ã Â¸Â¶Ã Â¸ÂÃ Â¸â€žÃ Â¸Â³Ã Â¸â€šÃ Â¸Â­Ã Â¹Æ’Ã Â¸Â«Ã Â¸Â¡Ã Â¹Ë†
     public function store(Request $request)
     {
         $data = $request->validate([
@@ -33,13 +33,15 @@ class OnboardingController extends Controller
             'attachments.*'     => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:5120',
         ]);
 
+        $data['pos_serial'] = trim($data['pos_serial'] ?? '') ?: null;
+
         $tellerProfile = Auth::user()->loadMissing(['branch', 'unit']);
         $data['branch_id'] = $tellerProfile->branch_id;
         $data['unit_id'] = $tellerProfile->unit_id;
 
         $this->ensureUnitMatchesBranch($data['branch_id'], $data['unit_id']);
 
-        // ✅ อัปโหลดไฟล์แนบ
+        // Ã¢Å“â€¦ Ã Â¸Â­Ã Â¸Â±Ã Â¸â€ºÃ Â¹â€šÃ Â¸Â«Ã Â¸Â¥Ã Â¸â€Ã Â¹â€žÃ Â¸Å¸Ã Â¸Â¥Ã Â¹Å’Ã Â¹ÂÃ Â¸â„¢Ã Â¸Å¡
         $paths = [];
         if ($request->hasFile('attachments')) {
             foreach ($request->file('attachments') as $file) {
@@ -51,23 +53,20 @@ class OnboardingController extends Controller
         $data['teller_id'] = Auth::user()->teller_id;
         $data['approval_status'] = 'pending';
 
-        // ✅ ใช้ Transaction + Lock ป้องกัน refer_code ซ้ำ
         DB::transaction(function () use (&$data) {
-            $today = now()->format('Ymd');
-
-            $latestToday = OnboardingRequest::whereDate('created_at', today())
-                ->where('refer_code', 'like', 'REF-' . $today . '-%')
-                ->lockForUpdate()
+            $latest = OnboardingRequest::lockForUpdate()
                 ->orderBy('id', 'desc')
                 ->first();
 
             $nextNumber = 1;
-            if ($latestToday && preg_match('/REF-' . $today . '-(\d+)/', $latestToday->refer_code, $matches)) {
-                $nextNumber = intval($matches[1]) + 1;
+            if ($latest && preg_match('/(\d+)/', $latest->refer_code, $matches)) {
+                $nextNumber = intval(substr($matches[1], -8)) + 1;
+            } elseif ($latest) {
+                $nextNumber = $latest->id + 1;
             }
 
-            // ✅ Format: REF-YYYYMMDD-XXX
-            $data['refer_code'] = 'REF-' . $today . '-' . str_pad($nextNumber, 3, '0', STR_PAD_LEFT);
+            // Format ໃໝ່: ເລກ 8 ຫຼັກ (ເພີ່ມ 0 ນຳໜ້າ)
+            $data['refer_code'] = str_pad($nextNumber, 8, '0', STR_PAD_LEFT);
 
             OnboardingRequest::create($data);
         });
@@ -75,7 +74,7 @@ class OnboardingController extends Controller
         return redirect()->route('teller.dashboard')->with('success');
     }
 
-    // 🧰 ฟอร์มแก้ไข
+    // Ã°Å¸Â§Â° Ã Â¸Å¸Ã Â¸Â­Ã Â¸Â£Ã Â¹Å’Ã Â¸Â¡Ã Â¹ÂÃ Â¸ÂÃ Â¹â€°Ã Â¹â€žÃ Â¸â€š
     public function edit($id)
     {
         $request = OnboardingRequest::where('id', $id)
@@ -87,7 +86,7 @@ class OnboardingController extends Controller
         return view('teller.requests.edit', compact('request', 'tellerProfile'));
     }
 
-    // 🔄 อัปเดตข้อมูล
+    // Ã°Å¸â€â€ž Ã Â¸Â­Ã Â¸Â±Ã Â¸â€ºÃ Â¹â‚¬Ã Â¸â€Ã Â¸â€¢Ã Â¸â€šÃ Â¹â€°Ã Â¸Â­Ã Â¸Â¡Ã Â¸Â¹Ã Â¸Â¥
     public function update(Request $request, $id)
     {
         $record = OnboardingRequest::where('teller_id', auth()->user()->teller_id)->findOrFail($id);
@@ -104,11 +103,13 @@ class OnboardingController extends Controller
             'delete_attachments' => 'array',
             'delete_attachments.*' => 'integer',
         ]);
+        $data['pos_serial'] = trim($data['pos_serial'] ?? '') ?: null;
 
-        // ดึงรายการไฟล์เดิม
+
+        // Ã Â¸â€Ã Â¸Â¶Ã Â¸â€¡Ã Â¸Â£Ã Â¸Â²Ã Â¸Â¢Ã Â¸ÂÃ Â¸Â²Ã Â¸Â£Ã Â¹â€žÃ Â¸Å¸Ã Â¸Â¥Ã Â¹Å’Ã Â¹â‚¬Ã Â¸â€Ã Â¸Â´Ã Â¸Â¡
         $existing = json_decode($record->attachments ?? '[]', true);
 
-        // ✅ ลบไฟล์ที่เลือก
+        // Ã¢Å“â€¦ Ã Â¸Â¥Ã Â¸Å¡Ã Â¹â€žÃ Â¸Å¸Ã Â¸Â¥Ã Â¹Å’Ã Â¸â€”Ã Â¸ÂµÃ Â¹Ë†Ã Â¹â‚¬Ã Â¸Â¥Ã Â¸Â·Ã Â¸Â­Ã Â¸Â
         $toDelete = $request->input('delete_attachments', []);
         foreach ($toDelete as $idx) {
             if (isset($existing[$idx])) {
@@ -118,7 +119,7 @@ class OnboardingController extends Controller
         }
         $existing = array_values($existing);
 
-        // ✅ เพิ่มไฟล์ใหม่
+        // Ã¢Å“â€¦ Ã Â¹â‚¬Ã Â¸Å¾Ã Â¸Â´Ã Â¹Ë†Ã Â¸Â¡Ã Â¹â€žÃ Â¸Å¸Ã Â¸Â¥Ã Â¹Å’Ã Â¹Æ’Ã Â¸Â«Ã Â¸Â¡Ã Â¹Ë†
         if ($request->hasFile('attachments')) {
             foreach ($request->file('attachments') as $file) {
                 $existing[] = $file->store('attachments', 'public');
@@ -133,7 +134,7 @@ class OnboardingController extends Controller
 
         $this->ensureUnitMatchesBranch($data['branch_id'], $data['unit_id']);
 
-        // ✅ อัปเดตข้อมูล
+        // Ã¢Å“â€¦ Ã Â¸Â­Ã Â¸Â±Ã Â¸â€ºÃ Â¹â‚¬Ã Â¸â€Ã Â¸â€¢Ã Â¸â€šÃ Â¹â€°Ã Â¸Â­Ã Â¸Â¡Ã Â¸Â¹Ã Â¸Â¥
         $record->update($data);
 
         if ($wasRejected) {
@@ -144,10 +145,10 @@ class OnboardingController extends Controller
 
         return redirect()
             ->route('teller.requests.show', $record->id)
-            ->with('success', 'ສຳເລັດການອແກ້ໄຂຂໍ້ມູນ');
+            ->with('success', 'Ã ÂºÂªÃ ÂºÂ³Ã Â»â‚¬Ã ÂºÂ¥Ã ÂºÂ±Ã Âºâ€Ã ÂºÂÃ ÂºÂ²Ã Âºâ„¢Ã ÂºÂ­Ã Â»ÂÃ ÂºÂÃ Â»â€°Ã Â»â€žÃ Âºâ€šÃ Âºâ€šÃ Â»ÂÃ Â»â€°Ã ÂºÂ¡Ã ÂºÂ¹Ã Âºâ„¢');
     }
 
-    // 👁️ แสดงรายละเอียดคำขอ
+    // Ã°Å¸â€˜ÂÃ¯Â¸Â Ã Â¹ÂÃ Â¸ÂªÃ Â¸â€Ã Â¸â€¡Ã Â¸Â£Ã Â¸Â²Ã Â¸Â¢Ã Â¸Â¥Ã Â¸Â°Ã Â¹â‚¬Ã Â¸Â­Ã Â¸ÂµÃ Â¸Â¢Ã Â¸â€Ã Â¸â€žÃ Â¸Â³Ã Â¸â€šÃ Â¸Â­
     public function show($id)
     {
         $request = OnboardingRequest::where('id', $id)
@@ -166,7 +167,7 @@ class OnboardingController extends Controller
 
         if (!$branchId) {
             throw ValidationException::withMessages([
-                'branch_id' => __('�����T��^��?��?�����%��������,���'),
+                'branch_id' => __('Ã¯Â¿Â½Ã¯Â¿Â½Ã¯Â¿Â½Ã¯Â¿Â½Ã¯Â¿Â½TÃ¯Â¿Â½Ã¯Â¿Â½^Ã¯Â¿Â½Ã¯Â¿Â½?Ã¯Â¿Â½Ã¯Â¿Â½?Ã¯Â¿Â½Ã¯Â¿Â½Ã¯Â¿Â½Ã¯Â¿Â½Ã¯Â¿Â½%Ã¯Â¿Â½Ã¯Â¿Â½Ã¯Â¿Â½Ã¯Â¿Â½Ã¯Â¿Â½Ã¯Â¿Â½Ã¯Â¿Â½Ã¯Â¿Â½,Ã¯Â¿Â½Ã¯Â¿Â½Ã¯Â¿Â½'),
             ]);
         }
 
@@ -174,14 +175,24 @@ class OnboardingController extends Controller
 
         if (!$unit) {
             throw ValidationException::withMessages([
-                'unit_id' => __('ຫນ່ວຍຍ່ອຍທີ່ເລືອກບໍ່ຖືກຕ້ອງ'),
+                'unit_id' => __('Ã ÂºÂ«Ã Âºâ„¢Ã Â»Ë†Ã ÂºÂ§Ã ÂºÂÃ ÂºÂÃ Â»Ë†Ã ÂºÂ­Ã ÂºÂÃ Âºâ€”Ã ÂºÂµÃ Â»Ë†Ã Â»â‚¬Ã ÂºÂ¥Ã ÂºÂ·Ã ÂºÂ­Ã ÂºÂÃ ÂºÅ¡Ã Â»ÂÃ Â»Ë†Ã Âºâ€“Ã ÂºÂ·Ã ÂºÂÃ Âºâ€¢Ã Â»â€°Ã ÂºÂ­Ã Âºâ€¡'),
             ]);
         }
 
         if ($branchId && (int) $unit->branch_id !== (int) $branchId) {
             throw ValidationException::withMessages([
-                'unit_id' => __('ຫນ່ວຍຍ່ອຍບໍ່ກົງກັບສາຂາທີ່ເລືອກ'),
+                'unit_id' => __('Ã ÂºÂ«Ã Âºâ„¢Ã Â»Ë†Ã ÂºÂ§Ã ÂºÂÃ ÂºÂÃ Â»Ë†Ã ÂºÂ­Ã ÂºÂÃ ÂºÅ¡Ã Â»ÂÃ Â»Ë†Ã ÂºÂÃ ÂºÂ»Ã Âºâ€¡Ã ÂºÂÃ ÂºÂ±Ã ÂºÅ¡Ã ÂºÂªÃ ÂºÂ²Ã Âºâ€šÃ ÂºÂ²Ã Âºâ€”Ã ÂºÂµÃ Â»Ë†Ã Â»â‚¬Ã ÂºÂ¥Ã ÂºÂ·Ã ÂºÂ­Ã ÂºÂ'),
             ]);
         }
     }
 }
+
+
+
+
+
+
+
+
+
+

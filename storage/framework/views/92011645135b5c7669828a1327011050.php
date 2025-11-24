@@ -363,7 +363,7 @@
                              <td>
                                 <span class="store-name">
                                 <i class="bi bi-computer text-muted" ></i>
-                                <?php echo e($r->pos_serial); ?>
+                                <?php echo e($r->pos_serial ?: '-'); ?>
 
                                 </span>
                             </td>
@@ -391,7 +391,7 @@
 
 
                             <td>
-                                <span class="store-name">
+                                <span class="store-name text-danger fw-semibold">
                                     <?php echo e($r->admin_remark); ?>
 
                                 </span>

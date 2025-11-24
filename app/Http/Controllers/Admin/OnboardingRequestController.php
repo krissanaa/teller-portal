@@ -26,11 +26,16 @@ class OnboardingRequestController extends Controller
         return view('admin.onboarding.show', compact('req'));
     }
 
-    public function approve($id)
+    public function approve(Request $request, $id)
     {
+        $data = $request->validate([
+            'pos_serial' => 'required|string|max:255',
+        ]);
+
         $req = OnboardingRequest::findOrFail($id);
         $req->approval_status = 'approved';
         $req->admin_remark = null;
+        $req->pos_serial = $data['pos_serial'];
         $req->save();
         return back()->with('success', 'Request approved.');
     }

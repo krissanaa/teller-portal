@@ -15,12 +15,39 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        background: linear-gradient(135deg, #0f766e 0%, #14b8a6 40%, #5eead4 100%);
+        background: #0b231f;
         position: relative;
         overflow-x: hidden;
         overflow-y: auto;
     }
 
+    /* Full-screen background layers to keep the photo visible while readable */
+    .background-hero {
+        position: fixed;
+        inset: 0;
+        background:
+            linear-gradient(135deg, rgba(0, 0, 0, 0.25), rgba(0, 0, 0, 0.15)),
+            url('{{ asset('images/apbBG.jpeg') }}') center center / cover no-repeat;
+        filter: saturate(1.1) contrast(1.05) brightness(1.05);
+        z-index: 0;
+    }
+
+    .background-hero::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: radial-gradient(circle at 50% 40%, rgba(255,255,255,0.12), transparent 50%);
+        mix-blend-mode: screen;
+        pointer-events: none;
+    }
+
+    .background-vignette {
+        position: fixed;
+        inset: 0;
+        background: radial-gradient(circle at 50% 45%, rgba(0,0,0,0) 0%, rgba(0,0,0,0.07) 55%, rgba(0,0,0,0.18) 100%);
+        pointer-events: none;
+        z-index: 1;
+    }
     /* Animated Tech Background */
     .tech-background {
         position: fixed;
@@ -136,18 +163,47 @@
         position: relative;
         z-index: 10;
         width: 100%;
+<<<<<<< ours
+<<<<<<< ours
+<<<<<<< ours
+        max-width: 520px;
+=======
+        max-width: 480px;
+>>>>>>> theirs
+=======
+        max-width: 450px;
+>>>>>>> theirs
+        padding: clamp(15px, 5vw, 20px);
+        margin: clamp(20px, 5vh, 40px) auto;
+    }
+
+    .login-card {
+<<<<<<< ours
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.96) 0%, rgba(249, 252, 251, 0.92) 100%);
+        backdrop-filter: blur(18px);
+        border-radius: clamp(16px, 4vw, 22px);
+        padding: clamp(28px, 6vw, 44px);
+        box-shadow: 0 24px 70px rgba(0, 0, 0, 0.35), 0 1px 0 rgba(255, 255, 255, 0.6);
+        border: 1px solid rgba(255, 255, 255, 0.22);
+=======
         max-width: 450px;
         padding: clamp(15px, 5vw, 20px);
         margin: clamp(20px, 5vh, 40px) auto;
     }
 
     .login-card {
+=======
+>>>>>>> theirs
         background: rgba(255, 255, 255, 0.98);
         backdrop-filter: blur(20px);
         border-radius: clamp(12px, 4vw, 20px);
         padding: clamp(25px, 6vw, 40px);
         box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
         border: 1px solid rgba(255, 255, 255, 0.2);
+<<<<<<< ours
+>>>>>>> theirs
+=======
+>>>>>>> theirs
         animation: cardSlideUp 0.6s ease-out;
         width: 100%;
     }
@@ -628,6 +684,8 @@
         }
     }
 </style>
+<div class="background-hero"></div>
+<div class="background-vignette"></div>
 <!-- Login Container -->
 <div class="login-container">
     <div class="login-card">

@@ -10,21 +10,27 @@
     * { font-family: 'Noto Sans Lao', 'Noto Sans', sans-serif; }
 
     :root {
-        --apb-primary: #0f766e;
-        --apb-accent: #14b8a6;
-        --apb-light: #ecfdf5;
+        --apb-primary: #14b8a6; /* Tailwind Teal 500 */
+        --apb-secondary: #0f766e; /* darker teal */
+        --apb-dark: #0d5c56;
     }
 
-    body { background: #F5F7FA; }
+    /* Use layout background to match dashboard/nav */
+    body { background: inherit; }
 
-    .page-header { background: #fff; border-radius: 12px; padding: 24px; margin-bottom: 24px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); border-left: 4px solid var(--apb-accent); }
-    .page-header h4 { margin:0; color:#050505; font-weight:700; font-size:1.5rem; display:flex; align-items:center; gap:12px; }
+    .form-shell {
+        max-width: 1180px;
+        margin: 0 auto;
+    }
+
+    .page-header { background: white; border-radius: 12px; padding: 24px; margin-bottom: 24px; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; }
+    .page-header h4 { margin: 0; color: rgb(0, 0, 0); font-weight: 700; font-size: 1.5rem; display: flex; align-items: center; gap: 12px; }
     .page-subtitle { color:#000; font-size:0.9rem; margin:6px 0 0; }
 
-    .form-card { background:#fff; border-radius:12px; box-shadow:0 2px 8px rgba(0,0,0,0.06); overflow:hidden; }
-    .form-body { padding:30px; }
-    .form-section { margin-bottom:30px; }
-    .section-title { color:#000; font-weight:700; font-size:1.2em; margin-bottom:18px; padding-bottom:10px; border-bottom:2px solid #f0f0f0; display:flex; align-items:center; gap:10px; }
+    .form-card { background:#fff; border-radius:14px; box-shadow:0 10px 28px rgba(0,0,0,0.08); overflow:hidden; }
+    .form-body { padding:22px; display:grid; gap:16px; }
+    .form-section { margin:0; padding:14px 16px; border:1px solid #eef2f0; border-radius:12px; background:#fbfdfc; }
+    .section-title { color:#000; font-weight:700; font-size:1.05em; margin-bottom:12px; padding-bottom:8px; border-bottom:1px solid #e6ecea; display:flex; align-items:center; gap:10px; }
     .section-title i { color: var(--apb-accent); font-size:1.3rem; }
     .form-label { font-weight:600; color:#000; margin-bottom:8px; font-size:1em; display:flex; align-items:center; gap:6px; }
     .form-label i { color:#6c757d; font-size:0.95rem; }
@@ -33,9 +39,9 @@
     .form-control:focus, .form-select:focus { border-color: var(--apb-accent); box-shadow:0 0 0 0.2rem rgba(76,175,80,0.15); background:#fff; }
 
     /* File upload */
-    .file-upload-container { margin-bottom:20px; }
-    .file-upload-area { border:3px dashed #B0BEC5; border-radius:10px; padding:30px 20px; text-align:center; background:#FAFAFA; transition:all 0.3s ease; cursor:pointer; }
-    .file-upload-area:hover { border-color:var(--apb-accent); background:#fff; transform:translateY(-2px); box-shadow:0 4px 12px rgba(76,175,80,0.1); }
+    .file-upload-container { margin-bottom:12px; }
+    .file-upload-area { border:2px dashed #B0BEC5; border-radius:10px; padding:22px 16px; text-align:center; background:#FAFAFA; transition:all 0.3s ease; cursor:pointer; }
+    .file-upload-area:hover { border-color:var(--apb-accent); background:#fff; transform:translateY(-1px); box-shadow:0 2px 8px rgba(76,175,80,0.1); }
     .file-upload-area.dragover { border-color:var(--apb-accent); background:var(--apb-light); transform:scale(1.02); }
     .file-upload-icon { font-size:3.5rem; color:var(--apb-accent); margin-bottom:16px; display:block; animation:float 3s ease-in-out infinite; }
     @keyframes float { 0%,100%{transform:translateY(0);} 50%{transform:translateY(-10px);} }
@@ -54,8 +60,8 @@
     .file-remove { background:#FFEBEE; border:2px solid #FFCDD2; color:#C62828; width:32px; height:32px; border-radius:8px; display:flex; align-items:center; justify-content:center; cursor:pointer; transition:all 0.3s ease; font-size:1.1rem; }
     .file-remove:hover { background:#EF5350; color:#fff; transform:scale(1.1); }
 
-    .form-actions { padding:24px 32px; background:linear-gradient(to right,#FAFAFA,#F5F5F5); border-top:2px solid #E0E0E0; display:flex; justify-content:space-between; gap:16px; }
-    .btn-submit { background:linear-gradient(135deg, var(--apb-primary) 0%, var(--apb-accent) 100%); border:none; color:#fff; padding:14px 32px; border-radius:10px; font-weight:700; display:inline-flex; align-items:center; gap:10px; font-size:1rem; box-shadow:0 4px 12px rgba(76,175,80,0.2); }
+    .form-actions { padding:18px 22px; background:linear-gradient(to right,#FAFAFA,#F5F5F5); border-top:1px solid #E0E0E0; display:flex; justify-content:space-between; gap:16px; }
+    .btn-submit { background:linear-gradient(135deg, var(--apb-primary) 0%, var(--apb-accent) 100%); border:none; color:#fff; padding:12px 26px; border-radius:10px; font-weight:700; display:inline-flex; align-items:center; gap:10px; font-size:1rem; box-shadow:0 4px 12px rgba(76,175,80,0.2); }
     .btn-back { background:#fff; border:2px solid #f70000; color:#000; padding:14px 32px; border-radius:10px; font-weight:700; display:inline-flex; align-items:center; gap:10px; text-decoration:none; font-size:1rem; }
     .btn-submit:hover { transform:translateY(-3px); box-shadow:0 6px 20px rgba(76,175,80,0.3); color:#fff; }
     .btn-back:hover { background:#ff0000; color:#fff; border-color:#ff0000; transform:translateY(-3px); }
@@ -69,12 +75,83 @@
         .file-upload-area { padding:30px 20px; }
         .file-upload-formats { flex-wrap:wrap; }
     }
+        .form-grid-layout {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 12px;
+        margin-bottom: 16px;
+    }
+
+    .grid-item {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .grid-full {
+        grid-column: 1 / -1;
+    }
+
+    .section-header {
+        grid-column: 1 / -1;
+        margin: 8px 0 4px;
+        padding: 10px 14px;
+        background: linear-gradient(135deg, #ecfdf5 0%, #f0fdf9 100%);
+        border-radius: 8px;
+        border-left: 4px solid #14b8a6;
+    }
+
+    .section-header h5 {
+        color: #0f766e;
+        font-weight: 700;
+        font-size: 1rem;
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .section-header h5 i {
+        color: #14b8a6;
+        font-size: 1.2rem;
+    }
+
+    .file-upload-compact {
+        grid-column: 1 / -1;
+    }
+
+    .file-upload-area {
+        padding: 20px 16px;
+    }
+
+    .file-upload-icon {
+        font-size: 2.5rem;
+        margin-bottom: 10px;
+    }
+
+    /* Responsive */
+    @media (max-width: 1366px) {
+        .form-grid-layout {
+            grid-template-columns: repeat(3, 1fr);
+        }
+    }
+
+    @media (max-width: 992px) {
+        .form-grid-layout {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+
+    @media (max-width: 768px) {
+        .form-grid-layout {
+            grid-template-columns: 1fr;
+        }
+    }
 </style>
 
-<div class="container-fluid py-4">
+<div class="form-shell container-fluid py-4">
     <div class="page-header">
         <h4><i class="bi bi-file-earmark-plus"></i> ສ້າງຄຳຂໍເປີດບັນຊີໃໝ່</h4>
-        <p class="page-subtitle">ກະລຸນາຕື່ມຂໍ້ມູນໃຫ້ຄົບຖ້ວນ ແລະ ຖືກຕ້ອງ</p>
+
     </div>
 
     <form method="POST" action="{{ route('teller.requests.store') }}" enctype="multipart/form-data" class="form-card" id="mainForm">

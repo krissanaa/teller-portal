@@ -8,6 +8,20 @@
         font-family: 'Noto Sans Lao', 'Noto Sans', sans-serif;
     }
 
+    /* Use layout background to match dashboard/nav */
+    body { background: inherit; }
+        :root {
+        --apb-primary: #14b8a6; /* Tailwind Teal 500 */
+        --apb-secondary: #0f766e; /* darker teal */
+        --apb-dark: #0d5c56;
+    }
+
+    .report-shell {
+        max-width: 1180px;
+        margin: 0 auto;
+    }
+
+
     .page-header {
         background: white;
         border-radius: 12px;
@@ -38,24 +52,24 @@
     }
     .btn-create {
         background: rgb(255, 255, 255);
-        border: 2px solid #f70000;
+        border: 2px solid #ff0000;
         color: #000000;
-        padding: 10px 20px;
+        padding: 10px 18px;
         border-radius: 10px;
         font-weight: 700;
         transition: all 0.3s ease;
         display: inline-flex;
         align-items: center;
-        gap: 10px;
+        gap: 8px;
         text-decoration: none;
-        font-size: 1rem;
+        font-size: 0.95rem;
     }
 
     .btn-create:hover {
-        background: rgb(255, 0, 0);
+        background: #ff0000;
         border: 2px solid #ff0000;
         color: #ffffff;
-        transform: translateY(-3px);
+        transform: translateY(-2px);
     }
 
 
@@ -403,7 +417,7 @@
 
 </style>
 
-<div class="container-fluid py-3">
+<div class="report-shell container-fluid py-3">
     <!-- Page Header -->
     <div class="page-header">
         <h4>

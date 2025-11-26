@@ -31,7 +31,8 @@ services:
       - "8081:80"
     volumes:
       - .:/var/www/html:ro
-      - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+      # Mount the entire nginx config directory to avoid file/dir mount issues on different hosts
+      - ./docker/nginx:/etc/nginx/conf.d:ro
     depends_on:
       - app
 

@@ -599,10 +599,11 @@
                         <?php $__empty_1 = true; $__currentLoopData = $notifications; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $n): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
                             <li>
                                 <div class="notification-item <?php echo e($n->approval_status == 'approved' ? 'approved' : 'rejected'); ?>">
-                                    <div class="notification-store">
-                                        <?php echo e($n->store_name . ' (' . $n->refer_code . ')'); ?>
+<div class="notification-store">
+    <div><?php echo e($n->store_name); ?> (<?php echo e($n->refer_code); ?>)</div>
+    <div>POS Serial: <?php echo e($n->pos_serial); ?></div>
+</div>
 
-                                    </div>
                                     <div class="notification-status <?php echo e($n->approval_status == 'approved' ? 'text-success' : 'text-danger'); ?>">
                                         <?php echo e($n->approval_status == 'approved' ? '✅ Approved' : '❌ Rejected'); ?>
 

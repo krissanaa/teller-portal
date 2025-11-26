@@ -29,7 +29,7 @@ class OnboardingController extends Controller
             'store_address'     => 'nullable|string',
             'pos_serial'        => 'nullable|string|max:255',
             'bank_account'      => 'nullable|string|max:255',
-            'installation_date' => 'nullable|date',
+            'installation_date' => 'required|date',
             'attachments.*'     => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:5120',
         ]);
 
@@ -59,10 +59,10 @@ class OnboardingController extends Controller
                 ->first();
 
             $nextNumber = 1;
-            if ($latest && preg_match('/(\d+)/', $latest->refer_code, $matches)) {
-                $nextNumber = intval(substr($matches[1], -8)) + 1;
-            } elseif ($latest) {
-                $nextNumber = $latest->id + 1;
+            if ($latest) {
+                $raw = (string) ($latest->refer_code ?? '');
+                $lastNumeric = preg_match('/^\d+$/', $raw) ? $raw : (string) $latest->id;
+                $nextNumber = (int) substr(str_pad($lastNumeric, 8, '0', STR_PAD_LEFT), -8) + 1;
             }
 
             // Format ໃໝ່: ເລກ 8 ຫຼັກ (ເພີ່ມ 0 ນຳໜ້າ)
@@ -98,7 +98,7 @@ class OnboardingController extends Controller
             'store_address'      => 'nullable|string',
             'pos_serial'         => 'nullable|string|max:255',
             'bank_account'       => 'nullable|string|max:50',
-            'installation_date'  => 'nullable|date',
+            'installation_date'  => 'required|date',
             'attachments.*'      => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:5120',
             'delete_attachments' => 'array',
             'delete_attachments.*' => 'integer',
@@ -145,7 +145,7 @@ class OnboardingController extends Controller
 
         return redirect()
             ->route('teller.requests.show', $record->id)
-            ->with('success', 'Ã ÂºÂªÃ ÂºÂ³Ã Â»â‚¬Ã ÂºÂ¥Ã ÂºÂ±Ã Âºâ€Ã ÂºÂÃ ÂºÂ²Ã Âºâ„¢Ã ÂºÂ­Ã Â»ÂÃ ÂºÂÃ Â»â€°Ã Â»â€žÃ Âºâ€šÃ Âºâ€šÃ Â»ÂÃ Â»â€°Ã ÂºÂ¡Ã ÂºÂ¹Ã Âºâ„¢');
+            ->with('success', 'ບັນທຶກການແກ້ໄຂສຳເລັດ');
     }
 
     // Ã°Å¸â€˜ÂÃ¯Â¸Â Ã Â¹ÂÃ Â¸ÂªÃ Â¸â€Ã Â¸â€¡Ã Â¸Â£Ã Â¸Â²Ã Â¸Â¢Ã Â¸Â¥Ã Â¸Â°Ã Â¹â‚¬Ã Â¸Â­Ã Â¸ÂµÃ Â¸Â¢Ã Â¸â€Ã Â¸â€žÃ Â¸Â³Ã Â¸â€šÃ Â¸Â­
@@ -186,13 +186,3 @@ class OnboardingController extends Controller
         }
     }
 }
-
-
-
-
-
-
-
-
-
-

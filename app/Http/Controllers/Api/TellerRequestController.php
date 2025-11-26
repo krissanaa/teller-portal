@@ -64,10 +64,10 @@ class TellerRequestController extends Controller
             $latest = $latestQuery->first();
 
             $nextNumber = 1;
-            if ($latest && preg_match('/(\\d+)/', $latest->refer_code, $matches)) {
-                $nextNumber = intval(substr($matches[1], -8)) + 1;
-            } elseif ($latest) {
-                $nextNumber = $latest->id + 1;
+            if ($latest) {
+                $raw = (string) ($latest->refer_code ?? '');
+                $lastNumeric = preg_match('/^\\d+$/', $raw) ? $raw : (string) $latest->id;
+                $nextNumber = (int) substr(str_pad($lastNumeric, 8, '0', STR_PAD_LEFT), -8) + 1;
             }
 
             $payload['refer_code'] = str_pad($nextNumber, 8, '0', STR_PAD_LEFT);
@@ -155,7 +155,7 @@ class TellerRequestController extends Controller
             'bank_account' => ['nullable', 'string', 'max:50'],
             'branch_id' => ['nullable', 'integer', Rule::exists($branchTable, 'id')],
             'unit_id' => ['nullable', 'integer', Rule::exists($unitTable, 'id')],
-            'installation_date' => ['nullable', 'date'],
+            'installation_date' => ['required', 'date'],
             'attachments' => ['sometimes', 'array'],
             'attachments.*' => ['file', 'mimes:pdf,jpg,jpeg,png', 'max:5120'],
             'delete_attachments' => ['sometimes', 'array'],

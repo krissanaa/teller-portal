@@ -1,908 +1,563 @@
-@extends('layouts.teller')
+﻿@extends('layouts.teller')
 
 @section('title', 'ແກ້ໄຂຄຳຂໍເປີດບັນຊີ')
 
 @section('content')
+@php
+$tellerProfile = $tellerProfile ?? auth()->user()->loadMissing(['branch', 'unit']);
+@endphp
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script>
+    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+</script>
+
 <style>
     * {
         font-family: 'Noto Sans Lao', 'Noto Sans', sans-serif;
     }
 
-    .page-header {
+    :root {
+        --apb-primary: #14b8a6;
+        --apb-bg: #f1f5f9;
+        --apb-border: #e2e8f0;
+    }
+
+    body {
+        background: var(--apb-bg);
+    }
+
+    .main-container {
+        max-width: 1200px;
+        margin: 20px auto;
+        padding: 0 20px;
+    }
+
+    .single-card {
         background: white;
-        border-radius: 12px;
-        padding: 24px;
-        margin-bottom: 24px;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-        border-left: 4px solid #ffc107;
-    }
-
-    .page-header h4 {
-        margin: 0;
-        color: #212529;
-        font-weight: 700;
-        font-size: 1.5rem;
-        display: flex;
-        align-items: center;
-        gap: 12px;
-    }
-
-    .page-subtitle {
-        color: #6c757d;
-        font-size: 0.9rem;
-        margin-top: 6px;
-        margin-bottom: 0;
-    }
-
-    .alert-custom {
-        border-radius: 10px;
-        border: none;
-        padding: 14px 18px;
-        margin-bottom: 20px;
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        font-weight: 600;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    }
-
-    .alert-custom i {
-        font-size: 1.3rem;
-    }
-
-    .warning-box {
-        background: #fff3cd;
-        border-left: 3px solid #ffc107;
-        padding: 14px 16px;
-        border-radius: 6px;
-        margin-bottom: 20px;
-        display: flex;
-        align-items: start;
-        gap: 12px;
-    }
-
-    .warning-box i {
-        color: #ffc107;
-        font-size: 1.3rem;
-        margin-top: 2px;
-    }
-
-    .warning-box-content {
-        flex: 1;
-    }
-
-    .warning-box-title {
-        color: #000;
-        font-weight: 700;
-        margin-bottom: 4px;
-        font-size: 0.95rem;
-    }
-
-    .warning-box-text {
-        color: #856404;
-        font-size: 0.85rem;
-        margin: 0;
-    }
-
-    .form-card {
-        background: white;
-        border-radius: 12px;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-        overflow: hidden;
-    }
-
-    .form-body {
+        border-radius: 16px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
         padding: 30px;
+        border: 1px solid white;
     }
 
-    .form-section {
-        margin-bottom: 30px;
-    }
-
-    .section-title {
-        color: #212529;
+    .page-title {
+        font-size: 1.25rem;
         font-weight: 700;
-        font-size: 1.1rem;
-        margin-bottom: 18px;
-        padding-bottom: 10px;
-        border-bottom: 2px solid #f0f0f0;
+        color: #1e293b;
+        margin-bottom: 24px;
         display: flex;
         align-items: center;
         gap: 10px;
+        padding-bottom: 16px;
+        border-bottom: 1px solid var(--apb-border);
     }
 
-    .section-title i {
-        color: var(--apb-accent);
-        font-size: 1.2rem;
+    .page-title i {
+        color: #f59e0b;
+        font-size: 1.4rem;
     }
 
-    .form-label {
+    /* Compact Grid Layout */
+    .form-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 20px;
+        margin-bottom: 24px;
+    }
+
+    .col-span-2 {
+        grid-column: span 2;
+    }
+
+    .col-span-4 {
+        grid-column: span 4;
+    }
+
+    .form-group label {
+        display: block;
         font-weight: 600;
-        color: #212529;
+        color: #475569;
         margin-bottom: 6px;
         font-size: 0.9rem;
-        display: flex;
-        align-items: center;
-        gap: 6px;
     }
 
-    .form-label i {
-        color: #6c757d;
+    .form-group label .required {
+        color: #ef4444;
+        margin-left: 2px;
+    }
+
+    .form-control,
+    .form-select {
+        width: 100%;
+        padding: 10px 14px;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        font-size: 0.95rem;
+        transition: all 0.2s;
+        background: #f8fafc;
+    }
+
+    .form-control:focus,
+    .form-select:focus {
+        border-color: var(--apb-primary);
+        background: white;
+        box-shadow: 0 0 0 3px rgba(20, 184, 166, 0.1);
+        outline: none;
+    }
+
+    /* Upload Section */
+    .upload-section {
+        background: #f8fafc;
+        border: 1px dashed #cbd5e1;
+        border-radius: 12px;
+        padding: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 20px;
+        transition: all 0.2s;
+        cursor: pointer;
+    }
+
+    .upload-section:hover {
+        border-color: var(--apb-primary);
+        background: #f0fdfa;
+    }
+
+    .upload-icon {
+        width: 40px;
+        height: 40px;
+        background: white;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--apb-primary);
+        font-size: 1.2rem;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    }
+
+    .upload-text {
+        font-weight: 600;
+        color: #334155;
         font-size: 0.95rem;
     }
 
-    .required {
-        color: #dc3545;
-        font-weight: 700;
-    }
-
-    .form-control, .form-select {
-        border: 1px solid #ced4da;
-        border-radius: 8px;
-        padding: 11px 14px;
-        transition: all 0.3s ease;
-        font-size: 0.9rem;
-    }
-
-    .form-control:focus, .form-select:focus {
-        border-color: var(--apb-accent);
-        box-shadow: 0 0 0 0.2rem rgba(76, 175, 80, 0.15);
-        background: white;
-    }
-
-    .form-control:hover, .form-select:hover {
-        border-color: #adb5bd;
-    }
-
-    .help-text {
-        background: #f8f9fa;
-        border-left: 3px solid var(--apb-accent);
-        padding: 14px 16px;
-        border-radius: 6px;
-        margin-bottom: 24px;
-        font-size: 0.9rem;
-    }
-
-    .help-text i {
-        color: var(--apb-accent);
-        margin-right: 6px;
-    }
-
-    .current-file-box {
-        background: #f8f9fa;
-        border: 1px solid #ced4da;
-        border-radius: 8px;
-        padding: 10px 14px;
-        margin-bottom: 12px;
-        display: inline-flex;
-        align-items: center;
-        gap: 10px;
-        font-weight: 600;
-        color: #212529;
-        text-decoration: none;
-        transition: all 0.3s ease;
-    }
-
-    .current-file-box:hover {
-        background: #e9ecef;
-        color: #212529;
-    }
-
-    .current-file-box i {
-        font-size: 1.1rem;
-        color: var(--apb-accent);
-    }
- /* Drag & Drop File Upload Area */
-    .file-upload-container {
-        margin-bottom: 20px;
-    }
-
-    .file-upload-area {
-        border: 3px dashed #B0BEC5;
-        border-radius: 10px;
-        padding: 30px 20px;
-        text-align: center;
-        background: #FAFAFA;
-        transition: all 0.3s ease;
-        cursor: pointer;
-        position: relative;
-    }
-
-    .file-upload-area:hover {
-        border-color: var(--apb-accent);
-        background: white;
-        transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(76, 175, 80, 0.1);
-    }
-
-    .file-upload-area.dragover {
-        border-color: var(--apb-accent);
-        background: var(--apb-light);
-        transform: scale(1.02);
-    }
-
-    .file-upload-icon {
-        font-size: 3.5rem;
-        color: var(--apb-accent);
-        margin-bottom: 16px;
-        display: block;
-        animation: float 3s ease-in-out infinite;
-    }
-
-    @keyframes float {
-        0%, 100% { transform: translateY(0px); }
-        50% { transform: translateY(-10px); }
-    }
-
-    .file-upload-text {
-        color: var(--apb-primary);
-        font-weight: 700;
-        font-size: 1.1rem;
-        margin-bottom: 8px;
-    }
-
-    .file-upload-hint {
-        color: #78909C;
-        font-size: 0.9rem;
-        margin-bottom: 12px;
-    }
-
-    .file-upload-formats {
-        display: flex;
-        justify-content: center;
-        gap: 12px;
-        margin-top: 16px;
-    }
-
-    .format-badge {
-        background: white;
-        border: 2px solid #E0E0E0;
-        padding: 6px 14px;
-        border-radius: 20px;
-        font-size: 0.8rem;
-        font-weight: 600;
-        color: #546E7A;
-    }
-
-    #fileName {
-        margin-top: 12px;
-        color: var(--apb-accent);
-        font-weight: 700;
-    }
-
-    .form-actions {
-        padding: 20px 30px;
-        background: #f8f9fa;
-        border-top: 1px solid #e9ecef;
-        display: flex;
-        gap: 12px;
-        flex-wrap: wrap;
-    }
-
-    .btn-update {
-        background: linear-gradient(90deg, var(--apb-primary) 0%, var(--apb-secondary) 100%);
-        border: none;
-        color: white;
-        padding: 11px 28px;
-        border-radius: 8px;
-        font-weight: 600;
-        transition: all 0.3s ease;
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-    }
-
-    .btn-update:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(45, 95, 63, 0.3);
-        background: linear-gradient(90deg, var(--apb-secondary) 0%, var(--apb-dark) 100%);
-        color: white;
-    }
-
-    .btn-cancel {
-        background: rgb(255, 255, 255);
-        border: 2px solid #f70000;
-        color: #000000;
-        padding: 14px 32px;
-        border-radius: 10px;
-        font-weight: 700;
-        transition: all 0.3s ease;
-        display: inline-flex;
-        align-items: center;
-        gap: 10px;
-        text-decoration: none;
-        font-size: 1rem;
-    }
-
-    .btn-cancel:hover {
-        background: rgb(255, 0, 0);
-        border: 2px solid #ff0000;
-        color: #ffffff;
-        transform: translateY(-3px);
-    }
-    @media (max-width: 768px) {
-        .form-body, .form-actions {
-            padding: 20px;
-        }
-
-        .form-actions {
-            flex-direction: column-reverse;
-        }
-
-        .form-actions button, .form-actions a {
-            width: 100%;
-            justify-content: center;
-        }
-    }
-    .file-upload-container {
-        margin-bottom: 20px;
-    }
-
-    .file-upload-area {
-        border: 3px dashed #B0BEC5;
-        border-radius: 10px;
-        padding: 30px 20px;
-        text-align: center;
-        background: #FAFAFA;
-        transition: all 0.3s ease;
-        cursor: pointer;
-        position: relative;
-    }
-
-    .file-upload-area:hover {
-        border-color: var(--apb-accent);
-        background: white;
-        transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(76, 175, 80, 0.1);
-    }
-
-    .file-upload-area.dragover {
-        border-color: var(--apb-accent);
-        background: var(--apb-light);
-        transform: scale(1.02);
-    }
-     .format-badge {
-        background: white;
-        border: 2px solid #E0E0E0;
-        padding: 6px 14px;
-        border-radius: 20px;
-        font-size: 0.8rem;
-        font-weight: 600;
-        color: #546E7A;
-    }
-    .file-upload-text {
-        color: var(--apb-primary);
-        font-weight: 700;
-        font-size: 1.1rem;
-        margin-bottom: 8px;
-    }
-
-    .file-upload-hint {
-        color: #78909C;
-        font-size: 0.9rem;
-        margin-bottom: 12px;
-    }
-
-    .file-upload-formats {
-        display: flex;
-        justify-content: center;
-        gap: 12px;
-        margin-top: 16px;
-    }
-
-    .format-badge {
-        background: white;
-        border: 2px solid #E0E0E0;
-        padding: 6px 14px;
-        border-radius: 20px;
-        font-size: 0.8rem;
-        font-weight: 600;
-        color: #546E7A;
+    .upload-hint {
+        color: #94a3b8;
+        font-size: 0.85rem;
     }
 
     /* File List */
     .file-list {
-        margin-top: 20px;
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 12px;
+        margin-top: 16px;
     }
 
     .file-item {
         background: white;
-        border: 2px solid #E0E0E0;
-        border-radius: 10px;
-        padding: 14px 18px;
-        margin-bottom: 12px;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        transition: all 0.3s ease;
-        animation: slideIn 0.3s ease;
-    }
-
-    @keyframes slideIn {
-        from {
-            opacity: 0;
-            transform: translateY(-10px);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
-
-    .file-item:hover {
-        border-color: var(--apb-accent);
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-    }
-
-    .file-info {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        flex: 1;
-    }
-
-    .file-icon {
-        width: 40px;
-        height: 40px;
-        background: var(--apb-light);
+        border: 1px solid #e2e8f0;
+        padding: 10px;
         border-radius: 8px;
         display: flex;
         align-items: center;
-        justify-content: center;
-        color: var(--apb-accent);
-        font-size: 1.3rem;
+        gap: 10px;
+        position: relative;
+    }
+
+    .file-preview-img {
+        width: 40px;
+        height: 40px;
+        object-fit: cover;
+        border-radius: 6px;
     }
 
     .file-details {
         flex: 1;
+        overflow: hidden;
     }
 
     .file-name {
+        font-size: 0.85rem;
         font-weight: 600;
-        color: #212529;
-        margin-bottom: 2px;
-        font-size: 0.9rem;
+        color: #334155;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
 
     .file-size {
-        color: #78909C;
-        font-size: 0.8rem;
+        font-size: 0.75rem;
+        color: #94a3b8;
     }
 
-    .file-remove {
-        background: #FFEBEE;
-        border: 2px solid #FFCDD2;
-        color: #C62828;
-        width: 32px;
-        height: 32px;
-        border-radius: 8px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
+    .remove-file {
+        color: #ef4444;
         cursor: pointer;
-        transition: all 0.3s ease;
+        padding: 4px;
+        border-radius: 4px;
+        transition: all 0.2s;
         font-size: 1.1rem;
     }
 
-    .file-remove:hover {
-        background: #EF5350;
-        color: white;
-        transform: scale(1.1);
-    }
-    /* Attachment Section */
-    .attachment-section {
-        background: #f8f9fa;
-        border-radius: 10px;
-        padding: 20px;
-        border: 2px dashed #ced4da;
-        margin-top: 20px;
+    .remove-file i {
+        color: #ef4444;
     }
 
-    .attachment-header {
+    .remove-file:hover {
+        color: #dc2626;
+        background: #fee2e2;
+    }
+
+    .remove-file:hover i {
+        color: #dc2626;
+    }
+
+    /* Actions */
+    .form-actions {
+        margin-top: 30px;
+        padding-top: 20px;
+        border-top: 1px solid var(--apb-border);
         display: flex;
-        align-items: center;
-        gap: 10px;
-        color: #212529;
-        font-weight: 700;
-        font-size: 1.05rem;
-        margin-bottom: 14px;
-    }
-
-    .attachment-header i {
-        color: var(--apb-accent);
-    }
-
-    .attachment-preview {
-        border-radius: 10px;
-        overflow: hidden;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-        margin-top: 14px;
-    }
-
-    .attachment-preview img {
-        max-width: 100%;
-        height: auto;
-        display: block;
-        border-radius: 10px;
-    }
-
-    .pdf-viewer {
-        border-radius: 10px;
-        border: 1px solid #e9ecef;
-    }
-
-    /* Action Buttons */
-    .action-buttons {
-        padding: 20px 28px;
-        background: #f8f9fa;
-        border-top: 1px solid #e9ecef;
-        display: flex;
+        justify-content: flex-end;
         gap: 12px;
-        flex-wrap: wrap;
     }
 
-    .btn-edit {
-        background: #ffc107;
-        border: none;
-        color: #000;
-        padding: 11px 28px;
+    .btn {
+        padding: 10px 24px;
         border-radius: 8px;
         font-weight: 600;
-        transition: all 0.3s ease;
+        border: none;
+        cursor: pointer;
         display: inline-flex;
         align-items: center;
         gap: 8px;
+        font-size: 0.95rem;
+        transition: all 0.2s;
         text-decoration: none;
     }
 
-    .btn-edit:hover {
-        background: #e0a800;
-        transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(255, 193, 7, 0.3);
-        color: #000;
+    .btn-cancel {
+        background: white;
+        border: 1px solid #cbd5e1;
+        color: #64748b;
     }
 
-
-
-    .btn-pdf {
-        background: linear-gradient(90deg, var(--apb-primary) 0%, var(--apb-secondary) 100%);
-        border: none;
-        color: white;
-        padding: 10px 20px;
-        border-radius: 8px;
-        font-weight: 600;
-        transition: all 0.3s ease;
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-        text-decoration: none;
+    .btn-cancel:hover {
+        background: #f1f5f9;
+        color: #334155;
     }
 
-    .btn-pdf:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(45, 95, 63, 0.3);
+    .btn-submit {
+        background: #f59e0b;
         color: white;
     }
 
-    @media (max-width: 768px) {
-        .detail-row {
-            flex-direction: column;
-            gap: 6px;
+    .btn-submit:hover {
+        background: #d97706;
+    }
+
+    @media (max-width: 992px) {
+        .form-grid {
+            grid-template-columns: repeat(2, 1fr);
         }
 
-        .detail-label {
-            flex: none;
-        }
-
-        .card-body-custom, .action-buttons {
-            padding: 20px;
-        }
-
-        .action-buttons {
-            flex-direction: column;
-        }
-
-        .action-buttons > * {
-            width: 100%;
-            justify-content: center;
+        .col-span-2,
+        .col-span-4 {
+            grid-column: span 2;
         }
     }
-    .drive-style-section {
-    background: #fff;
-    border-radius: 16px;
-    padding: 24px;
-    border: 1px solid #e9ecef;
-}
-.drive-header {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-        color: #0f766e;
-    font-size: 1.1rem;
-}
-.drive-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-    gap: 16px;
-}
-.drive-card {
-    position: relative;
-    background: #ffffff;
-    border-radius: 12px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.08);
-    overflow: hidden;
-    cursor: pointer;
-    transition: all 0.25s ease;
-}
-.drive-card:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 5px 14px rgba(0,0,0,0.12);
-}
-.drive-thumb {
-    height: 160px;
-    background: #f8f9fa;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    overflow: hidden;
-    position: relative;
-}
-.drive-thumb img,
-.drive-thumb iframe {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    border: none;
-}
-.drive-type {
-    position: absolute;
-    top: 8px;
-    right: 8px;
-    background: rgba(255,255,255,0.8);
-    border-radius: 6px;
-    padding: 4px 8px;
-    font-size: 0.85rem;
-    font-weight: bold;
-}
-.drive-type.pdf { color: #dc3545; }
-.drive-icon i {
-    font-size: 3rem;
-    color: #adb5bd;
-}
-.drive-name {
-    padding: 10px 12px;
-    font-size: 0.9rem;
-    color: #333;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    text-align: center;
-}
 
-.teller-branch-card {
-    background: linear-gradient(115deg, rgba(20, 184, 166, 0.12), rgba(15, 118, 110, 0.02));
-    border: 1px solid rgba(15, 118, 110, 0.15);
-    border-radius: 18px;
-    padding: 18px;
-    display: flex;
-    gap: 16px;
-    align-items: stretch;
-    flex-wrap: wrap;
-}
+    @media (max-width: 576px) {
+        .form-grid {
+            grid-template-columns: 1fr;
+        }
 
-.teller-branch-box {
-    flex: 1;
-    min-width: 180px;
-    background: white;
-    border-radius: 14px;
-    padding: 12px 16px;
-    border: 1px solid rgba(15, 118, 110, 0.12);
-}
-
-.teller-branch-box span {
-    display: block;
-    font-size: 0.78rem;
-    text-transform: uppercase;
-    letter-spacing: 0.4px;
-    color: #94a3b8;
-}
-
-.teller-branch-box strong {
-    display: block;
-    margin-top: 5px;
-    font-size: 1rem;
-    color: #0f172a;
-}
-
-.branch-hint {
-    font-size: 0.85rem;
-    color: #64748b;
-    margin-top: 10px;
-}
-.modal-xl {
-    max-width: 98vw !important;
-}
-#previewModal .modal-content {
-    height: 96vh;
-    border-radius: 12px;
-    overflow: hidden;
-}
-#previewModal .modal-body {
-    padding: 0;
-    height: calc(100vh - 80px);
-}
-
+        .col-span-2,
+        .col-span-4 {
+            grid-column: span 1;
+        }
+    }
 </style>
 
+<div class="main-container">
+    <div class="single-card">
+        <div class="page-title">
+            <i class="bi bi-pencil-square"></i>
+            <span>ແກ້ໄຂຄຳຂໍເປີດບັນຊີ</span>
+        </div>
 
+        @if ($errors->any())
+        <div class="alert alert-danger mb-4" style="border-radius: 8px;">
+            <ul class="mb-0 ps-3">
+                @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+        @endif
+
+        <form action="{{ route('teller.requests.update', $request->id) }}" method="POST" enctype="multipart/form-data" id="editForm">
+            @csrf
+            @method('PUT')
+
+            <div class="form-grid">
+                <!-- Row 1 -->
+                <div class="form-group">
+                    <label>ຊື່ຮ້ານຄ້າ <span class="required">*</span></label>
+                    <input type="text" name="store_name" class="form-control" value="{{ old('store_name', $request->store_name) }}" required placeholder="ໃສ່ຊື່ຮ້ານຄ້າ...">
+                </div>
+
+                <div class="form-group">
+                    <label>ປະເພດທຸລະກິດ <span class="required">*</span></label>
+                    <input type="text" name="business_type" class="form-control" value="{{ old('business_type', $request->business_type) }}" required placeholder="ປະເພດທຸລະກິດ...">
+                </div>
+
+                <div class="form-group">
+                    <label>ເລກບັນຊີທະນາຄານ</label>
+                    <input type="text" name="bank_account" class="form-control" value="{{ old('bank_account', $request->bank_account) }}" placeholder="ເລກບັນຊີ...">
+                </div>
+
+                <div class="form-group">
+                    <label>ວັນທີຕິດຕັ້ງ <span class="required">*</span></label>
+                    <input type="text" name="installation_date" class="form-control" value="{{ old('installation_date', $request->installation_date) }}" required placeholder="dd/mm/yyyy">
+                </div>
+
+                <!-- Row 2 -->
+                <div class="form-group col-span-2">
+                    <label>ທີ່ຢູ່ຮ້ານຄ້າ <span class="required">*</span></label>
+                    <textarea name="store_address" class="form-control" rows="1" style="min-height: 42px; height: 42px;" required placeholder="ບ້ານ, ເມືອງ, ແຂວງ...">{{ old('store_address', $request->store_address) }}</textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>ລະຫັດອ້າງອີງ</label>
+                    <input type="text" name="refer_code" class="form-control" value="{{ old('refer_code', $request->refer_code) }}" placeholder="ລະຫັດ...">
+                </div>
+
+                <div class="form-group">
+                    <label>ລະຫັດເຄື່ອງ POS</label>
+                    <input type="text" name="pos_serial" class="form-control" value="{{ old('pos_serial', $request->pos_serial) }}" placeholder="S/N...">
+                </div>
+
+                <!-- Row 3: Existing Attachments -->
+                @if(!empty($request->attachments))
+                <div class="form-group col-span-4">
+                    <label>ເອກະສານແນບທີ່ມີຢູ່</label>
+                    <div class="file-list" style="margin-top: 8px;">
+                        @php $attachments = json_decode($request->attachments ?? '[]', true); @endphp
+                        @foreach($attachments as $index => $filePath)
+                        @php
+                        $fileUrl = asset('storage/' . $filePath);
+                        $fileName = basename($filePath);
+                        $extension = strtolower(pathinfo($filePath, PATHINFO_EXTENSION));
+                        @endphp
+                        <div class="file-item" id="existing-file-{{ $index }}">
+                            @if(in_array($extension, ['jpg','jpeg','png']))
+                            <img src="{{ $fileUrl }}" class="file-preview-img">
+                            @elseif($extension === 'pdf')
+                            <i class="bi bi-file-pdf-fill" style="color: #ef4444; font-size: 1.5rem;"></i>
+                            @else
+                            <i class="bi bi-file-earmark-text" style="font-size: 1.5rem; color: #64748b;"></i>
+                            @endif
+                            <div class="file-details">
+                                <div class="file-name" title="{{ $fileName }}">{{ $fileName }}</div>
+                                <div class="file-size">{{ strtoupper($extension) }}</div>
+                            </div>
+                            <div class="remove-file" onclick="markFileForDeletion({{ $index }}, this)">
+                                <i class="bi bi-trash"></i>
+                            </div>
+                        </div>
+                        @endforeach
+                    </div>
+                    <div id="deletedFilesContainer"></div>
+                </div>
+                @endif
+
+                <!-- Row 4: New Uploads -->
+                <div class="form-group col-span-4">
+                    <label>ອັບໂຫລດເອກະສານເພີ່ມເຕີມ (PDF, JPG, PNG)</label>
+                    <div class="upload-section" id="dropArea">
+                        <div class="upload-icon">
+                            <i class="bi bi-cloud-arrow-up"></i>
+                        </div>
+                        <div>
+                            <div class="upload-text">ຄລິກ ຫຼື ລາກໄຟລ໌ມາໃສ່ບ່ອນນີ້</div>
+                            <div class="upload-hint">ຮອງຮັບໄຟລ໌ຮູບພາບ ແລະ PDF</div>
+                        </div>
+                        <input type="file" name="attachments[]" id="fileInput" multiple hidden accept=".pdf,.jpg,.jpeg,.png">
+                    </div>
+                    <div id="fileList" class="file-list"></div>
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <a href="{{ route('teller.requests.show', $request->id) }}" class="btn btn-cancel">
+                    <i class="bi bi-x-lg"></i> ຍົກເລີກ
+                </a>
+                <button type="submit" class="btn btn-submit">
+                    <i class="bi bi-check-lg"></i> ບັນທຶກການແກ້ໄຂ
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
 
 <script>
-// Multiple file upload with drag & drop functionality
-document.addEventListener('DOMContentLoaded', function() {
-    const dropArea = document.getElementById('dropArea');
-    const fileInput = document.getElementById('fileInput');
-    const fileList = document.getElementById('fileList');
-    let selectedFiles = [];
-
-    // Click to select files
-    dropArea.addEventListener('click', () => fileInput.click());
-
-    // File input change
-    fileInput.addEventListener('change', function(e) {
-        handleFiles(e.target.files);
-    });
-
-    // Drag & Drop Events
-    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-        dropArea.addEventListener(eventName, preventDefaults, false);
-    });
-
-    function preventDefaults(e) {
-        e.preventDefault();
-        e.stopPropagation();
-    }
-
-    ['dragenter', 'dragover'].forEach(eventName => {
-        dropArea.addEventListener(eventName, () => {
-            dropArea.classList.add('dragover');
-        }, false);
-    });
-
-    ['dragleave', 'drop'].forEach(eventName => {
-        dropArea.addEventListener(eventName, () => {
-            dropArea.classList.remove('dragover');
-        }, false);
-    });
-
-    dropArea.addEventListener('drop', function(e) {
-        const dt = e.dataTransfer;
-        const files = dt.files;
-        handleFiles(files);
-    }, false);
-
-    // Handle files
-    function handleFiles(files) {
-        const validFiles = [...files].filter(file => {
-            const validTypes = ['application/pdf', 'image/jpeg', 'image/jpg', 'image/png'];
-            const maxSize = 5 * 1024 * 1024; // 5MB
-
-            if (!validTypes.includes(file.type)) {
-                alert(`ໄຟລ໌ ${file.name} ບໍ່ຖືກຕ້ອງ. ກະລຸນາເລືອກ PDF, JPG, ຫຼື PNG ເທົ່ານັ້ນ.`);
-                return false;
-            }
-
-            if (file.size > maxSize) {
-                alert(`ໄຟລ໌ ${file.name} ມີຂະໜາດໃຫຍ່ເກີນ 5MB.`);
-                return false;
-            }
-
-            return true;
+    document.addEventListener('DOMContentLoaded', function() {
+        // Initialize Flatpickr
+        flatpickr("input[name='installation_date']", {
+            dateFormat: "Y-m-d",
+            altInput: true,
+            altFormat: "d/m/Y",
+            defaultDate: "{{ $request->installation_date }}",
+            allowInput: true
         });
 
-        validFiles.forEach(file => {
-            if (!selectedFiles.some(f => f.name === file.name && f.size === file.size)) {
-                selectedFiles.push(file);
-            }
+        const dropArea = document.getElementById('dropArea');
+        const fileInput = document.getElementById('fileInput');
+        const fileList = document.getElementById('fileList');
+        let selectedFiles = [];
+
+        dropArea.addEventListener('click', () => fileInput.click());
+        fileInput.addEventListener('change', (e) => handleFiles(e.target.files));
+
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            dropArea.addEventListener(eventName, preventDefaults, false);
         });
 
-        updateFileList();
-        updateFileInput();
-    }
+        function preventDefaults(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
 
-    // Update file list display
-    function updateFileList() {
-        fileList.innerHTML = '';
+        ['dragenter', 'dragover'].forEach(eventName => {
+            dropArea.addEventListener(eventName, () => dropArea.style.borderColor = '#14b8a6', false);
+        });
 
-        selectedFiles.forEach((file, index) => {
-            const fileItem = document.createElement('div');
-            fileItem.className = 'file-item';
-            fileItem.innerHTML = `
-                <div class="file-info">
-                    <div class="file-icon">
-                        <i class="bi bi-${getFileIcon(file.type)}"></i>
-                    </div>
+        ['dragleave', 'drop'].forEach(eventName => {
+            dropArea.addEventListener(eventName, () => dropArea.style.borderColor = '#cbd5e1', false);
+        });
+
+        dropArea.addEventListener('drop', (e) => handleFiles(e.dataTransfer.files));
+
+        function handleFiles(files) {
+            const newFiles = [...files];
+            selectedFiles = [...selectedFiles, ...newFiles];
+            updateFileInput();
+            updateFileList();
+        }
+
+        function updateFileList() {
+            fileList.innerHTML = '';
+            selectedFiles.forEach((file, index) => {
+                const div = document.createElement('div');
+                div.className = 'file-item';
+                const previewId = `preview-${index}`;
+
+                let iconHtml;
+                if (file.type.startsWith('image/')) {
+                    const url = URL.createObjectURL(file);
+                    iconHtml = `<img src="${url}" class="file-preview-img" onload="URL.revokeObjectURL(this.src)">`;
+                } else if (file.type === 'application/pdf') {
+                    iconHtml = `<canvas id="${previewId}" class="file-preview-img" style="background:#f1f5f9;"></canvas>`;
+                    renderPdfPreview(file, previewId);
+                } else {
+                    iconHtml = `<i class="bi bi-${getFileIcon(file.type)}" style="font-size:1.5rem; color:#64748b;"></i>`;
+                }
+
+                div.innerHTML = `
+                    ${iconHtml}
                     <div class="file-details">
-                        <div class="file-name">${file.name}</div>
+                        <div class="file-name" title="${file.name}">${file.name}</div>
                         <div class="file-size">${formatFileSize(file.size)}</div>
                     </div>
-                </div>
-                <button type="button" class="file-remove" onclick="removeFile(${index})">
-                    <i class="bi bi-x-lg"></i>
-                </button>
-            `;
-            fileList.appendChild(fileItem);
-        });
-    }
+                    <div class="remove-file" onclick="removeFile(${index})"><i class="bi bi-trash"></i></div>
+                `;
+                fileList.appendChild(div);
+            });
+        }
 
-    // Update hidden file input
-    function updateFileInput() {
-        const dataTransfer = new DataTransfer();
-        selectedFiles.forEach(file => dataTransfer.items.add(file));
-        fileInput.files = dataTransfer.files;
-    }
+        window.removeFile = function(index) {
+            selectedFiles.splice(index, 1);
+            updateFileInput();
+            updateFileList();
+        }
 
-    // Remove file
-    window.removeFile = function(index) {
-        selectedFiles.splice(index, 1);
-        updateFileList();
-        updateFileInput();
-    };
+        window.markFileForDeletion = function(index, btnElement) {
+            if (confirm('ທ່ານຕ້ອງການລຶບໄຟລ໌ນີ້ບໍ່?')) {
+                const input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = 'delete_attachments[]';
+                input.value = index;
+                document.getElementById('deletedFilesContainer').appendChild(input);
 
-    // Get file icon
-    function getFileIcon(type) {
-        if (type === 'application/pdf') return 'file-pdf-fill';
-        if (type.startsWith('image/')) return 'file-image-fill';
-        return 'file-earmark-fill';
-    }
+                const fileItem = btnElement.closest('.file-item');
+                fileItem.style.opacity = '0';
+                setTimeout(() => fileItem.remove(), 300);
+            }
+        }
 
-    // Format file size
-    function formatFileSize(bytes) {
-        if (bytes === 0) return '0 Bytes';
-        const k = 1024;
-        const sizes = ['Bytes', 'KB', 'MB'];
-        const i = Math.floor(Math.log(bytes) / Math.log(k));
-        return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
-    }
-});
-function openPreview(fileUrl, fileName, extension) {
-    const modal = new bootstrap.Modal(document.getElementById('previewModal'));
-    const title = document.getElementById('previewTitle');
-    const container = document.getElementById('previewContainer');
+        function updateFileInput() {
+            const dt = new DataTransfer();
+            selectedFiles.forEach(file => dt.items.add(file));
+            fileInput.files = dt.files;
+        }
 
-    title.textContent = fileName;
-    container.innerHTML = '';
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
 
-    if (['jpg', 'jpeg', 'png'].includes(extension)) {
-        container.innerHTML = `
-            <div class="d-flex justify-content-center align-items-center bg-black" style="height:100vh;">
-                <img src="${fileUrl}" class="img-fluid rounded shadow">
-            </div>`;
-    }
-    else if (extension === 'pdf') {
-        container.innerHTML = `
-            <iframe src="${fileUrl}"
-                width="100%"
-                height="100%"
-                style="border:0; display:block;"
-                class="bg-dark">
-            </iframe>`;
-    }
-    else {
-        container.innerHTML = `
-            <div class="d-flex flex-column justify-content-center align-items-center text-center text-white-50" style="height:100vh;">
-                <i class="bi bi-file-earmark fs-1"></i>
-                <p class="mt-3">ບໍ່ສາມາດເບິ່ງຟາຍນີ້ໄດ້<br>
-                <a href="${fileUrl}" target="_blank" class="text-success fw-bold">ດາວໂຫລດ</a></p>
-            </div>`;
-    }
+        function getFileIcon(type) {
+            if (type.includes('pdf')) return 'file-pdf';
+            if (type.includes('word')) return 'file-word';
+            if (type.includes('excel') || type.includes('spreadsheet')) return 'file-excel';
+            return 'file-earmark';
+        }
 
-    modal.show();
-}
+        async function renderPdfPreview(file, canvasId) {
+            try {
+                const arrayBuffer = await file.arrayBuffer();
+                const pdf = await pdfjsLib.getDocument(arrayBuffer).promise;
+                const page = await pdf.getPage(1);
+
+                const canvas = document.getElementById(canvasId);
+                if (!canvas) return;
+
+                const viewport = page.getViewport({
+                    scale: 1
+                });
+                const scale = Math.min(40 / viewport.width, 40 / viewport.height) * 2;
+                const scaledViewport = page.getViewport({
+                    scale: scale
+                });
+
+                const context = canvas.getContext('2d');
+                canvas.height = 40;
+                canvas.width = 40;
+
+                const renderContext = {
+                    canvasContext: context,
+                    viewport: scaledViewport,
+                    transform: [1, 0, 0, 1, (40 - scaledViewport.width) / 2, (40 - scaledViewport.height) / 2]
+                };
+
+                await page.render(renderContext).promise;
+            } catch (error) {
+                console.error('Error rendering PDF preview:', error);
+                const canvas = document.getElementById(canvasId);
+                if (canvas) {
+                    canvas.replaceWith(document.createRange().createContextualFragment('<i class="bi bi-file-pdf-fill" style="font-size:1.5rem; color:#dc3545;"></i>'));
+                }
+            }
+        }
+    });
 </script>
 @endsection
-
-
-
-
-
-

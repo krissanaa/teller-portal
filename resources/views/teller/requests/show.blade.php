@@ -3,682 +3,382 @@
 @section('title', 'ລາຍລະອຽດຄຳຂໍເປີດບັນຊີ')
 
 @section('content')
+@php
+$tellerProfile = $tellerProfile ?? auth()->user()->loadMissing(['branch', 'unit']);
+@endphp
 <style>
     * {
         font-family: 'Noto Sans Lao', 'Noto Sans', sans-serif;
     }
 
-    .page-header {
+    :root {
+        --apb-primary: #14b8a6;
+        --apb-bg: #f1f5f9;
+        --apb-border: #e2e8f0;
+    }
+
+    body {
+        background: var(--apb-bg);
+    }
+
+    .main-container {
+        max-width: 1200px;
+        margin: 20px auto;
+        padding: 0 20px;
+    }
+
+    .single-card {
         background: white;
-        border-radius: 12px;
-        padding: 24px;
+        border-radius: 16px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+        padding: 30px;
+        border: 1px solid white;
+    }
+
+    .page-title {
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: #1e293b;
         margin-bottom: 24px;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-        border-left: 4px solid var(--apb-accent);
-    }
-
-    .page-header h4 {
-        margin: 0;
-        color: #212529;
-        font-weight: 700;
-        font-size: 1.5rem;
-        display: flex;
-        align-items: center;
-        gap: 12px;
-    }
-
-    .page-subtitle {
-        color: #6c757d;
-        font-size: 0.9rem;
-        margin-top: 6px;
-        margin-bottom: 0;
-    }
-
-    .detail-card {
-        background: white;
-        border-radius: 12px;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-        overflow: hidden;
-        margin-bottom: 24px;
-    }
-
-    .card-header-custom {
-        background: #f8f9fa;
-        padding: 20px 28px;
-        border-bottom: 1px solid #e9ecef;
-    }
-
-    .card-header-custom h5 {
-        margin: 0;
-        color: #212529;
-        font-weight: 700;
-        font-size: 1.6rem;
-        display: flex;
-        align-items: center;
-        gap: 12px;
-    }
-
-    .card-body-custom {
-        padding: 28px;
-    }
-
-    .detail-section {
-        margin-bottom: 28px;
-    }
-
-    .section-title {
-        color: #212529;
-        font-weight: 700;
-        font-size: 1.05rem;
-        margin-bottom: 16px;
-        padding-bottom: 10px;
-        border-bottom: 2px solid #f0f0f0;
         display: flex;
         align-items: center;
         gap: 10px;
+        padding-bottom: 16px;
+        border-bottom: 1px solid var(--apb-border);
     }
 
-    .section-title i {
-        color: var(--apb-accent);
-        font-size: 1.2rem;
+    .page-title i {
+        color: var(--apb-primary);
+        font-size: 1.4rem;
     }
 
-    .detail-row {
-        display: flex;
-        padding: 14px 0;
-        border-bottom: 1px solid #f8f9fa;
-        transition: all 0.2s ease;
+    /* Compact Grid Layout */
+    .form-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 20px;
+        margin-bottom: 24px;
     }
 
-    .detail-row:hover {
-        background: #f8f9fa;
-        padding-left: 12px;
-        margin-left: -12px;
-        padding-right: 12px;
-        margin-right: -12px;
-        border-radius: 6px;
+    .col-span-2 {
+        grid-column: span 2;
     }
 
-    .detail-row:last-child {
-        border-bottom: none;
+    .col-span-4 {
+        grid-column: span 4;
     }
 
-    .detail-label {
-        flex: 0 0 200px;
+    .form-group label {
+        display: block;
         font-weight: 600;
-        color: #495057;
-        display: flex;
-        align-items: center;
-        gap: 8px;
+        color: #475569;
+        margin-bottom: 6px;
         font-size: 0.9rem;
     }
 
-    .detail-label i {
-        color: #6c757d;
-    }
-
-    .detail-value {
-        flex: 1;
-        color: #000000;
-        font-weight: 600;
-        font-size: 1rem;   s
-    }
-
-    .detail-value.empty {
-        color: #9e9e9e;
-        font-style: italic;
-    }
-
-    .info-badge {
-        background: #f8f9fa;
-        color: #212529;
-        padding: 6px 14px;
-        border-radius: 6px;
-        font-weight: 600;
-        display: inline-flex;
+    .form-value {
+        width: 100%;
+        padding: 10px 14px;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        font-size: 0.95rem;
+        background: #f8fafc;
+        color: #334155;
+        min-height: 42px;
+        display: flex;
         align-items: center;
-        gap: 6px;
-        font-size: 0.85rem;
-        border: 1px solid #e9ecef;
     }
 
     /* Status Badge */
-    .status-badge-large {
-        padding: 10px 22px;
-        border-radius: 8px;
-        font-weight: 700;
-        font-size: 0.95rem;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
+    .status-badge {
         display: inline-flex;
         align-items: center;
-        gap: 8px;
+        gap: 6px;
+        padding: 4px 12px;
+        border-radius: 6px;
+        font-size: 0.85rem;
+        font-weight: 600;
     }
 
-    .status-badge-large.approved {
-        background: #d4edda;
-        color: #155724;
-        border: 2px solid #28a745;
+    .status-approved {
+        background: #dcfce7;
+        color: #166534;
     }
 
-    .status-badge-large.pending {
-        background: #fff3cd;
-        color: #856404;
-        border: 2px solid #ffc107;
+    .status-pending {
+        background: #fef9c3;
+        color: #854d0e;
     }
 
-    .status-badge-large.rejected {
-        background: #f8d7da;
-        color: #721c24;
-        border: 2px solid #dc3545;
+    .status-rejected {
+        background: #fee2e2;
+        color: #991b1b;
     }
 
-    /* Attachment Section */
-    .attachment-section {
-        background: #f8f9fa;
-        border-radius: 10px;
-        padding: 20px;
-        border: 2px dashed #ced4da;
-        margin-top: 20px;
+    /* File Preview Grid */
+    .file-preview-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+        gap: 12px;
+        margin-top: 8px;
     }
 
-    .attachment-header {
+    .file-item {
+        background: white;
+        border: 1px solid #e2e8f0;
+        padding: 10px;
+        border-radius: 8px;
         display: flex;
         align-items: center;
         gap: 10px;
-        color: #212529;
-        font-weight: 700;
-        font-size: 1.05rem;
-        margin-bottom: 14px;
+        cursor: pointer;
+        transition: all 0.2s;
     }
 
-    .attachment-header i {
-        color: var(--apb-accent);
+    .file-item:hover {
+        border-color: var(--apb-primary);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
     }
 
-    .attachment-preview {
-        border-radius: 10px;
+    .file-item i {
+        font-size: 1.2rem;
+        color: #64748b;
+    }
+
+    .file-preview-img {
+        width: 40px;
+        height: 40px;
+        object-fit: cover;
+        border-radius: 6px;
+    }
+
+    .file-details {
+        flex: 1;
         overflow: hidden;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-        margin-top: 14px;
     }
 
-    .attachment-preview img {
-        max-width: 100%;
-        height: auto;
-        display: block;
-        border-radius: 10px;
+    .file-name {
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: #334155;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
 
-    .pdf-viewer {
-        border-radius: 10px;
-        border: 1px solid #e9ecef;
+    .file-size {
+        font-size: 0.75rem;
+        color: #94a3b8;
     }
 
-    /* Action Buttons */
-    .action-buttons {
-        padding: 20px 28px;
-        background: #f8f9fa;
-        border-top: 1px solid #e9ecef;
+    /* Actions */
+    .form-actions {
+        margin-top: 30px;
+        padding-top: 20px;
+        border-top: 1px solid var(--apb-border);
         display: flex;
+        justify-content: flex-end;
         gap: 12px;
-        flex-wrap: wrap;
     }
 
-    .btn-edit {
-        background: #ffc107;
-        border: none;
-        color: #000;
-        padding: 11px 28px;
+    .btn {
+        padding: 10px 24px;
         border-radius: 8px;
         font-weight: 600;
-        transition: all 0.3s ease;
+        border: none;
+        cursor: pointer;
         display: inline-flex;
         align-items: center;
         gap: 8px;
+        font-size: 0.95rem;
+        transition: all 0.2s;
         text-decoration: none;
-    }
-
-    .btn-edit:hover {
-        background: #e0a800;
-        transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(255, 193, 7, 0.3);
-        color: #000;
     }
 
     .btn-back {
-        background: rgb(255, 255, 255);
-        border: 2px solid #f70000;
-        color: #000000;
-        padding: 14px 32px;
-        border-radius: 10px;
-        font-weight: 700;
-        transition: all 0.3s ease;
-        display: inline-flex;
-        align-items: center;
-        gap: 10px;
-        text-decoration: none;
-        font-size: 1rem;
+        background: white;
+        border: 1px solid #cbd5e1;
+        color: #64748b;
     }
 
     .btn-back:hover {
-        background: rgb(255, 0, 0);
-        border: 2px solid #ff0000;
-        color: #ffffff;
-        transform: translateY(-3px);
+        background: #f1f5f9;
+        color: #334155;
     }
 
-    .btn-pdf {
-        background: linear-gradient(90deg, var(--apb-primary) 0%, var(--apb-secondary) 100%);
-        border: none;
-        color: white;
-        padding: 10px 20px;
-        border-radius: 8px;
-        font-weight: 600;
-        transition: all 0.3s ease;
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-        text-decoration: none;
-    }
-
-    .btn-pdf:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(45, 95, 63, 0.3);
+    .btn-edit {
+        background: #f59e0b;
         color: white;
     }
 
-    @media (max-width: 768px) {
-        .detail-row {
-            flex-direction: column;
-            gap: 6px;
+    .btn-edit:hover {
+        background: #d97706;
+    }
+
+    @media (max-width: 992px) {
+        .form-grid {
+            grid-template-columns: repeat(2, 1fr);
         }
 
-        .detail-label {
-            flex: none;
-        }
-
-        .card-body-custom, .action-buttons {
-            padding: 20px;
-        }
-
-        .action-buttons {
-            flex-direction: column;
-        }
-
-        .action-buttons > * {
-            width: 100%;
-            justify-content: center;
+        .col-span-2,
+        .col-span-4 {
+            grid-column: span 2;
         }
     }
-    .drive-style-section {
-    background: #fff;
-    border-radius: 16px;
-    padding: 24px;
-    border: 1px solid #e9ecef;
-}
-.drive-header {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    color: #2D5F3F;
-    font-size: 1.1rem;
-}
-.drive-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-    gap: 16px;
-}
-.drive-card {
-    position: relative;
-    background: #ffffff;
-    border-radius: 12px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.08);
-    overflow: hidden;
-    cursor: pointer;
-    transition: all 0.25s ease;
-}
-.drive-card:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 5px 14px rgba(0,0,0,0.12);
-}
-.drive-thumb {
-    height: 160px;
-    background: #f8f9fa;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    overflow: hidden;
-    position: relative;
-}
-.drive-thumb img,
-.drive-thumb iframe {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    border: none;
-}
-.drive-type {
-    position: absolute;
-    top: 8px;
-    right: 8px;
-    background: rgba(255,255,255,0.8);
-    border-radius: 6px;
-    padding: 4px 8px;
-    font-size: 0.85rem;
-    font-weight: bold;
-}
-.drive-type.pdf { color: #dc3545; }
-.drive-icon i {
-    font-size: 3rem;
-    color: #adb5bd;
-}
-.drive-name {
-    padding: 10px 12px;
-    font-size: 0.9rem;
-    color: #333;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    text-align: center;
-}
-.modal-xl {
-    max-width: 98vw !important;
-}
-#previewModal .modal-content {
-    height: 96vh;
-    border-radius: 12px;
-    overflow: hidden;
-}
-#previewModal .modal-body {
-    padding: 0;
-    height: calc(100vh - 80px);
-}
 
+    @media (max-width: 576px) {
+        .form-grid {
+            grid-template-columns: 1fr;
+        }
 
+        .col-span-2,
+        .col-span-4 {
+            grid-column: span 1;
+        }
+    }
 </style>
 
-<div class="container-fluid">
-    <!-- Page Header -->
-    <div class="page-header">
-        <h4>
-            <i class="bi bi-file-text"></i>
-            ລາຍລະອຽດຄຳຂໍເປີດບັນຊີ
-        </h4>
-        <p class="page-subtitle">ຂໍ້ມູນລະອຽດຂອງຮ້ານຄ້າ ແລະ ສະຖານະການອະນຸມັດ</p>
-    </div>
-
-    <!-- Main Details Card -->
-    <div class="detail-card">
-        <div class="card-header-custom">
-            <h5>
-                <i class="bi bi-shop-window"></i>
-                {{ $request->store_name }}
-            </h5>
+<div class="main-container">
+    <div class="single-card">
+        <div class="page-title">
+            <i class="bi bi-file-text-fill"></i>
+            <span>ລາຍລະອຽດຄຳຂໍເປີດບັນຊີ</span>
+            <div style="margin-left: auto;">
+                @if($request->approval_status == 'approved')
+                <span class="status-badge status-approved"><i class="bi bi-check-circle-fill"></i> ອະນຸມັດແລ້ວ</span>
+                @elseif($request->approval_status == 'pending')
+                <span class="status-badge status-pending"><i class="bi bi-clock-fill"></i> ລໍຖ້າອະນຸມັດ</span>
+                @else
+                <span class="status-badge status-rejected"><i class="bi bi-x-circle-fill"></i> ປະຕິເສດ</span>
+                @endif
+            </div>
         </div>
 
-        <div class="card-body-custom">
-            <!-- Section 1: Basic Information -->
-            <div class="detail-section">
-                <div class="section-title">
-                    <i class="bi bi-info-circle"></i>
-                    ຂໍ້ມູນພື້ນຖານ
-                </div>
-
-                <div class="detail-row">
-                    <div class="detail-label">
-                        <i class="bi bi-hash"></i>
-                        ລະຫັດອ້າງອີງ
-                    </div>
-                    <div class="detail-value">
-                        <span class="info-badge">
-                            <i class="bi bi-tag"></i>
-                            {{ $request->refer_code }}
-                        </span>
-                    </div>
-                </div>
-
-                <div class="detail-row">
-                    <div class="detail-label">
-                        <i class="bi bi-briefcase"></i>
-                        ປະເພດທຸລະກິດ
-                    </div>
-                    <div class="detail-value">{{ $request->business_type }}</div>
-                </div>
-
-                <div class="detail-row">
-                    <div class="detail-label">
-                        <i class="bi bi-geo-alt"></i>
-                        ທີ່ຢູ່
-                    </div>
-                    <div class="detail-value">{{ $request->store_address }}</div>
-                </div>
+        <div class="form-grid">
+            <!-- Row 1 -->
+            <div class="form-group">
+                <label>ຊື່ຮ້ານຄ້າ</label>
+                <div class="form-value">{{ $request->store_name }}</div>
             </div>
 
-            <!-- Section 2: POS & Banking -->
-            <div class="detail-section">
-                <div class="section-title">
-                    <i class="bi bi-credit-card"></i>
-                    ຂໍ້ມູນ POS ແລະ ທະນາຄານ
-                </div>
-
-                <div class="detail-row">
-                    <div class="detail-label">
-                        <i class="bi bi-upc-scan"></i>
-                        ລະຫັດເຄື່ອງ POS
-                    </div>
-                    <div class="detail-value">
-                        <span class="info-badge">{{ $request->pos_serial }}</span>
-                    </div>
-                </div>
-
-                <div class="detail-row">
-                    <div class="detail-label">
-                        <i class="bi bi-bank"></i>
-                        ເລກບັນຊີທະນາຄານ
-                    </div>
-                    <div class="detail-value {{ !$request->bank_account ? 'empty' : '' }}">
-                        {{ $request->bank_account ?? 'ບໍ່ມີຂໍ້ມູນ' }}
-                    </div>
-                </div>
+            <div class="form-group">
+                <label>ປະເພດທຸລະກິດ</label>
+                <div class="form-value">{{ $request->business_type }}</div>
             </div>
 
-            <!-- Section 3: Installation Details -->
-            <div class="detail-section">
-                <div class="section-title">
-                    <i class="bi bi-calendar-check"></i>
-                    ຂໍ້ມູນການຕິດຕັ້ງ
-                </div>
-
-                <div class="detail-row">
-                    <div class="detail-label">
-                        <i class="bi bi-calendar3"></i>
-                        ວັນທີຕິດຕັ້ງ
-                    </div>
-                    <div class="detail-value">
-                        <i class="bi bi-calendar-event text-primary me-2"></i>
-                        {{ \Carbon\Carbon::parse($request->installation_date)->format('d/m/Y') }}
-                    </div>
-                </div>
-
-                <div class="detail-row">
-                    <div class="detail-label">
-                        <i class="bi bi-pin-map"></i>
-                        ສາຂາ
-                    </div>
-                    <div class="detail-value {{ !$request->branch ? 'empty' : '' }}">
-                        {{ $request->branch->name ?? 'ບໍ່ມີຂໍ້ມູນ' }}
-                    </div>
-                </div>
+            <div class="form-group">
+                <label>ເລກບັນຊີທະນາຄານ</label>
+                <div class="form-value">{{ $request->bank_account ?? '-' }}</div>
             </div>
 
-            <!-- Section 4: Status -->
-            <div class="detail-section">
-                <div class="section-title">
-                    <i class="bi bi-check-circle"></i>
-                    ສະຖານະການອະນຸມັດ
-                </div>
-
-                <div class="detail-row">
-                    <div class="detail-label">
-                        <i class="bi bi-flag"></i>
-                        ສະຖານະ
-                    </div>
-                    <div class="detail-value">
-                        @if($request->approval_status == 'approved')
-                            <span class="status-badge-large approved">
-                                <i class="bi bi-check-circle-fill"></i>
-                                ອະນຸມັດແລ້ວ
-                            </span>
-                        @elseif($request->approval_status == 'pending')
-                            <span class="status-badge-large pending">
-                                <i class="bi bi-clock-fill"></i>
-                                ລໍຖ້າອະນຸມັດ
-                            </span>
-                        @else
-                            <span class="status-badge-large rejected">
-                                <i class="bi bi-x-circle-fill"></i>
-                                ປະຕິເສດ
-                            </span>
-                        @endif
-                    </div>
-                </div>
-
-                <div class="detail-row">
-                    <div class="detail-label">
-                        <i class="bi bi-chat-dots"></i>
-                        ໝາຍເຫດ
-                    </div>
-                    <div class="detail-value {{ !$request->admin_remark ? 'empty' : '' }}">
-                        {{ $request->admin_remark ?? '' }}
-                    </div>
-                </div>
+            <div class="form-group">
+                <label>ວັນທີຕິດຕັ້ງ</label>
+                <div class="form-value">{{ \Carbon\Carbon::parse($request->installation_date)->format('d/m/Y') }}</div>
             </div>
 
-
-<!-- Attachment Section -->
-@if(!empty($request->attachments))
-    @php
-        $attachments = json_decode($request->attachments ?? '[]', true);
-    @endphp
-
-    @if(!empty($attachments))
-        <div class="drive-style-section mt-4">
-            <div class="drive-header mb-3">
-                <i class="bi bi-paperclip"></i>
-                ເອກະສານແນບ (ຄລິກທີ່ໂລໂກເພື່ອເບິ່ງ)
+            <!-- Row 2 -->
+            <div class="form-group col-span-2">
+                <label>ທີ່ຢູ່ຮ້ານຄ້າ</label>
+                <div class="form-value" style="height: auto; min-height: 42px;">{{ $request->store_address }}</div>
             </div>
 
-            <div class="drive-grid">
-                @foreach($attachments as $filePath)
+            <div class="form-group">
+                <label>ລະຫັດອ້າງອີງ</label>
+                <div class="form-value">{{ $request->refer_code }}</div>
+            </div>
+
+            <div class="form-group">
+                <label>ລະຫັດເຄື່ອງ POS</label>
+                <div class="form-value">{{ $request->pos_serial ?? '-' }}</div>
+            </div>
+
+            <!-- Row 3: Attachments -->
+            @if(!empty($request->attachments))
+            <div class="form-group col-span-4">
+                <label>ເອກະສານແນບ</label>
+                <div class="file-preview-grid">
+                    @php $attachments = json_decode($request->attachments ?? '[]', true); @endphp
+                    @foreach($attachments as $filePath)
                     @php
-                        $fileUrl = asset('storage/' . $filePath);
-                        $fileName = basename($filePath);
-                        $extension = strtolower(pathinfo($filePath, PATHINFO_EXTENSION));
+                    $fileUrl = asset('storage/' . $filePath);
+                    $fileName = basename($filePath);
+                    $extension = strtolower(pathinfo($filePath, PATHINFO_EXTENSION));
                     @endphp
-
-                    <div class="drive-card" onclick="openPreview('{{ $fileUrl }}', '{{ $fileName }}', '{{ $extension }}')">
-                        <div class="drive-thumb">
-                            @if(in_array($extension, ['jpg','jpeg','png']))
-                                <img src="{{ $fileUrl }}" alt="{{ $fileName }}">
-                            @elseif($extension === 'pdf')
-                                <iframe src="{{ $fileUrl }}" title="{{ $fileName }}"></iframe>
-                            @else
-                                <div class="drive-icon">
-                                    <i class="bi bi-file-earmark-text"></i>
-                                </div>
-                            @endif
-                            <div class="drive-type {{ $extension }}">{{ strtoupper($extension) }}</div>
+                    <div class="file-item" onclick="openPreview('{{ $fileUrl }}', '{{ $fileName }}', '{{ $extension }}')">
+                        @if(in_array($extension, ['jpg','jpeg','png']))
+                        <img src="{{ $fileUrl }}" class="file-preview-img">
+                        @elseif($extension === 'pdf')
+                        <i class="bi bi-file-pdf-fill" style="color: #ef4444; font-size: 1.5rem;"></i>
+                        @else
+                        <i class="bi bi-file-earmark-text"></i>
+                        @endif
+                        <div class="file-details">
+                            <div class="file-name" title="{{ $fileName }}">{{ $fileName }}</div>
+                            <div class="file-size">{{ strtoupper($extension) }}</div>
                         </div>
-                        <div class="drive-name">{{ $fileName }}</div>
                     </div>
-                @endforeach
+                    @endforeach
+                </div>
             </div>
-        </div>
-    @else
-        <div class="alert alert-warning mt-3">
-            <i class="bi bi-exclamation-triangle me-2"></i>
-            ບໍ່ພົບໄຟລ໌ແນບໃນລາຍການນີ້
-        </div>
-    @endif
-@endif
+            @endif
 
-<!-- 🔍 Preview Modal -->
-<div class="modal fade" id="previewModal" tabindex="-1" aria-labelledby="previewTitle" aria-hidden="true">
-    <div class="modal-dialog modal-fullscreen"> <!-- 👈 ใช้ fullscreen modal -->
-        <div class="modal-content bg-dark text-white border-0">
-            <div class="modal-header border-0 bg-success py-2">
-                <h5 class="modal-title text-white" id="previewTitle"></h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            <!-- Admin Remark if rejected -->
+            @if($request->admin_remark)
+            <div class="form-group col-span-4">
+                <label>ໝາຍເຫດຈາກຜູ້ອະນຸມັດ</label>
+                <div class="form-value" style="background: #fff1f2; color: #991b1b; border-color: #fecaca;">
+                    {{ $request->admin_remark }}
+                </div>
             </div>
-            <div class="modal-body p-0" id="previewContainer">
-                <!-- Preview will load dynamically -->
-            </div>
-        </div>
-    </div>
-</div>
-
-
+            @endif
         </div>
 
-        <!-- Action Buttons -->
-        <div class="action-buttons">
-
-
-            <a href="{{ route('teller.dashboard') }}" class="btn-back">
-                <i class="bi bi-arrow-left-circle"></i>
-                ກັບຄືນ
+        <div class="form-actions">
+            <a href="{{ route('teller.dashboard') }}" class="btn btn-back">
+                <i class="bi bi-arrow-left"></i> ກັບຄືນ
             </a>
-
-
-                <a href="{{ route('teller.requests.edit', $request->id) }}" class="btn-edit">
-                    <i class="bi bi-pencil-square"></i>
-                    ແກ້ໄຂຂໍ້ມູນ
-                </a>
-
+            <a href="{{ route('teller.requests.edit', $request->id) }}" class="btn btn-edit">
+                <i class="bi bi-pencil-square"></i> ແກ້ໄຂຂໍ້ມູນ
+            </a>
         </div>
     </div>
 </div>
-@endsection
+
+<!-- Preview Modal -->
+<div class="modal fade" id="previewModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg" style="height: 85vh; border-radius: 16px; overflow: hidden;">
+            <div class="modal-header border-bottom-0 py-3 px-4" style="background: white; position: absolute; top: 0; left: 0; right: 0; z-index: 10;">
+                <h5 class="modal-title text-dark fw-bold" id="previewTitle" style="font-size: 1.1rem;"></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" style="background-color: #f1f5f9; padding: 10px; border-radius: 50%; opacity: 1;"></button>
+            </div>
+            <div class="modal-body p-0 bg-light d-flex align-items-center justify-content-center" id="previewContainer" style="padding-top: 60px !important;"></div>
+        </div>
+    </div>
+</div>
+
 <script>
-function openPreview(fileUrl, fileName, extension) {
-    const modal = new bootstrap.Modal(document.getElementById('previewModal'));
-    const title = document.getElementById('previewTitle');
-    const container = document.getElementById('previewContainer');
+    function openPreview(fileUrl, fileName, extension) {
+        const modal = new bootstrap.Modal(document.getElementById('previewModal'));
+        document.getElementById('previewTitle').textContent = fileName;
+        const container = document.getElementById('previewContainer');
+        container.innerHTML = '';
 
-    title.textContent = fileName;
-    container.innerHTML = '';
-
-    if (['jpg', 'jpeg', 'png'].includes(extension)) {
-        container.innerHTML = `
-            <div class="d-flex justify-content-center align-items-center bg-black" style="height:100vh;">
-                <img src="${fileUrl}" class="img-fluid rounded shadow">
-            </div>`;
+        if (['jpg', 'jpeg', 'png'].includes(extension)) {
+            container.innerHTML = `<img src="${fileUrl}" class="img-fluid shadow-sm" style="max-height: 100%; max-width: 100%; border-radius: 8px;">`;
+        } else if (extension === 'pdf') {
+            container.innerHTML = `<iframe src="${fileUrl}" width="100%" height="100%" style="border:0;"></iframe>`;
+        } else {
+            container.innerHTML = `
+                <div class="text-center">
+                    <div class="mb-3"><i class="bi bi-file-earmark-text text-secondary" style="font-size: 4rem;"></i></div>
+                    <h5 class="text-secondary mb-3">ບໍ່ສາມາດສະແດງຕົວຢ່າງໄດ້</h5>
+                    <a href="${fileUrl}" class="btn btn-primary px-4 rounded-pill" download>
+                        <i class="bi bi-download me-2"></i> ດາວໂຫລດໄຟລ໌
+                    </a>
+                </div>`;
+        }
+        modal.show();
     }
-    else if (extension === 'pdf') {
-        container.innerHTML = `
-            <iframe src="${fileUrl}"
-                width="100%"
-                height="100%"
-                style="border:0; display:block;"
-                class="bg-dark">
-            </iframe>`;
-    }
-    else {
-        container.innerHTML = `
-            <div class="d-flex flex-column justify-content-center align-items-center text-center text-white-50" style="height:100vh;">
-                <i class="bi bi-file-earmark fs-1"></i>
-                <p class="mt-3">ບໍ່ສາມາດເບິ່ງໄຟລ໌ນີ້ໄດ້<br>
-                <a href="${fileUrl}" target="_blank" class="text-success fw-bold">ດາວໂຫລດ</a></p>
-            </div>`;
-    }
-
-    modal.show();
-}
 </script>
-
-
-
-
-
-
+@endsection

@@ -599,9 +599,11 @@
                         @forelse($notifications as $n)
                             <li>
                                 <div class="notification-item {{ $n->approval_status == 'approved' ? 'approved' : 'rejected' }}">
-                                    <div class="notification-store">
-                                        {{ $n->store_name . ' (' . $n->refer_code . ')' }}
-                                    </div>
+<div class="notification-store">
+    <div>{{ $n->store_name }} ({{ $n->refer_code }})</div>
+    <div>POS Serial: {{ $n->pos_serial }}</div>
+</div>
+
                                     <div class="notification-status {{ $n->approval_status == 'approved' ? 'text-success' : 'text-danger' }}">
                                         {{ $n->approval_status == 'approved' ? '✅ Approved' : '❌ Rejected' }}
                                     </div>

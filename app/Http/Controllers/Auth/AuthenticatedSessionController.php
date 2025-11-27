@@ -19,26 +19,37 @@ class AuthenticatedSessionController extends Controller
     /**
      * ประมวลผลการ login
      */
-public function store(Request $request)
-{
-    $credentials = $request->validate([
-        // Accept digit strings (1-10) to match registration rules
-        'teller_id' => ['required', 'digits_between:1,10'],
-        'password' => ['required'],
-    ]);
+    public function store(Request $request)
+    {
+        $credentials = $request->validate([
+            // Accept digit strings (1-10) to match registration rules
+            'teller_id' => ['required', 'digits_between:1,10'],
+            'password' => ['required'],
+        ]);
 
-    // Keep teller_id as string to preserve leading zeros
+        // Keep teller_id as string to preserve leading zeros
 
-    if (Auth::attempt($credentials, $request->boolean('remember'))) {
-        $request->session()->regenerate();
-        // Let /dashboard route decide based on user role
-        return redirect()->intended(route('dashboard'));
+        if (Auth::attempt($credentials, $request->boolean('remember'))) {
+            $request->session()->regenerate();
+
+            $user = Auth::user();
+            // 📝 Log Login
+            \App\Models\UserLog::create([
+                'admin_id' => $user->id,
+                'user_id' => $user->id,
+                'action' => 'login',
+                'description' => "User {$user->name} logged in",
+                'details' => ['ip' => $request->ip(), 'user_agent' => $request->userAgent()]
+            ]);
+
+            // Let /dashboard route decide based on user role
+            return redirect()->intended(route('dashboard'));
+        }
+
+        return back()->withErrors([
+            'teller_id' => 'Teller ID ຫຼືລະຫັດຜ່ານບໍ່ຖືກຕ້ອງ.',
+        ]);
     }
-
-    return back()->withErrors([
-        'teller_id' => 'Teller ID ຫຼືລະຫັດຜ່ານບໍ່ຖືກຕ້ອງ.',
-    ]);
-}
 
 
     /**

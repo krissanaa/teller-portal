@@ -20,10 +20,19 @@ class OnboardingRequestController extends Controller
         abort_unless($tellerId, 403, 'ไม่พบรหัสเทลเลอร์');
 
         // ในตัวอย่างนี้เราโฟกัสเฉพาะสถานะ จึงยังไม่รับข้อมูลฟอร์มอื่น ๆ
-        OnboardingRequest::create([
+        $req = OnboardingRequest::create([
             'teller_id' => $tellerId,
             'status' => OnboardingRequest::STATUS_PENDING,
             'remark' => null,
+        ]);
+
+        // 📝 Log Submit Form
+        \App\Models\UserLog::create([
+            'admin_id' => $user->id,
+            'user_id' => $user->id,
+            'action' => 'submit_form',
+            'description' => "Submitted new form (Workflow)",
+            'details' => ['request_id' => $req->id]
         ]);
 
         return redirect()
@@ -45,6 +54,17 @@ class OnboardingRequestController extends Controller
         $onboardingRequest->update([
             'status' => OnboardingRequest::STATUS_APPROVED,
             'remark' => null,
+        ]);
+
+        // 📝 Log Approve Form
+        $tellerUserId = \App\Models\User::where('teller_id', $onboardingRequest->teller_id)->value('id');
+
+        \App\Models\UserLog::create([
+            'admin_id' => Auth::id(),
+            'user_id' => $tellerUserId,
+            'action' => 'approve_form',
+            'description' => "Approved form (Workflow)",
+            'details' => ['request_id' => $onboardingRequest->id]
         ]);
 
         return back()->with('success', 'อนุมัติคำขอเรียบร้อยแล้ว');
@@ -70,6 +90,17 @@ class OnboardingRequestController extends Controller
             'remark' => $data['remark'],
         ]);
 
+        // 📝 Log Reject Form
+        $tellerUserId = \App\Models\User::where('teller_id', $onboardingRequest->teller_id)->value('id');
+
+        \App\Models\UserLog::create([
+            'admin_id' => Auth::id(),
+            'user_id' => $tellerUserId,
+            'action' => 'reject_form',
+            'description' => "Rejected form (Workflow)",
+            'details' => ['request_id' => $onboardingRequest->id, 'remark' => $data['remark']]
+        ]);
+
         return back()->with('success', 'บันทึกสถานะ rejected พร้อมเหตุผลเรียบร้อยแล้ว');
     }
 
@@ -87,6 +118,15 @@ class OnboardingRequestController extends Controller
         $onboardingRequest->update([
             'status' => OnboardingRequest::STATUS_PENDING,
             'remark' => null,
+        ]);
+
+        // 📝 Log Resubmit Form
+        \App\Models\UserLog::create([
+            'admin_id' => Auth::id(),
+            'user_id' => Auth::id(),
+            'action' => 'resubmit_form',
+            'description' => "Resubmitted form (Workflow)",
+            'details' => ['request_id' => $onboardingRequest->id]
         ]);
 
         return redirect()

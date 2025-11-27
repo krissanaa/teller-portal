@@ -35,6 +35,15 @@ class RegisteredUserController extends Controller
 
         event(new Registered($user));
 
+        // 📝 Log Registration
+        \App\Models\UserLog::create([
+            'admin_id' => $user->id,
+            'user_id' => $user->id,
+            'action' => 'register',
+            'description' => "User {$user->name} registered",
+            'details' => ['teller_id' => $user->teller_id]
+        ]);
+
         return redirect()
             ->route('login')
             ->with('success', 'ລົງທະບຽນສຳເລັດ');

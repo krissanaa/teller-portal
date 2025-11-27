@@ -29,20 +29,20 @@ class ReportController extends Controller
                 $like = "%{$search}%";
 
                 $q->where('store_name', 'like', $like)
-                  ->orWhere('refer_code', 'like', $like)
-                  ->orWhere('business_type', 'like', $like)
-                  ->orWhere('pos_serial', 'like', $like)
-                  ->orWhere('store_address', 'like', $like)
-                  ->orWhere('bank_account', 'like', $like)
-                  ->orWhere('installation_date', 'like', $like)
-                  ->orWhereHas('branch', function ($branchQuery) use ($like) {
-                      $branchQuery->where('BRANCH_NAME', 'like', $like)
-                          ->orWhere('BRANCH_CODE', 'like', $like);
-                  })
-                  ->orWhereHas('unit', function ($unitQuery) use ($like) {
-                      $unitQuery->where('unit_name', 'like', $like)
-                          ->orWhere('unit_code', 'like', $like);
-                  });
+                    ->orWhere('refer_code', 'like', $like)
+                    ->orWhere('business_type', 'like', $like)
+                    ->orWhere('pos_serial', 'like', $like)
+                    ->orWhere('store_address', 'like', $like)
+                    ->orWhere('bank_account', 'like', $like)
+                    ->orWhere('installation_date', 'like', $like)
+                    ->orWhereHas('branch', function ($branchQuery) use ($like) {
+                        $branchQuery->where('BRANCH_NAME', 'like', $like)
+                            ->orWhere('BRANCH_CODE', 'like', $like);
+                    })
+                    ->orWhereHas('unit', function ($unitQuery) use ($like) {
+                        $unitQuery->where('unit_name', 'like', $like)
+                            ->orWhere('unit_code', 'like', $like);
+                    });
             });
         }
 
@@ -72,14 +72,18 @@ class ReportController extends Controller
 
         $data = $query->paginate(10);
 
-        $years = OnboardingRequest::where('teller_id', Auth::user()->teller_id)
-            ->selectRaw('YEAR(created_at) as year')
-            ->distinct()
-            ->orderByDesc('year')
-            ->pluck('year')
-            ->toArray();
+        $years = \Illuminate\Support\Facades\Cache::remember('teller_report_years_' . Auth::user()->teller_id, 60 * 60 * 24, function () {
+            return OnboardingRequest::where('teller_id', Auth::user()->teller_id)
+                ->selectRaw('YEAR(created_at) as year')
+                ->distinct()
+                ->orderByDesc('year')
+                ->pluck('year')
+                ->toArray();
+        });
 
-        $branches = Branch::with('units')->orderBy('BRANCH_NAME')->get();
+        $branches = \Illuminate\Support\Facades\Cache::remember('all_branches_with_units', 60 * 60 * 24, function () {
+            return Branch::with('units')->orderBy('BRANCH_NAME')->get();
+        });
 
         return view('teller.report.index', [
             'data' => $data,

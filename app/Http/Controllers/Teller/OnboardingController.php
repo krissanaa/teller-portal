@@ -68,7 +68,16 @@ class OnboardingController extends Controller
             // Format ໃໝ່: ເລກ 8 ຫຼັກ (ເພີ່ມ 0 ນຳໜ້າ)
             $data['refer_code'] = str_pad($nextNumber, 8, '0', STR_PAD_LEFT);
 
-            OnboardingRequest::create($data);
+            $req = OnboardingRequest::create($data);
+
+            // 📝 Log Create Request
+            \App\Models\UserLog::create([
+                'admin_id' => Auth::id(),
+                'user_id' => Auth::id(),
+                'action' => 'create_request',
+                'description' => "Created request {$req->refer_code}",
+                'details' => ['request_id' => $req->id, 'store_name' => $req->store_name]
+            ]);
         });
 
         return redirect()->route('teller.dashboard')->with('success', 'ສ້າງຄຳຂໍສຳເລັດ');
@@ -136,6 +145,15 @@ class OnboardingController extends Controller
 
         // Ã¢Å“â€¦ Ã Â¸Â­Ã Â¸Â±Ã Â¸â€ºÃ Â¹â‚¬Ã Â¸â€Ã Â¸â€¢Ã Â¸â€šÃ Â¹â€°Ã Â¸Â­Ã Â¸Â¡Ã Â¸Â¹Ã Â¸Â¥
         $record->update($data);
+
+        // 📝 Log Update Request
+        \App\Models\UserLog::create([
+            'admin_id' => Auth::id(),
+            'user_id' => Auth::id(),
+            'action' => 'update_request',
+            'description' => "Updated request {$record->refer_code}",
+            'details' => ['request_id' => $record->id, 'changes' => array_keys($data)]
+        ]);
 
         if ($wasRejected) {
             $record->approval_status = 'pending';

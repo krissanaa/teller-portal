@@ -8,6 +8,7 @@ services:
     volumes:
       - .:/var/www/html
     environment:
+      TZ: Asia/Bangkok
       DB_CONNECTION: mysql
       DB_HOST: db
       DB_PORT: 3306
@@ -29,6 +30,8 @@ services:
     restart: unless-stopped
     ports:
       - "8081:80"
+    environment:
+      TZ: Asia/Bangkok
     volumes:
       - .:/var/www/html:ro
       # Mount the entire nginx config directory to avoid file/dir mount issues on different hosts
@@ -41,6 +44,7 @@ services:
     container_name: teller_db
     restart: unless-stopped
     environment:
+      TZ: Asia/Bangkok
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: teller_portal
       MYSQL_USER: teller_user

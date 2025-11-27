@@ -1,15 +1,14 @@
-@extends('layouts.admin')
-@section('title', 'Activity Logs')
-@section('page-subtitle', 'Monitor system activities and user actions')
-@section('page-actions')
-<a href="{{ route('admin.logs.index') }}" class="btn btn-outline-secondary btn-sm">
+<?php $__env->startSection('title', 'Activity Logs'); ?>
+<?php $__env->startSection('page-subtitle', 'Monitor system activities and user actions'); ?>
+<?php $__env->startSection('page-actions'); ?>
+<a href="<?php echo e(route('admin.logs.index')); ?>" class="btn btn-outline-secondary btn-sm">
     <i class="bi bi-arrow-clockwise"></i> Refresh
 </a>
-<a href="{{ route('admin.logs.index', array_merge(request()->query(), ['export' => 'csv'])) }}" class="btn btn-gradient btn-sm">
+<a href="<?php echo e(route('admin.logs.index', array_merge(request()->query(), ['export' => 'csv']))); ?>" class="btn btn-gradient btn-sm">
     <i class="bi bi-download"></i> Export CSV
 </a>
-@endsection
-@push('styles')
+<?php $__env->stopSection(); ?>
+<?php $__env->startPush('styles'); ?>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 <style>
     .form-control:focus,
@@ -66,17 +65,17 @@
         vertical-align: middle;
     }
 </style>
-@endpush
-@section('content')
+<?php $__env->stopPush(); ?>
+<?php $__env->startSection('content'); ?>
 <!-- Filters -->
 <div class="filter-card">
-    <form method="GET" action="{{ route('admin.logs.index') }}" class="row g-3">
+    <form method="GET" action="<?php echo e(route('admin.logs.index')); ?>" class="row g-3">
         <!-- Search -->
         <div class="col-md-3">
             <label class="form-label">Search</label>
             <div class="input-group">
                 <span class="input-group-text bg-white"><i class="bi bi-search"></i></span>
-                <input type="text" name="search" value="{{ $search }}" class="form-control" placeholder="Description, Action, User...">
+                <input type="text" name="search" value="<?php echo e($search); ?>" class="form-control" placeholder="Description, Action, User...">
             </div>
         </div>
         <!-- User Filter -->
@@ -84,11 +83,12 @@
             <label class="form-label">User</label>
             <select name="admin_id" class="form-select">
                 <option value="">All Users</option>
-                @foreach($admins as $admin)
-                <option value="{{ $admin->id }}" {{ $adminId == $admin->id ? 'selected' : '' }}>
-                    {{ $admin->name }}
+                <?php $__currentLoopData = $admins; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $admin): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                <option value="<?php echo e($admin->id); ?>" <?php echo e($adminId == $admin->id ? 'selected' : ''); ?>>
+                    <?php echo e($admin->name); ?>
+
                 </option>
-                @endforeach
+                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
             </select>
         </div>
         <!-- Action Filter -->
@@ -96,29 +96,30 @@
             <label class="form-label">Action</label>
             <select name="action" class="form-select">
                 <option value="">All Actions</option>
-                @foreach($actions as $act)
-                <option value="{{ $act }}" {{ $action == $act ? 'selected' : '' }}>
-                    {{ ucfirst(str_replace('_', ' ', $act)) }}
+                <?php $__currentLoopData = $actions; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $act): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                <option value="<?php echo e($act); ?>" <?php echo e($action == $act ? 'selected' : ''); ?>>
+                    <?php echo e(ucfirst(str_replace('_', ' ', $act))); ?>
+
                 </option>
-                @endforeach
+                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
             </select>
         </div>
         <!-- Date Range -->
         <div class="col-md-3">
             <label class="form-label">Date Range</label>
             <div class="input-group">
-                <input type="text" name="start_date" class="form-control datepicker" placeholder="Start Date" value="{{ $startDate }}">
+                <input type="text" name="start_date" class="form-control datepicker" placeholder="Start Date" value="<?php echo e($startDate); ?>">
                 <span class="input-group-text">to</span>
-                <input type="text" name="end_date" class="form-control datepicker" placeholder="End Date" value="{{ $endDate }}">
+                <input type="text" name="end_date" class="form-control datepicker" placeholder="End Date" value="<?php echo e($endDate); ?>">
             </div>
         </div>
         <!-- Per Page -->
         <div class="col-md-1">
             <label class="form-label">Show</label>
             <select name="per_page" class="form-select">
-                @foreach([10,25,50,100] as $size)
-                <option value="{{ $size }}" {{ $perPage == $size ? 'selected' : '' }}>{{ $size }}</option>
-                @endforeach
+                <?php $__currentLoopData = [10,25,50,100]; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $size): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                <option value="<?php echo e($size); ?>" <?php echo e($perPage == $size ? 'selected' : ''); ?>><?php echo e($size); ?></option>
+                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
             </select>
         </div>
         <!-- Buttons -->
@@ -133,7 +134,7 @@
 <div class="table-card">
     <div class="table-card-header">
         <h5>Activity Logs</h5>
-        <span class="meta">{{ $logs->total() }} total entries</span>
+        <span class="meta"><?php echo e($logs->total()); ?> total entries</span>
     </div>
     <div class="table-responsive">
         <table class="table table-modern">
@@ -149,19 +150,19 @@
                 </tr>
             </thead>
             <tbody>
-                @forelse($logs as $log)
+                <?php $__empty_1 = true; $__currentLoopData = $logs; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $log): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
                 <tr>
-                    <td class="fw-bold text-muted">{{ $log->id }}</td>
+                    <td class="fw-bold text-muted"><?php echo e($log->id); ?></td>
                     <td>
                         <div class="d-flex align-items-center gap-2">
                             <div class="user-avatar">
                                 <i class="bi bi-person-fill"></i>
                             </div>
-                            <span class="fw-semibold">{{ $log->admin->name ?? 'System' }}</span>
+                            <span class="fw-semibold"><?php echo e($log->admin->name ?? 'System'); ?></span>
                         </div>
                     </td>
                     <td>
-                        @php
+                        <?php
                         $badgeColor = match(true) {
                         str_contains(strtolower($log->action), 'delete') => 'danger',
                         str_contains(strtolower($log->action), 'create') => 'success',
@@ -169,38 +170,41 @@
                         str_contains(strtolower($log->action), 'login') => 'info',
                         default => 'secondary'
                         };
-                        @endphp
-                        <span class="badge badge-action badge-{{ $badgeColor }}">
-                            {{ ucfirst(str_replace('_', ' ', $log->action)) }}
+                        ?>
+                        <span class="badge badge-action badge-<?php echo e($badgeColor); ?>">
+                            <?php echo e(ucfirst(str_replace('_', ' ', $log->action))); ?>
+
                         </span>
                     </td>
-                    <td class="text-truncate" style="max-width: 300px;" title="{{ $log->description }}">
-                        {{ $log->description }}
+                    <td class="text-truncate" style="max-width: 300px;" title="<?php echo e($log->description); ?>">
+                        <?php echo e($log->description); ?>
+
                     </td>
                     <td>
-                        @if($log->targetUser)
+                        <?php if($log->targetUser): ?>
                         <span class="status-pill approved">
-                            <i class="bi bi-person"></i> {{ $log->targetUser->name }}
+                            <i class="bi bi-person"></i> <?php echo e($log->targetUser->name); ?>
+
                         </span>
-                        @else
+                        <?php else: ?>
                         <span class="text-muted small">-</span>
-                        @endif
+                        <?php endif; ?>
                     </td>
                     <td>
                         <div class="d-flex flex-column">
-                            <span class="fw-semibold">{{ $log->created_at->format('d M Y') }}</span>
-                            <span class="text-muted small">{{ $log->created_at->format('H:i A') }}</span>
+                            <span class="fw-semibold"><?php echo e($log->created_at->format('d M Y')); ?></span>
+                            <span class="text-muted small"><?php echo e($log->created_at->format('H:i A')); ?></span>
                         </div>
                     </td>
                     <td class="text-end">
                         <button type="button" class="btn btn-sm btn-outline-primary"
-                            onclick="showDetails({{ json_encode($log->details) }})"
+                            onclick="showDetails(<?php echo e(json_encode($log->details)); ?>)"
                             title="View Details">
                             <i class="bi bi-eye"></i>
                         </button>
                     </td>
                 </tr>
-                @empty
+                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
                 <tr>
                     <td colspan="7" class="text-center py-5 text-muted">
                         <div class="mb-3">
@@ -209,16 +213,17 @@
                         <p class="mb-0">No logs found matching your criteria.</p>
                     </td>
                 </tr>
-                @endforelse
+                <?php endif; ?>
             </tbody>
         </table>
     </div>
     <!-- Pagination -->
-    @if($logs->hasPages())
+    <?php if($logs->hasPages()): ?>
     <div class="mt-3">
-        {{ $logs->links('pagination::bootstrap-5') }}
+        <?php echo e($logs->links('pagination::bootstrap-5')); ?>
+
     </div>
-    @endif
+    <?php endif; ?>
 </div>
 <!-- Details Modal -->
 <div class="modal fade" id="detailsModal" tabindex="-1" aria-hidden="true">
@@ -283,8 +288,8 @@
         </div>
     </div>
 </div>
-@endsection
-@push('scripts')
+<?php $__env->stopSection(); ?>
+<?php $__env->startPush('scripts'); ?>
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 <script>
     // Initialize Flatpickr
@@ -345,4 +350,5 @@
         modal.show();
     }
 </script>
-@endpush
+<?php $__env->stopPush(); ?>
+<?php echo $__env->make('layouts.admin', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH /var/www/html/resources/views/admin/logs/index.blade.php ENDPATH**/ ?>

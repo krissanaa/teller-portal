@@ -26,9 +26,23 @@ class ReportController extends Controller
 
         if ($search) {
             $query->where(function ($q) use ($search) {
-                $q->where('store_name', 'like', "%{$search}%")
-                  ->orWhere('refer_code', 'like', "%{$search}%")
-                  ->orWhere('business_type', 'like', "%{$search}%");
+                $like = "%{$search}%";
+
+                $q->where('store_name', 'like', $like)
+                  ->orWhere('refer_code', 'like', $like)
+                  ->orWhere('business_type', 'like', $like)
+                  ->orWhere('pos_serial', 'like', $like)
+                  ->orWhere('store_address', 'like', $like)
+                  ->orWhere('bank_account', 'like', $like)
+                  ->orWhere('installation_date', 'like', $like)
+                  ->orWhereHas('branch', function ($branchQuery) use ($like) {
+                      $branchQuery->where('BRANCH_NAME', 'like', $like)
+                          ->orWhere('BRANCH_CODE', 'like', $like);
+                  })
+                  ->orWhereHas('unit', function ($unitQuery) use ($like) {
+                      $unitQuery->where('unit_name', 'like', $like)
+                          ->orWhere('unit_code', 'like', $like);
+                  });
             });
         }
 

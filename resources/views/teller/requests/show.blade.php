@@ -245,7 +245,7 @@ $tellerProfile = $tellerProfile ?? auth()->user()->loadMissing(['branch', 'unit'
             <span>ລາຍລະອຽດຄຳຂໍເປີດບັນຊີ</span>
             <div style="margin-left: auto;">
                 @if($request->approval_status == 'approved')
-                <span class="status-badge status-approved"><i class="bi bi-check-circle-fill"></i> ອະນຸມັດແລ້ວ</span>
+                <span class="status-badge status-approved"><i class="bi bi-check-circle-fill"></i> ອະນຸມັດ</span>
                 @elseif($request->approval_status == 'pending')
                 <span class="status-badge status-pending"><i class="bi bi-clock-fill"></i> ລໍຖ້າອະນຸມັດ</span>
                 @else

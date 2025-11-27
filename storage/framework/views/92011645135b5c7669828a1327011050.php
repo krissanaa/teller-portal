@@ -398,7 +398,15 @@
                             </td>
                             <td class="text-center">
                                 <span class="status-badge <?php echo e($r->approval_status === 'rejected' ? 'rejected' : ''); ?>">
-                                    <?php echo e(ucfirst($r->approval_status)); ?>
+                                    <?php
+                                        $statusLabel = match ($r->approval_status) {
+                                            'pending' => 'ລໍຖ້າອະນຸມັດ',
+                                            'approved' => 'ອະນຸມັດ',
+                                            'rejected' => 'ປະຕິເສດ',
+                                            default => ucfirst($r->approval_status),
+                                        };
+                                    ?>
+                                    <?php echo e($statusLabel); ?>
 
                                     <?php if($r->approval_status === 'rejected'): ?>
                                         <span class="status-note">

@@ -71,7 +71,7 @@ class OnboardingController extends Controller
             OnboardingRequest::create($data);
         });
 
-        return redirect()->route('teller.dashboard')->with('success');
+        return redirect()->route('teller.dashboard')->with('success', 'ສ້າງຄຳຂໍສຳເລັດ');
     }
 
     // Ã°Å¸Â§Â° Ã Â¸Å¸Ã Â¸Â­Ã Â¸Â£Ã Â¹Å’Ã Â¸Â¡Ã Â¹ÂÃ Â¸ÂÃ Â¹â€°Ã Â¹â€žÃ Â¸â€š

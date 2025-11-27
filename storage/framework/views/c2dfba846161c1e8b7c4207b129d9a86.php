@@ -242,12 +242,12 @@ $tellerProfile = $tellerProfile ?? auth()->user()->loadMissing(['branch', 'unit'
             <i class="bi bi-file-text-fill"></i>
             <span>ລາຍລະອຽດຄຳຂໍເປີດບັນຊີ</span>
             <div style="margin-left: auto;">
-                <?php if($request->approval_status == 'approved'): ?>
-                <span class="status-badge status-approved"><i class="bi bi-check-circle-fill"></i> ອະນຸມັດແລ້ວ</span>
-                <?php elseif($request->approval_status == 'pending'): ?>
-                <span class="status-badge status-pending"><i class="bi bi-clock-fill"></i> ລໍຖ້າອະນຸມັດ</span>
+                <?php if ($request->approval_status == 'approved'): ?>
+                    <span class="status-badge status-approved"><i class="bi bi-check-circle-fill"></i> ອະນຸມັດ</span>
+                <?php elseif ($request->approval_status == 'pending'): ?>
+                    <span class="status-badge status-pending"><i class="bi bi-clock-fill"></i> ລໍຖ້າອະນຸມັດ</span>
                 <?php else: ?>
-                <span class="status-badge status-rejected"><i class="bi bi-x-circle-fill"></i> ປະຕິເສດ</span>
+                    <span class="status-badge status-rejected"><i class="bi bi-x-circle-fill"></i> ປະຕິເສດ</span>
                 <?php endif; ?>
             </div>
         </div>
@@ -291,44 +291,49 @@ $tellerProfile = $tellerProfile ?? auth()->user()->loadMissing(['branch', 'unit'
             </div>
 
             <!-- Row 3: Attachments -->
-            <?php if(!empty($request->attachments)): ?>
-            <div class="form-group col-span-4">
-                <label>ເອກະສານແນບ</label>
-                <div class="file-preview-grid">
-                    <?php $attachments = json_decode($request->attachments ?? '[]', true); ?>
-                    <?php $__currentLoopData = $attachments; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $filePath): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                    <?php
-                    $fileUrl = asset('storage/' . $filePath);
-                    $fileName = basename($filePath);
-                    $extension = strtolower(pathinfo($filePath, PATHINFO_EXTENSION));
-                    ?>
-                    <div class="file-item" onclick="openPreview('<?php echo e($fileUrl); ?>', '<?php echo e($fileName); ?>', '<?php echo e($extension); ?>')">
-                        <?php if(in_array($extension, ['jpg','jpeg','png'])): ?>
-                        <img src="<?php echo e($fileUrl); ?>" class="file-preview-img">
-                        <?php elseif($extension === 'pdf'): ?>
-                        <i class="bi bi-file-pdf-fill" style="color: #ef4444; font-size: 1.5rem;"></i>
-                        <?php else: ?>
-                        <i class="bi bi-file-earmark-text"></i>
-                        <?php endif; ?>
-                        <div class="file-details">
-                            <div class="file-name" title="<?php echo e($fileName); ?>"><?php echo e($fileName); ?></div>
-                            <div class="file-size"><?php echo e(strtoupper($extension)); ?></div>
-                        </div>
+            <?php if (!empty($request->attachments)): ?>
+                <div class="form-group col-span-4">
+                    <label>ເອກະສານແນບ</label>
+                    <div class="file-preview-grid">
+                        <?php $attachments = json_decode($request->attachments ?? '[]', true); ?>
+                        <?php $__currentLoopData = $attachments;
+                        $__env->addLoop($__currentLoopData);
+                        foreach ($__currentLoopData as $filePath): $__env->incrementLoopIndices();
+                            $loop = $__env->getLastLoop(); ?>
+                            <?php
+                            $fileUrl = asset('storage/' . $filePath);
+                            $fileName = basename($filePath);
+                            $extension = strtolower(pathinfo($filePath, PATHINFO_EXTENSION));
+                            ?>
+                            <div class="file-item" onclick="openPreview('<?php echo e($fileUrl); ?>', '<?php echo e($fileName); ?>', '<?php echo e($extension); ?>')">
+                                <?php if (in_array($extension, ['jpg', 'jpeg', 'png'])): ?>
+                                    <img src="<?php echo e($fileUrl); ?>" class="file-preview-img">
+                                <?php elseif ($extension === 'pdf'): ?>
+                                    <i class="bi bi-file-pdf-fill" style="color: #ef4444; font-size: 1.5rem;"></i>
+                                <?php else: ?>
+                                    <i class="bi bi-file-earmark-text"></i>
+                                <?php endif; ?>
+                                <div class="file-details">
+                                    <div class="file-name" title="<?php echo e($fileName); ?>"><?php echo e($fileName); ?></div>
+                                    <div class="file-size"><?php echo e(strtoupper($extension)); ?></div>
+                                </div>
+                            </div>
+                        <?php endforeach;
+                        $__env->popLoop();
+                        $loop = $__env->getLastLoop(); ?>
                     </div>
-                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                 </div>
-            </div>
             <?php endif; ?>
 
             <!-- Admin Remark if rejected -->
-            <?php if($request->admin_remark): ?>
-            <div class="form-group col-span-4">
-                <label>ໝາຍເຫດຈາກຜູ້ອະນຸມັດ</label>
-                <div class="form-value" style="background: #fff1f2; color: #991b1b; border-color: #fecaca;">
-                    <?php echo e($request->admin_remark); ?>
+            <?php if ($request->admin_remark): ?>
+                <div class="form-group col-span-4">
+                    <label>ໝາຍເຫດຈາກຜູ້ອະນຸມັດ</label>
+                    <div class="form-value" style="background: #fff1f2; color: #991b1b; border-color: #fecaca;">
+                        <?php echo e($request->admin_remark); ?>
 
+                    </div>
                 </div>
-            </div>
             <?php endif; ?>
         </div>
 

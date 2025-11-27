@@ -394,6 +394,29 @@ $tellerProfile = $tellerProfile ?? auth()->user()->loadMissing(['branch', 'unit'
                 </div>
             </div>
 
+            <!-- Delete Confirmation Modal -->
+            <div class="modal fade" id="deleteConfirmModal" tabindex="-1" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered modal-sm">
+                    <div class="modal-content" style="border-radius: 12px; border: none;">
+                        <div class="modal-body" style="padding: 24px; text-align: center;">
+                            <div style="font-size: 2.5rem; color: #ef4444; margin-bottom: 12px;">
+                                <i class="bi bi-trash-fill"></i>
+                            </div>
+                            <h6 style="font-size: 1rem; font-weight: 600; color: #1e293b; margin-bottom: 6px;">ລົບໄຟລ໌ນີ້?</h6>
+                            <p style="color: #64748b; font-size: 0.85rem; margin-bottom: 20px;">ບໍ່ສາມາດຍົກເລີກໄດ້</p>
+                            <div style="display: flex; gap: 8px; justify-content: center;">
+                                <button type="button" class="btn btn-sm" data-bs-dismiss="modal" style="background: #f1f5f9; color: #64748b; padding: 8px 16px; border-radius: 6px; font-weight: 600; border: none;">
+                                    ຍົກເລີກ
+                                </button>
+                                <button type="button" class="btn btn-sm" id="confirmDeleteBtn" style="background: #ef4444; color: white; padding: 8px 16px; border-radius: 6px; font-weight: 600; border: none;">
+                                    ລົບ
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <div class="form-actions">
                 <a href="<?php echo e(route('teller.requests.show', $request->id)); ?>" class="btn btn-cancel">
                     <i class="bi bi-x-lg"></i> ຍົກເລີກ
@@ -487,19 +510,37 @@ $tellerProfile = $tellerProfile ?? auth()->user()->loadMissing(['branch', 'unit'
             updateFileList();
         }
 
+        let pendingDeleteIndex = null;
+        let pendingDeleteElement = null;
+
         window.markFileForDeletion = function(index, btnElement) {
-            if (confirm('ທ່ານຕ້ອງການລຶບໄຟລ໌ນີ້ບໍ່?')) {
+            pendingDeleteIndex = index;
+            pendingDeleteElement = btnElement;
+            const modal = new bootstrap.Modal(document.getElementById('deleteConfirmModal'));
+            modal.show();
+        }
+
+        document.getElementById('confirmDeleteBtn').addEventListener('click', function() {
+            if (pendingDeleteIndex !== null && pendingDeleteElement !== null) {
                 const input = document.createElement('input');
                 input.type = 'hidden';
                 input.name = 'delete_attachments[]';
-                input.value = index;
+                input.value = pendingDeleteIndex;
                 document.getElementById('deletedFilesContainer').appendChild(input);
 
-                const fileItem = btnElement.closest('.file-item');
+                const fileItem = pendingDeleteElement.closest('.file-item');
                 fileItem.style.opacity = '0';
                 setTimeout(() => fileItem.remove(), 300);
+
+                // Close modal
+                const modal = bootstrap.Modal.getInstance(document.getElementById('deleteConfirmModal'));
+                modal.hide();
+
+                // Reset
+                pendingDeleteIndex = null;
+                pendingDeleteElement = null;
             }
-        }
+        });
 
         function updateFileInput() {
             const dt = new DataTransfer();

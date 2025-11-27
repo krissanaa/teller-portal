@@ -9,10 +9,15 @@
     }
 
     /* Use layout background to match dashboard/nav */
-    body { background: inherit; }
-        :root {
-        --apb-primary: #14b8a6; /* Tailwind Teal 500 */
-        --apb-secondary: #0f766e; /* darker teal */
+    body {
+        background: inherit;
+    }
+
+    :root {
+        --apb-primary: #14b8a6;
+        /* Tailwind Teal 500 */
+        --apb-secondary: #0f766e;
+        /* darker teal */
         --apb-dark: #0d5c56;
     }
 
@@ -50,6 +55,7 @@
         gap: 12px;
         flex-wrap: wrap;
     }
+
     .btn-create {
         background: rgb(255, 255, 255);
         border: 2px solid #ff0000;
@@ -78,71 +84,75 @@
 
 
     /* Compact Status Cards */
-.status-card {
-    background: white;
-    border-radius: 10px;
-    box-shadow: 0 1px 6px rgba(0, 0, 0, 0.05);
-    border: 1px solid #e9ecef;
-    transition: all 0.3s ease;
-    text-decoration: none;
-    display: block;
-}
+    .status-card {
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 1px 6px rgba(0, 0, 0, 0.05);
+        border: 1px solid #e9ecef;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: block;
+    }
 
-.status-card:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.08);
-}
+    .status-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 3px 12px rgba(0, 0, 0, 0.08);
+    }
 
-.status-card-body {
-    padding: 14px 10px;
-    text-align: center;
-}
-
-.status-icon {
-    font-size: 1.8rem;
-    margin-bottom: 6px;
-    display: block;
-}
-
-.status-label {
-    font-size: 0.75rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.3px;
-    margin-bottom: 4px;
-    color: #000000;
-}
-
-.status-count {
-    font-size: 1.6rem;
-    font-weight: 700;
-    line-height: 1;
-    color: #000000;
-}
-
-/* Color borders */
-.status-card.pending {
-    border-left: 4px solid #ffc107;
-}
-.status-card.approved {
-    border-left: 4px solid #28a745;
-}
-.status-card.rejected {
-    border-left: 4px solid #dc3545;
-}
-
-/* Make cards more compact on mobile */
-@media (max-width: 768px) {
     .status-card-body {
-        padding: 12px 6px;
+        padding: 14px 10px;
+        text-align: center;
     }
+
     .status-icon {
-        font-size: 1.5rem;
+        font-size: 1.8rem;
+        margin-bottom: 6px;
+        display: block;
     }
+
+    .status-label {
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.3px;
+        margin-bottom: 4px;
+        color: #000000;
+    }
+
     .status-count {
-        font-size: 1.4rem;
+        font-size: 1.6rem;
+        font-weight: 700;
+        line-height: 1;
+        color: #000000;
     }
-}
+
+    /* Color borders */
+    .status-card.pending {
+        border-left: 4px solid #ffc107;
+    }
+
+    .status-card.approved {
+        border-left: 4px solid #28a745;
+    }
+
+    .status-card.rejected {
+        border-left: 4px solid #dc3545;
+    }
+
+    /* Make cards more compact on mobile */
+    @media (max-width: 768px) {
+        .status-card-body {
+            padding: 12px 6px;
+        }
+
+        .status-icon {
+            font-size: 1.5rem;
+        }
+
+        .status-count {
+            font-size: 1.4rem;
+        }
+    }
 
 
     /* Filter Card */
@@ -168,7 +178,8 @@
         color: var(--apb-accent);
     }
 
-    .search-input, .filter-select {
+    .search-input,
+    .filter-select {
         border: 1px solid #ced4da;
         border-radius: 8px;
         padding: 11px 14px;
@@ -176,7 +187,8 @@
         font-size: 0.9rem;
     }
 
-    .search-input:focus, .filter-select:focus {
+    .search-input:focus,
+    .filter-select:focus {
         border-color: var(--apb-accent);
         box-shadow: 0 0 0 0.2rem rgba(76, 175, 80, 0.15);
     }
@@ -248,6 +260,7 @@
         font-size: 1rem;
         letter-spacing: 0.5px;
         color: #000000;
+        white-space: nowrap;
     }
 
     .modern-table tbody tr {
@@ -296,6 +309,7 @@
         transition: all 0.2s ease;
         text-transform: uppercase;
         letter-spacing: 0.5px;
+        white-space: nowrap;
     }
 
     .badge-status.pending {
@@ -357,64 +371,108 @@
             font-size: 2rem;
         }
     }
+
+    /* Pagination Styling */
     .pagination svg {
-    width: 16px !important;
-    height: 16px !important;
-}
-.pagination {
-    display: flex;
-    justify-content: center;
-    gap: 4px;
-    margin-top: 1rem;
-}
-.pagination .page-link {
-    color: #2d5f3f;
-    border-radius: 6px;
-}
-.pagination .page-link:hover {
-    background: #2d5f3f;
-    color: white;
-}
-/* ปุ่ม Filter Date */
-.date-filter-btn {
-    border: 1px solid #ced4da;
-    background: white;
-    padding: 11px 14px;
-    border-radius: 8px;
-    font-weight: 600;
-    color: #333;
-    transition: 0.2s ease;
-}
+        width: 16px !important;
+        height: 16px !important;
+    }
 
-/* ❌ เอา hover ออก (ไม่ต้องมีเอฟเฟกต์ตอนเอาเมาส์ไปวาง) */
-.date-filter-btn:hover {
-    background: white !important;
-    border-color: #ced4da !important;
-    color: #333 !important;
-}
+    .pagination {
+        display: flex;
+        justify-content: center;
+        gap: 8px;
+        margin-top: 1.5rem;
+        flex-wrap: wrap;
+    }
 
-/* ✔ Focus/Active ยังเป็นสีเขียว */
-.date-filter-btn:focus,
-.date-filter-btn:active,
-.date-filter-btn.show {
-    border-color: var(--apb-accent) !important;
-    box-shadow: 0 0 0 0.15rem rgba(76, 175, 80, 0.25) !important;
-    color: var(--apb-accent) !important;
-}
+    .pagination .page-item {
+        margin: 0;
+    }
 
-.date-filter-btn:focus i,
-.date-filter-btn:active i,
-.date-filter-btn.show i {
-    color: var(--apb-accent) !important;
-}
-/* ทำให้ select + filter date button มี font-size เท่ากัน */
-.filter-size-unify {
-    font-size: 0.9rem !important;
-}
+    .pagination .page-link {
+        color: #64748b;
+        background: white;
+        border: 1px solid #e2e8f0;
+        border-radius: 4px;
+        padding: 4px 8px;
+        font-weight: 600;
+        font-size: 0.75rem;
+        transition: all 0.3s ease;
+        min-width: 28px;
+        text-align: center;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    }
 
+    .pagination .page-link:hover {
+        background: linear-gradient(135deg, #14b8a6 0%, #0f766e 100%);
+        border-color: #14b8a6;
+        color: white;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(20, 184, 166, 0.3);
+    }
 
+    .pagination .page-item.active .page-link {
+        background: linear-gradient(135deg, #14b8a6 0%, #0f766e 100%);
+        border-color: #14b8a6;
+        color: white;
+        box-shadow: 0 4px 12px rgba(20, 184, 166, 0.4);
+        transform: scale(1.05);
+    }
 
+    .pagination .page-item.disabled .page-link {
+        background: #f1f5f9;
+        border-color: #e2e8f0;
+        color: #cbd5e1;
+        cursor: not-allowed;
+        box-shadow: none;
+    }
 
+    .pagination .page-item.disabled .page-link:hover {
+        background: #f1f5f9;
+        border-color: #e2e8f0;
+        color: #cbd5e1;
+        transform: none;
+        box-shadow: none;
+    }
+
+    /* ปุ่ม Filter Date */
+    .date-filter-btn {
+        border: 1px solid #ced4da;
+        background: white;
+        padding: 11px 14px;
+        border-radius: 8px;
+        font-weight: 600;
+        color: #333;
+        transition: 0.2s ease;
+    }
+
+    /* ❌ เอา hover ออก (ไม่ต้องมีเอฟเฟกต์ตอนเอาเมาส์ไปวาง) */
+    .date-filter-btn:hover {
+        background: white !important;
+        border-color: #ced4da !important;
+        color: #333 !important;
+    }
+
+    /* ✔ Focus/Active ยังเป็นสีเขียว */
+    .date-filter-btn:focus,
+    .date-filter-btn:active,
+    .date-filter-btn.show {
+        border-color: var(--apb-accent) !important;
+        box-shadow: 0 0 0 0.15rem rgba(76, 175, 80, 0.25) !important;
+        color: var(--apb-accent) !important;
+    }
+
+    .date-filter-btn:focus i,
+    .date-filter-btn:active i,
+    .date-filter-btn.show i {
+        color: var(--apb-accent) !important;
+    }
+
+    /* ทำให้ select + filter date button มี font-size เท่ากัน */
+    .filter-size-unify {
+        font-size: 0.9rem !important;
+    }
 </style>
 
 <div class="report-shell container-fluid py-3">
@@ -424,9 +482,9 @@
             <i class="bi bi-graph-up-arrow"></i>
             ລາຍງານຮ້ານຄ້າຂອງຂ້ອຍ
         </h4>
-          <div class="header-actions">
+        <div class="header-actions">
             <a href="{{ route('teller.dashboard')}}" class="btn-create">
-   <i class="bi bi-arrow-left"></i>
+                <i class="bi bi-arrow-left"></i>
                 ກັບໜ້າຫຼັກ
             </a>
 
@@ -434,7 +492,7 @@
     </div>
 
     @php
-        $tellerIdentifier = Auth::user()->teller_id ?? Auth::id();
+    $tellerIdentifier = Auth::user()->teller_id ?? Auth::id();
     @endphp
 
     <!-- Status Summary Cards -->
@@ -454,7 +512,7 @@
             <a href="{{ route('teller.report', ['status' => 'approved']) }}" class="status-card approved">
                 <div class="status-card-body">
                     <span class="status-icon">✅</span>
-                    <div class="status-label">ອະນຸມັດແລ້ວ</div>
+                    <div class="status-label">ອະນຸມັດ</div>
                     <div class="status-count">
                         {{ \App\Models\TellerPortal\OnboardingRequest::where('teller_id', $tellerIdentifier)->where('approval_status','approved')->count() }}
                     </div>
@@ -485,82 +543,82 @@
                 <label class="form-label fw-semibold text-muted small mb-2">
                     <i class="bi bi-search"></i> ຄົ້ນຫາ
                 </label>
-<input type="text" name="search" value="{{ $search }}"
-       class="form-control search-input filter-size-unify fw-semibold"
-                       placeholder="ຊື່ຮ້ານ / ລະຫັດອ້າງອີງ / ປະເພດທຸລະກິດ"
-                       onkeydown="if(event.key==='Enter'){this.form.submit();}">
+                <input type="text" name="search" value="{{ $search }}"
+                    class="form-control search-input filter-size-unify fw-semibold"
+                    placeholder="ຊື່ຮ້ານ / ລະຫັດອ້າງອີງ / ປະເພດທຸລະກິດ"
+                    onkeydown="if(event.key==='Enter'){this.form.submit();}">
             </div>
             <div class="col-md-4">
                 <label class="form-label fw-semibold text-muted small mb-2">
                     <i class="bi bi-filter"></i> ສະຖານະ
                 </label>
-<select name="status" class="form-select filter-select text-muted fw-semibold filter-size-unify"
-        onchange="this.form.submit()">
+                <select name="status" class="form-select filter-select text-muted fw-semibold filter-size-unify"
+                    onchange="this.form.submit()">
                     <option value="">-- ສະຖານະທັງໝົດ --</option>
                     <option value="pending" {{ $status=='pending' ? 'selected' : '' }}>⏳ ລໍຖ້າອະນຸມັດ</option>
-                    <option value="approved" {{ $status=='approved' ? 'selected' : '' }}>✅ ອະນຸມັດແລ້ວ</option>
+                    <option value="approved" {{ $status=='approved' ? 'selected' : '' }}>✅ ອະນຸມັດ</option>
                     <option value="rejected" {{ $status=='rejected' ? 'selected' : '' }}>❌ ປະຕິເສດ</option>
                 </select>
             </div>
             <div class="col-md-3">
-    <label class="form-label fw-semibold text-muted small mb-2">
-        <i class="bi bi-calendar2-range"></i> ຕັ້ງຄ່າວັນທີ
-    </label>
+                <label class="form-label fw-semibold text-muted small mb-2">
+                    <i class="bi bi-calendar2-range"></i> ຕັ້ງຄ່າວັນທີ
+                </label>
 
-    <div class="dropdown w-100">
-<button class="btn date-filter-btn w-100 d-flex justify-content-between align-items-center
+                <div class="dropdown w-100">
+                    <button class="btn date-filter-btn w-100 d-flex justify-content-between align-items-center
                text-muted fw-semibold filter-size-unify"
-        type="button" id="dateFilterDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-    <span><i class="bi bi-sliders"></i> ເລືອກວັນທີ</span>
-    <i class="bi bi-chevron-down small"></i>
-</button>
+                        type="button" id="dateFilterDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                        <span><i class="bi bi-sliders"></i> ເລືອກວັນທີ</span>
+                        <i class="bi bi-chevron-down small"></i>
+                    </button>
 
 
 
-        <div class="dropdown-menu p-3 w-100 date-dropdown" aria-labelledby="dateFilterDropdown"
-             style="min-width:260px;">
+                    <div class="dropdown-menu p-3 w-100 date-dropdown" aria-labelledby="dateFilterDropdown"
+                        style="min-width:260px;">
 
-            <!-- YEAR -->
-            <div class="mb-3">
-                <label class="form-label fw-semibold small mb-1">
-                    <i class="bi bi-calendar2-week"></i> Year
-                </label>
-                <select name="year" class="form-select filter-select" onchange="this.form.submit()">
-                    <option value="">All Years</option>
-                    @foreach($years as $y)
-                        <option value="{{ $y }}" {{ $year == $y ? 'selected' : '' }}>{{ $y }}</option>
-                    @endforeach
-                </select>
+                        <!-- YEAR -->
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold small mb-1">
+                                <i class="bi bi-calendar2-week"></i> Year
+                            </label>
+                            <select name="year" class="form-select filter-select" onchange="this.form.submit()">
+                                <option value="">All Years</option>
+                                @foreach($years as $y)
+                                <option value="{{ $y }}" {{ $year == $y ? 'selected' : '' }}>{{ $y }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        <!-- MONTH -->
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold small mb-1">
+                                <i class="bi bi-calendar3"></i> Month
+                            </label>
+                            <select name="month" class="form-select filter-select" onchange="this.form.submit()">
+                                <option value="">All Months</option>
+                                @foreach(range(1, 12) as $m)
+                                <option value="{{ $m }}" {{ $month == $m ? 'selected' : '' }}>
+                                    {{ \Carbon\Carbon::create()->month($m)->format('F') }}
+                                </option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        <!-- DAY -->
+                        <div>
+                            <label class="form-label fw-semibold small mb-1">
+                                <i class="bi bi-calendar-day"></i> Day
+                            </label>
+                            <input type="date" name="day" value="{{ $day }}"
+                                class="form-control filter-select"
+                                onchange="this.form.submit()">
+                        </div>
+
+                    </div>
+                </div>
             </div>
-
-            <!-- MONTH -->
-            <div class="mb-3">
-                <label class="form-label fw-semibold small mb-1">
-                    <i class="bi bi-calendar3"></i> Month
-                </label>
-                <select name="month" class="form-select filter-select" onchange="this.form.submit()">
-                    <option value="">All Months</option>
-                    @foreach(range(1, 12) as $m)
-                        <option value="{{ $m }}" {{ $month == $m ? 'selected' : '' }}>
-                            {{ \Carbon\Carbon::create()->month($m)->format('F') }}
-                        </option>
-                    @endforeach
-                </select>
-            </div>
-
-            <!-- DAY -->
-            <div>
-                <label class="form-label fw-semibold small mb-1">
-                    <i class="bi bi-calendar-day"></i> Day
-                </label>
-                <input type="date" name="day" value="{{ $day }}"
-                       class="form-control filter-select"
-                       onchange="this.form.submit()">
-            </div>
-
-        </div>
-    </div>
-</div>
             <div class="col-md-3">
                 <a href="{{ route('teller.report') }}" class="btn btn-reset w-100">
                     <i class="bi bi-arrow-clockwise"></i> ລ້າງຕົວກອງ
@@ -595,86 +653,86 @@
                 </thead>
                 <tbody>
                     @forelse($data as $r)
-                             <tr class="table-row-clickable" data-href="{{ route('teller.requests.show', $r->id) }}">
-                            <td class="text-center fw-bold text-muted">
-                                {{ ($data->firstItem() ?? 0) + $loop->index }}
-                            </td>
-                            <td>
-                                <span class="reference-code">
-                                    <i class="bi bi-hash"></i>{{ $r->refer_code }}
-                                </span>
-                            </td>
-                                                        <td>
-                                <span class="store-name">
-                                <i class="bi bi-computer text-muted" ></i>
+                    <tr class="table-row-clickable" data-href="{{ route('teller.requests.show', $r->id) }}">
+                        <td class="text-center fw-bold text-muted">
+                            {{ ($data->firstItem() ?? 0) + $loop->index }}
+                        </td>
+                        <td>
+                            <span class="reference-code">
+                                <i class="bi bi-hash"></i>{{ $r->refer_code }}
+                            </span>
+                        </td>
+                        <td>
+                            <span class="store-name">
+                                <i class="bi bi-computer text-muted"></i>
                                 {{ $r->pos_serial ?: '-' }}
-                                </span>
-                            </td>
-                            <td>
-                                <span class="store-name">
-                                    <i class="bi bi-shop"></i>
-                                    {{ $r->store_name }}
+                            </span>
+                        </td>
+                        <td>
+                            <span class="store-name">
+                                <i class="bi bi-shop"></i>
+                                {{ $r->store_name }}
                                 </a>
-                            </td>
-                                                        <td>
-                                <span class="store-name">
+                        </td>
+                        <td>
+                            <span class="store-name">
                                 {{ $r->business_type }}
                             </span>
-                            </td>
+                        </td>
 
-                            <td>
-                                <SPAN class="store-name">
+                        <td>
+                            <SPAN class="store-name">
                                 <i class="bi bi-calendar3 text-muted"></i>
                                 {{ $r->installation_date }}
-                                </SPAN>
-                            </td>
+                            </SPAN>
+                        </td>
 
-                            <td class="text-center">
-                                @if($r->approval_status == 'approved')
-                                    <a href="{{ route('teller.report', ['status' => 'approved']) }}"
-                                       class="badge-status approved">
-                                        Approved
-                                    </a>
-                                @elseif($r->approval_status == 'pending')
-                                    <a href="{{ route('teller.report', ['status' => 'pending']) }}"
-                                       class="badge-status pending">
-                                        Pending
-                                    </a>
-                                @else
-                                    <a href="{{ route('teller.report', ['status' => 'rejected']) }}"
-                                       class="badge-status rejected">
-                                        Rejected
-                                    </a>
-                                @endif
-                            </td>
-                        </tr>
+                        <td class="text-center">
+                            @if($r->approval_status == 'approved')
+                            <a href="{{ route('teller.report', ['status' => 'approved']) }}"
+                                class="badge-status approved">
+                                ອະນຸມັດ
+                            </a>
+                            @elseif($r->approval_status == 'pending')
+                            <a href="{{ route('teller.report', ['status' => 'pending']) }}"
+                                class="badge-status pending">
+                                ລໍຖ້າອະນຸມັດ
+                            </a>
+                            @else
+                            <a href="{{ route('teller.report', ['status' => 'rejected']) }}"
+                                class="badge-status rejected">
+                                ປະຕິເສດ
+                            </a>
+                            @endif
+                        </td>
+                    </tr>
                     @empty
-                        <tr>
-                            <td colspan="7" class="empty-state">
-                                <i class="bi bi-inbox"></i>
-                                <p>ບໍ່ມີຂໍ້ມູນສຳລັບລາຍງານ</p>
-                            </td>
-                        </tr>
+                    <tr>
+                        <td colspan="7" class="empty-state">
+                            <i class="bi bi-inbox"></i>
+                            <p>ບໍ່ມີຂໍ້ມູນສຳລັບລາຍງານ</p>
+                        </td>
+                    </tr>
                     @endforelse
                 </tbody>
             </table>
 
             <!-- Pagination -->
-@if($data->hasPages())
-    <div class="pagination-wrapper text-center mt-4">
-        {{ $data->links('pagination::bootstrap-5') }}
-    </div>
-@endif
+            @if($data->hasPages())
+            <div class="pagination-wrapper text-center mt-4">
+                {{ $data->links('pagination::bootstrap-5') }}
+            </div>
+            @endif
         </div>
     </div>
 </div>
 <script>
-document.addEventListener('DOMContentLoaded', function () {
-    document.querySelectorAll('.table-row-clickable').forEach(row => {
-        row.addEventListener('click', () => {
-            window.location.href = row.dataset.href;
+    document.addEventListener('DOMContentLoaded', function() {
+        document.querySelectorAll('.table-row-clickable').forEach(row => {
+            row.addEventListener('click', () => {
+                window.location.href = row.dataset.href;
+            });
         });
     });
-});
 </script>
 @endsection

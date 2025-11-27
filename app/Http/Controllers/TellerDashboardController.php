@@ -12,15 +12,31 @@ use Illuminate\Validation\ValidationException;
 
 class TellerDashboardController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         $tellerId = Auth::user()->teller_id;
+        $search = trim((string) $request->query('search', ''));
 
-        $requests = OnboardingRequest::where('teller_id', $tellerId)
-            ->whereIn('approval_status', ['pending', 'rejected'])
+        $requestsQuery = OnboardingRequest::where('teller_id', $tellerId)
             ->with('branch')
-            ->orderByDesc('updated_at')
-            ->paginate(10);
+            ->orderByDesc('updated_at');
+
+        // Default: show only pending + rejected; if searching, include all statuses and search across key fields.
+        if ($search === '') {
+            $requestsQuery->whereIn('approval_status', ['pending', 'rejected']);
+        } else {
+            $requestsQuery->where(function ($q) use ($search) {
+                $like = '%' . $search . '%';
+                $q->where('refer_code', 'like', $like)
+                    ->orWhere('store_name', 'like', $like)
+                    ->orWhere('pos_serial', 'like', $like)
+                    ->orWhere('business_type', 'like', $like)
+                    ->orWhere('store_address', 'like', $like)
+                    ->orWhere('bank_account', 'like', $like);
+            });
+        }
+
+        $requests = $requestsQuery->paginate(10)->withQueryString();
 
         $notifications = OnboardingRequest::where('teller_id', $tellerId)
             ->whereIn('approval_status', ['approved', 'rejected'])
@@ -29,7 +45,7 @@ class TellerDashboardController extends Controller
             ->take(5)
             ->get();
 
-        return view('teller.dashboard', compact('requests', 'notifications'));
+        return view('teller.dashboard', compact('requests', 'notifications', 'search'));
     }
 
     public function report()

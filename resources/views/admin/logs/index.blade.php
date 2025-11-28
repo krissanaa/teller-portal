@@ -65,6 +65,26 @@
     .table-modern tbody td {
         vertical-align: middle;
     }
+
+    /* Keep table area height consistent whether data exists or not */
+    .logs-table-card {
+        min-height: 420px;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .logs-table-card .table-responsive {
+        flex: 1;
+        min-height: 300px;
+    }
+
+    .logs-empty-state {
+        min-height: 220px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
 </style>
 @endpush
 @section('content')
@@ -130,7 +150,7 @@
     </form>
 </div>
 <!-- Logs Table -->
-<div class="table-card">
+<div class="table-card logs-table-card">
     <div class="table-card-header">
         <h5>Activity Logs</h5>
         <span class="meta">{{ $logs->total() }} total entries</span>
@@ -139,7 +159,7 @@
         <table class="table table-modern">
             <thead>
                 <tr>
-                    <th width="5%">#</th>
+
                     <th width="15%">User</th>
                     <th width="15%">Action</th>
                     <th width="35%">Description</th>
@@ -151,7 +171,7 @@
             <tbody>
                 @forelse($logs as $log)
                 <tr>
-                    <td class="fw-bold text-muted">{{ $log->id }}</td>
+
                     <td>
                         <div class="d-flex align-items-center gap-2">
                             <div class="user-avatar">
@@ -202,11 +222,13 @@
                 </tr>
                 @empty
                 <tr>
-                    <td colspan="7" class="text-center py-5 text-muted">
-                        <div class="mb-3">
-                            <i class="bi bi-clipboard-x display-4 text-light"></i>
+                    <td colspan="6" class="text-center text-muted">
+                        <div class="logs-empty-state">
+                            <div class="mb-3">
+                                <i class="bi bi-clipboard-x display-4 text-light"></i>
+                            </div>
+                            <p class="mb-0">No logs found matching your criteria.</p>
                         </div>
-                        <p class="mb-0">No logs found matching your criteria.</p>
                     </td>
                 </tr>
                 @endforelse
@@ -216,7 +238,7 @@
     <!-- Pagination -->
     @if($logs->hasPages())
     <div class="mt-3">
-        {{ $logs->links('pagination::bootstrap-5') }}
+        {{ $logs->links('vendor.pagination.custom') }}
     </div>
     @endif
 </div>

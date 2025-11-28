@@ -16,7 +16,7 @@ class OnboardingRequestController extends Controller
 
         $requests = OnboardingRequest::where('approval_status', $status)
             ->orderBy('created_at', 'desc')
-            ->paginate(10)
+            ->paginate(5)
             ->appends(['status' => $status]);
 
         return view('admin.onboarding.index', compact('requests', 'status'));

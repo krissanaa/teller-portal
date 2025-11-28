@@ -9,8 +9,10 @@
     }
 
     :root {
-        --apb-primary: #14b8a6; /* Tailwind Teal 500 */
-        --apb-secondary: #0f766e; /* darker teal */
+        --apb-primary: #14b8a6;
+        /* Tailwind Teal 500 */
+        --apb-secondary: #0f766e;
+        /* darker teal */
         --apb-dark: #0d5c56;
     }
 
@@ -252,24 +254,27 @@
         margin: 0;
     }
 
-.pagination svg {
-    width: 16px !important;
-    height: 16px !important;
-}
-.pagination {
-    display: flex;
-    justify-content: center;
-    gap: 4px;
-    margin-top: 1rem;
-}
-.pagination .page-link {
-    color: #2d5f3f;
-    border-radius: 6px;
-}
-.pagination .page-link:hover {
-    background: #ffffff;
-    color: rgb(0, 0, 0);
-}
+    .pagination svg {
+        width: 16px !important;
+        height: 16px !important;
+    }
+
+    .pagination {
+        display: flex;
+        justify-content: center;
+        gap: 4px;
+        margin-top: 1rem;
+    }
+
+    .pagination .page-link {
+        color: #2d5f3f;
+        border-radius: 6px;
+    }
+
+    .pagination .page-link:hover {
+        background: #ffffff;
+        color: rgb(0, 0, 0);
+    }
 
     @media (max-width: 768px) {
         .page-header {
@@ -324,7 +329,7 @@
         </div>
     </div>
 
-<!-- Pending + Rejected Requests Table -->
+    <!-- Pending + Rejected Requests Table -->
     <div class="dashboard-card">
         <div class="card-header-custom">
             <div class="card-title">
@@ -354,84 +359,84 @@
                 </thead>
                 <tbody>
                     @forelse($requests as $r)
-                        <tr class="table-row-clickable" data-href="{{ route('teller.requests.show', $r->id) }}">
+                    <tr class="table-row-clickable" data-href="{{ route('teller.requests.show', $r->id) }}">
 
-                            <td>
-                                <span class="reference-code">
-                                    <i class="bi bi-hash"></i>{{ $r->refer_code }}
-                                </span>
-                            </td>
-                             <td>
-                                <span class="store-name">
-                                <i class="bi bi-computer text-muted" ></i>
+                        <td>
+                            <span class="reference-code">
+                                <i class="bi bi-hash"></i>{{ $r->refer_code }}
+                            </span>
+                        </td>
+                        <td>
+                            <span class="store-name">
+                                <i class="bi bi-computer text-muted"></i>
                                 {{ $r->pos_serial ?: '-' }}
-                                </span>
-                            </td>
-                            <td>
-                                <span class="store-name">
-                                    <i class="bi bi-shop text-muted me-1"></i>
-                                    {{ $r->store_name }}
-                                </span>
-                            </td>
-                            <td>
-                                <span class="store-name">
-                                    {{ $r->business_type }}
-                                </span>
-                            </td>
+                            </span>
+                        </td>
+                        <td>
+                            <span class="store-name">
+                                <i class="bi bi-shop text-muted me-1"></i>
+                                {{ $r->store_name }}
+                            </span>
+                        </td>
+                        <td>
+                            <span class="store-name">
+                                {{ $r->business_type }}
+                            </span>
+                        </td>
 
-                            <td>
-                                <span class="store-name">
+                        <td>
+                            <span class="store-name">
                                 <i class="bi bi-calendar3 text-muted"></i>
                                 {{ $r->installation_date }}
-                                </span>
-                            </td>
+                            </span>
+                        </td>
 
 
-                            <td>
-                                <span class="store-name text-danger fw-semibold">
-                                    {{ $r->admin_remark }}
+                        <td>
+                            <span class="store-name text-danger fw-semibold">
+                                {{ $r->admin_remark }}
+                            </span>
+                        </td>
+                        <td class="text-center">
+                            <span class="status-badge {{ $r->approval_status === 'rejected' ? 'rejected' : '' }}">
+                                @php
+                                $statusLabel = match ($r->approval_status) {
+                                'pending' => 'ລໍຖ້າອະນຸມັດ',
+                                'approved' => 'ອະນຸມັດ',
+                                'rejected' => 'ປະຕິເສດ',
+                                default => ucfirst($r->approval_status),
+                                };
+                                @endphp
+                                {{ $statusLabel }}
+                                @if($r->approval_status === 'rejected')
+                                <span class="status-note">
+                                    <i class="bi bi-arrow-repeat"></i>
+                                    <a href="{{ route('teller.requests.edit', $r->id) }}" class="resubmit-link">
+                                        Resubmit
+                                    </a>
                                 </span>
-                            </td>
-                            <td class="text-center">
-                                <span class="status-badge {{ $r->approval_status === 'rejected' ? 'rejected' : '' }}">
-                                    @php
-                                        $statusLabel = match ($r->approval_status) {
-                                            'pending' => 'ລໍຖ້າອະນຸມັດ',
-                                            'approved' => 'ອະນຸມັດ',
-                                            'rejected' => 'ປະຕິເສດ',
-                                            default => ucfirst($r->approval_status),
-                                        };
-                                    @endphp
-                                    {{ $statusLabel }}
-                                    @if($r->approval_status === 'rejected')
-                                        <span class="status-note">
-                                            <i class="bi bi-arrow-repeat"></i>
-                                            <a href="{{ route('teller.requests.edit', $r->id) }}" class="resubmit-link">
-                                                Resubmit
-                                            </a>
-                                        </span>
-                                    @endif
-                                </span>
-                            </td>
-                        </tr>
+                                @endif
+                            </span>
+                        </td>
+                    </tr>
                     @empty
-                        <tr>
-                            <td colspan="7" class="empty-state">
-                                <i class="bi bi-inbox"></i>
-                                <p>ບໍ່ມີຂໍ້ມູນ
-                            </td>
-                        </tr>
+                    <tr>
+                        <td colspan="7" class="empty-state">
+                            <i class="bi bi-inbox"></i>
+                            <p>ບໍ່ມີຂໍ້ມູນ
+                        </td>
+                    </tr>
                     @endforelse
 
                 </tbody>
             </table>
         </div>
 
-@if($requests->hasPages())
-    <div class="pagination-wrapper text-center mt-4">
-        {{ $requests->links('pagination::bootstrap-5') }}
-    </div>
-@endif
+        @if($requests->hasPages())
+        <div class="pagination-wrapper text-center mt-4">
+            {{ $requests->links('vendor.pagination.custom') }}
+        </div>
+        @endif
     </div>
 
 
@@ -439,18 +444,18 @@
 
 {{-- can click all row --}}
 <script>
-document.addEventListener('DOMContentLoaded', function () {
-    setInterval(() => window.location.reload(),  300000);
+    document.addEventListener('DOMContentLoaded', function() {
+        setInterval(() => window.location.reload(), 300000);
 
-    document.querySelectorAll('.table-row-clickable').forEach(row => {
-        row.addEventListener('click', () => {
-            window.location.href = row.dataset.href;
+        document.querySelectorAll('.table-row-clickable').forEach(row => {
+            row.addEventListener('click', () => {
+                window.location.href = row.dataset.href;
+            });
+        });
+
+        document.querySelectorAll('.resubmit-link').forEach(link => {
+            link.addEventListener('click', (event) => event.stopPropagation());
         });
     });
-
-    document.querySelectorAll('.resubmit-link').forEach(link => {
-        link.addEventListener('click', (event) => event.stopPropagation());
-    });
-});
 </script>
 @endsection

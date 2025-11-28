@@ -380,7 +380,7 @@
 
     .pagination {
         display: flex;
-        justify-content: center;
+        justify-content: flex-end;
         gap: 8px;
         margin-top: 1.5rem;
         flex-wrap: wrap;
@@ -719,8 +719,8 @@
 
             <!-- Pagination -->
             @if($data->hasPages())
-            <div class="pagination-wrapper text-center mt-4">
-                {{ $data->links('pagination::bootstrap-5') }}
+            <div class="pagination-wrapper d-flex justify-content-end mt-4">
+                {{ $data->links('vendor.pagination.custom') }}
             </div>
             @endif
         </div>

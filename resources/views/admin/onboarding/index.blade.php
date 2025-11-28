@@ -4,180 +4,379 @@
 
 @section('content')
 @php
-    use Illuminate\Support\Str;
+use Illuminate\Support\Str;
 
-    $statusClassMap = [
-        'approved' => 'status-pill approved',
-        'rejected' => 'status-pill rejected',
-        'pending' => 'status-pill pending',
-    ];
+$statusClassMap = [
+'approved' => 'status-pill approved',
+'rejected' => 'status-pill rejected',
+'pending' => 'status-pill pending',
+];
 @endphp
 
 <style>
     :root {
-        --bg-color: #0d1b14;
+        --apb-primary: #0f766e;
+        --apb-secondary: #0d5c56;
+        --apb-accent: #14b8a6;
+        --apb-dark: #0b3f3a;
+        --bg-color: #f8f9fa;
         --card-bg: #ffffff;
-        --card-border: rgba(19, 78, 74, 0.1);
-        --brand-green: #1c724b;
-        --brand-green-light: #e6f4ee;
-        --brand-gray: #708090;
-        --text-dark: #0f172a;
-        --text-muted: #6b7280;
-        --chip-bg: rgba(28, 114, 75, 0.08);
+        --text-dark: #334155;
+        --text-muted: #64748b;
+        --border-color: #e2e8f0;
     }
 
     body {
-        font-family: 'Noto Sans Lao', 'Noto Sans', sans-serif;
-        background: #ffffff;
+        font-family: 'Inter', 'Noto Sans Lao', sans-serif;
+        background: var(--bg-color);
         color: var(--text-dark);
+        font-size: 0.9375rem;
+        /* Bigger base font */
+        line-height: 1.5;
     }
 
     .onboarding-shell {
-        max-width: 1100px;
+        max-width: 1400px;
         margin: 0 auto;
-        padding: 2rem 1rem 3rem;
+        padding: 1.5rem 1rem 3rem;
     }
 
     .page-heading {
-        font-size: clamp(1.8rem, 3vw, 2.4rem);
-        font-weight: 800;
-        color: var(--text-dark);
-        margin-bottom: 1.5rem;
+        font-size: 1.5rem;
+        /* Bigger heading */
+        font-weight: 700;
+        color: #0f172a;
+        margin-bottom: 1rem;
+        letter-spacing: -0.025em;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
     }
 
     .card-stack {
         display: flex;
         flex-direction: column;
-        gap: 1.3rem;
+        gap: 0.5rem;
+        /* Keep compact gap */
     }
 
     .request-card {
-        border-radius: 24px;
-        border: 1px solid rgba(28, 114, 75, 0.18);
-        background: var(--card-bg);
-        padding: 1.6rem;
-        box-shadow: 0 18px 40px rgba(15, 23, 42, 0.12);
+        background: white;
+        border-radius: 6px;
+        padding: 0.875rem;
+        /* Keep compact padding */
+        box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+        border: 1px solid var(--border-color);
+        border-left: 3px solid var(--apb-primary);
+        border-top: 1px solid var(--border-color);
+        transition: all 0.15s ease;
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
     }
 
-    .info-strip {
+    .request-card:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        border-color: #cbd5e1;
+    }
+
+    /* Header Section */
+    .card-header-row {
         display: flex;
-        flex-wrap: wrap;
-        gap: 0.6rem;
-        margin-top: 1rem;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 0.75rem;
+    }
+
+    .request-title {
+        font-size: 1.25rem;
+        /* Bigger title */
+        font-weight: 700;
+        color: #0f172a;
+        margin: 0;
+        line-height: 1.3;
+    }
+
+    .meta-row {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        margin-top: 0.15rem;
+        color: var(--text-muted);
+        font-size: 0.9375rem;
+        /* Bigger meta text */
+    }
+
+    .meta-item {
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+    }
+
+    /* Info Grid */
+    .info-strip {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+        gap: 0.5rem;
+        padding: 0.5rem;
+        background: #f8fafc;
+        border-radius: 4px;
+        border: 1px solid #f1f5f9;
     }
 
     .info-chip {
-        flex: 1 1 220px;
-        min-width: 200px;
-        border-radius: 18px;
-        border: 1px solid rgba(28, 114, 75, 0.15);
-        background: rgba(28, 114, 75, 0.06);
-        padding: 0.7rem 0.95rem;
-        display: inline-flex;
-        align-items: flex-start;
-        gap: 0.6rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
     }
 
     .info-chip i {
-        color: var(--brand-green);
-        font-size: 1.1rem;
-        margin-top: 0.15rem;
+        color: var(--apb-primary);
+        font-size: 1.125rem;
+        /* Bigger icon */
+        opacity: 0.8;
     }
 
     .info-chip .text {
         display: flex;
         flex-direction: column;
-        gap: 0.2rem;
+        line-height: 1.2;
     }
 
     .info-chip small {
-        display: block;
-        font-size: 0.72rem;
+        font-size: 0.75rem;
+        /* Bigger label */
         text-transform: uppercase;
-        letter-spacing: 0.05em;
-        color: var(--text-muted);
+        color: #94a3b8;
+        font-weight: 600;
+        letter-spacing: 0.025em;
     }
 
     .info-chip strong {
-        display: block;
         font-size: 1rem;
-        color: var(--text-dark);
-        font-weight: 700;
+        /* Bigger value */
+        color: #334155;
+        font-weight: 600;
     }
 
+    /* Status Pills */
     .status-pill {
         display: inline-flex;
         align-items: center;
-        gap: 0.35rem;
-        padding: 0.35rem 1.1rem;
-        border-radius: 999px;
-        font-size: 0.78rem;
-        font-weight: 700;
+        gap: 4px;
+        padding: 4px 10px;
+        border-radius: 4px;
+        font-size: 0.8125rem;
+        /* Bigger pill text */
+        font-weight: 600;
         text-transform: uppercase;
-        letter-spacing: 0.08em;
+        letter-spacing: 0.025em;
+        line-height: 1;
     }
 
-    .status-pill.approved { background: rgba(28, 114, 75, 0.15); color: var(--brand-green); }
-    .status-pill.pending { background: rgba(251, 191, 36, 0.25); color: #b45309; }
-    .status-pill.rejected { background: rgba(239, 68, 68, 0.2); color: #b91c1c; }
-
-    .request-title {
-        margin: 0.5rem 0 0;
-        font-size: 1.3rem;
-        font-weight: 800;
-        color: #000000;
+    .status-pill::before {
+        content: '';
+        display: block;
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
     }
 
+    .status-pill.approved {
+        background: #ecfdf5;
+        color: #047857;
+        border: 1px solid #d1fae5;
+    }
+
+    .status-pill.approved::before {
+        background: #059669;
+    }
+
+    .status-pill.pending {
+        background: #fffbeb;
+        color: #b45309;
+        border: 1px solid #fde68a;
+    }
+
+    .status-pill.pending::before {
+        background: #d97706;
+    }
+
+    .status-pill.rejected {
+        background: #fef2f2;
+        color: #b91c1c;
+        border: 1px solid #fecaca;
+    }
+
+    .status-pill.rejected::before {
+        background: #dc2626;
+    }
+
+    /* Tags & Attachments */
     .tag-row {
         display: flex;
         flex-wrap: wrap;
-        gap: 0.65rem;
-        margin-top: 1rem;
+        gap: 0.35rem;
+        font-size: 0.875rem;
+        /* Bigger tag text */
     }
 
     .tag-row span {
-        background: rgba(28, 114, 75, 0.12);
-        color: var(--brand-green);
-        border-radius: 999px;
-        padding: 0.35rem 0.85rem;
-        font-size: 0.78rem;
-        font-weight: 600;
+        background: white;
+        color: var(--text-muted);
+        border: 1px solid var(--border-color);
+        border-radius: 3px;
+        padding: 3px 8px;
         display: inline-flex;
         align-items: center;
-        gap: 0.35rem;
+        gap: 0.25rem;
+    }
+
+    .tag-row span i {
+        color: var(--apb-accent);
+        font-size: 0.875rem;
     }
 
     .attachment-box {
-        margin-top: 1.25rem;
-        border: 1px dashed rgba(28, 114, 75, 0.3);
-        border-radius: 20px;
-        padding: 0.9rem;
-        background: #f8fefb;
+        margin-top: 0.25rem;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.35rem;
     }
 
     .attachment-pill {
         display: inline-flex;
         align-items: center;
-        gap: 0.5rem;
-        border: 1px solid rgba(15, 23, 42, 0.1);
-        border-radius: 14px;
-        padding: 0.45rem 0.8rem;
+        gap: 0.35rem;
+        border: 1px solid #e2e8f0;
+        border-radius: 3px;
+        padding: 4px 10px;
         background: #fff;
         text-decoration: none;
         color: var(--text-dark);
-        font-size: 0.85rem;
-        margin-right: 0.5rem;
-        margin-bottom: 0.5rem;
+        font-size: 0.875rem;
+        /* Bigger attachment text */
+        font-weight: 500;
+        transition: all 0.15s ease;
     }
 
+    .attachment-pill:hover {
+        border-color: var(--apb-primary);
+        color: var(--apb-primary);
+        background: #f0fdfa;
+    }
+
+    /* Actions */
+    .card-footer {
+        margin-top: 0.25rem;
+        padding-top: 0.75rem;
+        border-top: 1px solid #f1f5f9;
+        display: flex;
+        gap: 0.5rem;
+    }
+
+    .btn {
+        padding: 0.4rem 1rem;
+        font-size: 0.875rem;
+        /* Bigger button text */
+        font-weight: 600;
+        border-radius: 4px;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+        transition: all 0.15s ease;
+    }
+
+    .btn-success {
+        background: #0f766e;
+        border: 1px solid #0f766e;
+        color: white;
+    }
+
+    .btn-success:hover {
+        background: #0d5c56;
+        border-color: #0d5c56;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+    }
+
+    .btn-danger {
+        background: white;
+        border: 1px solid #ef4444;
+        color: #ef4444;
+    }
+
+    .btn-danger:hover {
+        background: #fef2f2;
+    }
+
+    .btn-outline-secondary {
+        background: white;
+        border: 1px solid #cbd5e1;
+        color: #475569;
+    }
+
+    .btn-outline-secondary:hover {
+        background: #f8fafc;
+        border-color: #94a3b8;
+        color: #0f172a;
+    }
+
+    /* Modal Styles */
+    .modal-content {
+        border: none;
+        border-radius: 16px;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        overflow: hidden;
+    }
+
+    .modal-header {
+        border-bottom: 1px solid #f1f5f9;
+        padding: 1.25rem 1.5rem;
+        background: white;
+    }
+
+    .modal-title {
+        font-weight: 700;
+        font-size: 1.125rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .modal-body {
+        padding: 1.5rem;
+    }
+
+    .modal-footer {
+        border-top: 1px solid #f1f5f9;
+        padding: 1rem 1.5rem;
+        background: #f8fafc;
+    }
+
+    .form-control {
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        padding: 0.6rem 1rem;
+        font-size: 0.9375rem;
+        transition: all 0.2s ease;
+    }
+
+    .form-control:focus {
+        border-color: var(--apb-accent);
+        box-shadow: 0 0 0 3px rgba(20, 184, 166, 0.1);
+    }
+
+    /* Lightbox */
     .attachment-lightbox {
         position: fixed;
         inset: 0;
-        background: rgba(5, 12, 9, 0.92);
+        background: rgba(15, 23, 42, 0.9);
+        backdrop-filter: blur(4px);
         display: flex;
         align-items: center;
         justify-content: center;
-        padding: 1.5rem;
+        padding: 2rem;
         z-index: 1050;
         opacity: 0;
         pointer-events: none;
@@ -191,254 +390,276 @@
 
     .lightbox-content {
         position: relative;
-        width: min(90vw, 1000px);
-        max-height: 92vh;
-        background: #0f1a15;
-        border-radius: 18px;
-        border: 1px solid rgba(255, 255, 255, 0.3);
-        overflow: hidden;
-        box-shadow: 0 40px 80px rgba(0, 0, 0, 0.6);
+        width: auto;
+        max-width: 90vw;
+        max-height: 90vh;
+        background: transparent;
         display: flex;
         flex-direction: column;
     }
 
-    .lightbox-body {
-        padding: 1rem;
-        background: #ffffff;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-
-    .lightbox-body.scrollable {
-        overflow: auto;
-    }
-
-    .lightbox-body img,
-    .lightbox-body iframe {
-        width: clamp(300px, 100%, 900px);
+    .lightbox-body img {
+        max-width: 100%;
         max-height: 85vh;
-        object-fit: contain;
-        border: none;
-        border-radius: 12px;
-        background: #fff;
-    }
-
-    .lightbox-body.scrollable iframe {
-        height: 85vh;
-        max-height: none;
+        border-radius: 4px;
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
     }
 
     .lightbox-close {
         position: absolute;
-        top: 0.75rem;
-        right: 0.75rem;
-        width: 40px;
-        height: 40px;
-        border-radius: 50%;
+        top: -3rem;
+        right: 0;
+        color: white;
+        background: transparent;
         border: none;
-        background: rgba(255, 255, 255, 0.15);
-        color: #fff;
-        font-size: 1.1rem;
+        font-size: 2rem;
         cursor: pointer;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        transition: background 0.2s ease;
+        opacity: 0.8;
     }
 
     .lightbox-close:hover {
-        background: rgba(255, 255, 255, 0.3);
-    }
-
-    .card-footer {
-        margin-top: 1.1rem;
-        display: flex;
-        flex-wrap: wrap;
-        gap: 0.6rem;
-    }
-
-    .btn-outline-primary {
-        border-color: var(--brand-green);
-        color: var(--brand-green);
-        transition: background 0.2s ease, color 0.2s ease;
-    }
-
-    .btn-outline-primary:hover {
-        background: #b91c1c;
-        border-color: #b91c1c;
-        color: #fff;
-    }
-    .btn-outline-secondary {
-        border-color: #000000;
-        color: #000000;
-        transition: background 0.2s ease, color 0.2s ease;
-    }
-
-    .btn-outline-secondary:hover {
-        background: #b91c1c;
-        border-color: #b91c1c;
-        color: #fff;
+        opacity: 1;
     }
 
     @media (max-width: 640px) {
-        .info-chip {
-            flex-basis: 100%;
+        .info-strip {
+            grid-template-columns: 1fr;
         }
+
+    }
+
+    /* Pagination - Teller Style */
+    .pagination svg {
+        width: 16px !important;
+        height: 16px !important;
+    }
+
+    .pagination {
+        display: flex;
+        justify-content: center;
+        gap: 8px;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+        flex-wrap: wrap;
+    }
+
+    .pagination .page-item {
+        margin: 0;
+    }
+
+    .pagination .page-link {
+        color: #64748b;
+        background: white;
+        border: 1px solid #e2e8f0;
+        border-radius: 4px;
+        padding: 4px 8px;
+        font-weight: 600;
+        font-size: 0.75rem;
+        transition: all 0.3s ease;
+        min-width: 28px;
+        text-align: center;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-decoration: none;
+    }
+
+    .pagination .page-link:hover {
+        background: linear-gradient(135deg, #14b8a6 0%, #0f766e 100%);
+        border-color: #14b8a6;
+        color: white;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(20, 184, 166, 0.3);
+    }
+
+    .pagination .page-item.active .page-link {
+        background: linear-gradient(135deg, #14b8a6 0%, #0f766e 100%);
+        border-color: #14b8a6;
+        color: white;
+        box-shadow: 0 4px 12px rgba(20, 184, 166, 0.4);
+        transform: scale(1.05);
+    }
+
+    .pagination .page-item.disabled .page-link {
+        background: #f1f5f9;
+        border-color: #e2e8f0;
+        color: #cbd5e1;
+        cursor: not-allowed;
+        box-shadow: none;
+        pointer-events: none;
+    }
+
+    .pagination .page-item.disabled .page-link:hover {
+        background: #f1f5f9;
+        border-color: #e2e8f0;
+        color: #cbd5e1;
+        transform: none;
+        box-shadow: none;
     }
 </style>
 
 
 
 
-    <div class="card-stack">
+<div class="card-stack">
     @forelse ($requests as $req)
 
+    @php
+    $created = optional($req->created_at)?->format('M d, Y \\a\\t h:i A');
+    $attachments = is_array($req->attachments)
+    ? $req->attachments
+    : (is_string($req->attachments) ? json_decode($req->attachments ?? '[]', true) : []);
+    @endphp
+    <div class="request-card">
+        <div class="d-flex justify-content-between flex-wrap gap-2">
+            <div>
+                <span class="{{ $statusClassMap[$req->approval_status] ?? 'status-pill pending' }}">
+                    {{ ucfirst($req->approval_status) }}
+                </span>
+                <h2 class="request-title mb-0">{{ $req->store_name ?? 'Unnamed Store' }}</h2>
+                <div class="text-black fw-bold mt-1" style="font-size: 15px">
+                    <i class="bi bi-location"></i> {{ $req->business_type ?? '-' }}
+                </div>
+
+                <div class="text-black fw-bold small mt-1" style="font-size: 15px">
+                    <i class="bi bi-location"></i> {{ $req->store_address ?? 'N/A' }}
+                </div>
+
+                <div class="text-black fw-bold small mt-1" style="font-size: 15px">
+                    <i class="bi bi-location"></i> {{ optional($req->branch)->name ?? '-' }}
+                </div>
+
+
+            </div>
+            <div class="text-end">
+                <div class="fw-semibold">
+                    {{ optional($req->teller)->name ? optional($req->teller)->name .' ('. $req->teller_id .')' : ($req->teller_id ?? '-') }}
+                </div>
+                @if ($created)
+                <small class="text-muted d-block">
+                    <i class="bi bi-calendar-event"></i> Submitted {{ $created }}
+                </small>
+                @endif
+            </div>
+        </div>
+
+        <div class="info-strip">
+            <div class="info-chip">
+                <i class="bi bi-upc"></i>
+                <div class="text">
+                    <small>Refer ID</small>
+                    <strong>{{ $req->refer_code ?? 'N/A' }}</strong>
+                </div>
+            </div>
+
+
+
+
+            <div class="info-chip">
+                <i class="bi bi-bank"></i>
+                <div class="text">
+                    <small>Bank Account</small>
+                    <strong>{{ $req->bank_account ?? '-' }}</strong>
+                </div>
+            </div>
+            <div class="info-chip">
+                <i class="bi bi-calendar-check"></i>
+                <div class="text">
+                    <small>Install Date</small>
+                    <strong>{{ $req->installation_date ? \Carbon\Carbon::parse($req->installation_date)->format('M d, Y') : '-' }}</strong>
+                </div>
+            </div>
+        </div>
+
+        <div class="tag-row">
+            <span><i class="bi bi-info-circle"></i> Store status: {{ Str::title(str_replace('_', ' ', $req->store_status ?? 'unknown')) }}</span>
+            <span><i class="bi bi-paperclip"></i> Attachments: {{ count($attachments) }}</span>
+            <span><i class="bi bi-chat-text"></i> Admin remark: {{ $req->admin_remark ?? '-' }}</span>
+        </div>
+
+        @if (count($attachments))
+        <div class="attachment-box">
+            @foreach ($attachments as $path)
             @php
-                $created = optional($req->created_at)?->format('M d, Y \\a\\t h:i A');
-                $attachments = is_array($req->attachments)
-                    ? $req->attachments
-                    : (is_string($req->attachments) ? json_decode($req->attachments ?? '[]', true) : []);
+            $fileName = basename($path);
+            $url = asset('storage/' . ltrim($path, '/'));
+            $extension = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
             @endphp
-            <div class="request-card">
-                <div class="d-flex justify-content-between flex-wrap gap-2">
-                    <div>
-                        <span class="{{ $statusClassMap[$req->approval_status] ?? 'status-pill pending' }}">
-                            {{ ucfirst($req->approval_status) }}
-                        </span>
-                        <h2 class="request-title mb-0">{{ $req->store_name ?? 'Unnamed Store' }}</h2>
-                        <div class="text-black fw-bold mt-1" style="font-size: 15px">
-                            <i class="bi bi-location"></i> {{ $req->business_type ?? '-' }}
-                        </div>
-
-                        <div class="text-black fw-bold small mt-1" style="font-size: 15px">
-                            <i class="bi bi-location"></i> {{ $req->store_address ?? 'N/A' }}
-                        </div>
-
-                        <div class="text-black fw-bold small mt-1" style="font-size: 15px">
-                            <i class="bi bi-location"></i> {{ optional($req->branch)->name ?? '-' }}
-                        </div>
-
-
-                    </div>
-                    <div class="text-end">
-                        <div class="fw-semibold">
-                            {{ optional($req->teller)->name ? optional($req->teller)->name .' ('. $req->teller_id .')' : ($req->teller_id ?? '-') }}
-                        </div>
-                        @if ($created)
-                            <small class="text-muted d-block">
-                                <i class="bi bi-calendar-event"></i> Submitted {{ $created }}
-                            </small>
-                        @endif
-                    </div>
-                </div>
-
-                <div class="info-strip">
-                    <div class="info-chip">
-                        <i class="bi bi-upc"></i>
-                        <div class="text">
-                            <small>Refer ID</small>
-                            <strong>{{ $req->refer_code ?? 'N/A' }}</strong>
-                        </div>
-                    </div>
-                    <div class="info-chip">
-                        <i class="bi bi-cpu"></i>
-                        <div class="text">
-                            <small>POS Serial</small>
-                            <strong>{{ $req->pos_serial ?? '-' }}</strong>
-                        </div>
-                    </div>
-
-
-
-                    <div class="info-chip">
-                        <i class="bi bi-bank"></i>
-                        <div class="text">
-                            <small>Bank Account</small>
-                            <strong>{{ $req->bank_account ?? '-' }}</strong>
-                        </div>
-                    </div>
-                    <div class="info-chip">
-                        <i class="bi bi-calendar-check"></i>
-                        <div class="text">
-                            <small>Install Date</small>
-                            <strong>{{ $req->installation_date ? \Carbon\Carbon::parse($req->installation_date)->format('M d, Y') : '-' }}</strong>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="tag-row">
-                    <span><i class="bi bi-info-circle"></i> Store status: {{ Str::title(str_replace('_', ' ', $req->store_status ?? 'unknown')) }}</span>
-                    <span><i class="bi bi-paperclip"></i> Attachments: {{ count($attachments) }}</span>
-                    <span><i class="bi bi-chat-text"></i> Admin remark: {{ $req->admin_remark ?? '-' }}</span>
-                </div>
-
-                @if (count($attachments))
-                    <div class="attachment-box">
-                        @foreach ($attachments as $path)
-                            @php
-                                $fileName = basename($path);
-                                $url = asset('storage/' . ltrim($path, '/'));
-                                $extension = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
-                            @endphp
-                            <button type="button"
-                                class="attachment-pill"
-                                onclick="openAdminPreview('{{ $url }}', '{{ addslashes($fileName) }}', '{{ $extension }}')">
-                                @if(in_array($extension, ['jpg','jpeg','png','gif']))
-                                    <span style="width:42px;height:42px;border-radius:12px;overflow:hidden;display:inline-flex;">
-                                        <img src="{{ $url }}" alt="{{ $fileName }}" style="width:100%;height:100%;object-fit:cover;">
-                                    </span>
-                                @elseif($extension === 'pdf')
-                                    <span style="width:42px;height:42px;border-radius:12px;display:inline-flex;align-items:center;justify-content:center;background:#fef2f2;color:#b91c1c;font-weight:700;">
-                                        PDF
-                                    </span>
-                                @else
-                                    <i class="bi bi-paperclip"></i>
-                                @endif
-                                {{ Str::limit($fileName, 24) }}
-                            </button>
-                        @endforeach
-                    </div>
+            <button type="button"
+                class="attachment-pill"
+                onclick="openAdminPreview('{{ $url }}', '{{ addslashes($fileName) }}', '{{ $extension }}')">
+                @if(in_array($extension, ['jpg','jpeg','png','gif']))
+                <span style="width:42px;height:42px;border-radius:12px;overflow:hidden;display:inline-flex;">
+                    <img src="{{ $url }}" alt="{{ $fileName }}" style="width:100%;height:100%;object-fit:cover;">
+                </span>
+                @elseif($extension === 'pdf')
+                <span style="width:42px;height:42px;border-radius:12px;display:inline-flex;align-items:center;justify-content:center;background:#fef2f2;color:#b91c1c;font-weight:700;">
+                    PDF
+                </span>
+                @else
+                <i class="bi bi-paperclip"></i>
                 @endif
+                {{ Str::limit($fileName, 24) }}
+            </button>
+            @endforeach
+        </div>
+        @endif
 
-                @if ($req->approval_status === 'pending')
-                    <div class="card-footer d-flex gap-2">
-                        <button class="btn btn-success btn-sm" type="button"
-                                data-bs-toggle="modal"
-                                data-bs-target="#approveModal"
-                                data-request-id="{{ $req->id }}"
-                                data-store="{{ $req->store_name }}"
-                                data-refer="{{ $req->refer_code }}"
-                                data-pos-serial="{{ $req->pos_serial ?? '' }}">
-                            Approve & assign POS
-                        </button>
-                        <button class="btn btn-danger btn-sm" type="button"
-                                data-bs-toggle="modal"
-                                data-bs-target="#rejectModal"
-                                data-request-id="{{ $req->id }}"
-                                data-store="{{ $req->store_name }}"
-                                data-refer="{{ $req->refer_code }}">
-                            Reject
-                        </button>
-                    </div>
-                @endif
-            </div>
-        @empty
-            <div class="text-center border rounded-4 py-5" style="border-color: rgba(28, 114, 75, 0.2); background: #f8fdf9;">
-                <i class="bi bi-inbox fs-1 text-success mb-2"></i>
-                <p class="mb-0 fw-semibold text-muted">No onboarding requests found.</p>
-            </div>
-        @endforelse
+        @if ($req->approval_status === 'pending')
+        <div class="card-footer d-flex gap-2">
+            <button class="btn btn-success btn-sm" type="button"
+                data-bs-toggle="modal"
+                data-bs-target="#approveModal"
+                data-request-id="{{ $req->id }}"
+                data-store="{{ $req->store_name }}"
+                data-refer="{{ $req->refer_code }}"
+                data-pos-serial="{{ $req->pos_serial ?? '' }}">
+                Approve & assign POS
+            </button>
+            <button class="btn btn-danger btn-sm" type="button"
+                data-bs-toggle="modal"
+                data-bs-target="#rejectModal"
+                data-request-id="{{ $req->id }}"
+                data-store="{{ $req->store_name }}"
+                data-refer="{{ $req->refer_code }}">
+                Reject
+            </button>
+        </div>
+        @endif
     </div>
+    @empty
+    <div class="text-center border rounded-4 py-5" style="border-color: rgba(28, 114, 75, 0.2); background: #f8fdf9;">
+        <i class="bi bi-inbox fs-1 text-success mb-2"></i>
+        <p class="mb-0 fw-semibold text-muted">No onboarding requests found.</p>
+    </div>
+    @endforelse
+</div>
 
-    <div class="mt-3">
-        {{ $requests->links() }}
-    </div>
-    <div class="text-center mt-4">
+@if($requests->hasPages())
+<div class="position-relative mt-4">
+    <div class="position-absolute top-50 start-50 translate-middle" style="z-index: 1;">
         <a href="{{ route('admin.dashboard') }}" class="btn btn-outline-secondary">
             <i class="bi bi-house"></i> Back to Home
         </a>
     </div>
+    <div class="d-flex flex-column align-items-end">
+        <div class="text-muted small mb-2">
+            Showing {{ $requests->firstItem() }} to {{ $requests->lastItem() }} of {{ $requests->total() }} results
+        </div>
+        <div>
+            {{ $requests->links('vendor.pagination.custom') }}
+        </div>
+    </div>
+</div>
+@else
+<div class="text-center mt-4">
+    <a href="{{ route('admin.dashboard') }}" class="btn btn-outline-secondary">
+        <i class="bi bi-house"></i> Back to Home
+    </a>
+</div>
+@endif
 </div>
 
 <div id="attachmentLightbox" class="attachment-lightbox d-none">
@@ -452,28 +673,28 @@
 <div class="modal fade" id="approveModal" tabindex="-1" aria-labelledby="approveModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
-            <div class="modal-header bg-success text-white">
-                <h5 class="modal-title" id="approveModalLabel">
-                    <i class="bi bi-check2-circle me-2"></i>
-                    Approve request & add POS serial
+            <div class="modal-header">
+                <h5 class="modal-title text-success" id="approveModalLabel">
+                    <i class="bi bi-check-circle-fill me-2"></i>
+                    Approve Request
                 </h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <form method="POST"
-                  action="{{ route('admin.onboarding.approve', '__REQUEST_ID__') }}"
-                  data-base-action="{{ route('admin.onboarding.approve', '__REQUEST_ID__') }}"
-                  id="approveForm">
+                action="{{ route('admin.onboarding.approve', '__REQUEST_ID__') }}"
+                data-base-action="{{ route('admin.onboarding.approve', '__REQUEST_ID__') }}"
+                id="approveForm">
                 @csrf
                 <div class="modal-body">
-                    <p class="text-muted mb-3" id="approve_request_info"></p>
-                    <label for="modal_pos_serial" class="form-label fw-semibold text-success small">POS Serial (required)</label>
+                    <p class="text-muted mb-4" id="approve_request_info"></p>
+                    <label for="modal_pos_serial" class="form-label fw-bold text-dark small text-uppercase">POS Serial (Required)</label>
                     <input
                         type="text"
                         name="pos_serial"
                         id="modal_pos_serial"
                         class="form-control"
                         required
-                        placeholder="Example: POS-2024-001">
+                        placeholder="">
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
@@ -488,29 +709,29 @@
 <div class="modal fade" id="rejectModal" tabindex="-1" aria-labelledby="rejectModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
-            <div class="modal-header bg-danger text-white">
-                <h5 class="modal-title" id="rejectModalLabel">
-                    <i class="bi bi-x-octagon me-2"></i>
+            <div class="modal-header">
+                <h5 class="modal-title text-danger" id="rejectModalLabel">
+                    <i class="bi bi-x-circle-fill me-2"></i>
                     Reject Request
                 </h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <form method="POST"
-                  action="{{ route('admin.onboarding.reject', '__REQUEST_ID__') }}"
-                  data-base-action="{{ route('admin.onboarding.reject', '__REQUEST_ID__') }}"
-                  id="rejectForm">
+                action="{{ route('admin.onboarding.reject', '__REQUEST_ID__') }}"
+                data-base-action="{{ route('admin.onboarding.reject', '__REQUEST_ID__') }}"
+                id="rejectForm">
                 @csrf
                 <div class="modal-body">
                     <input type="hidden" name="request_id" id="modal_request_id">
-                    <p class="text-muted mb-3" id="modal_request_info"></p>
-                    <label for="modal_admin_remark" class="form-label fw-semibold text-danger small">Reject remark</label>
+                    <p class="text-muted mb-4" id="modal_request_info"></p>
+                    <label for="modal_admin_remark" class="form-label fw-bold text-dark small text-uppercase">Rejection Reason</label>
                     <textarea
                         name="admin_remark"
                         id="modal_admin_remark"
                         class="form-control"
                         rows="3"
                         required
-                        placeholder="Example: Missing documents or incorrect POS serial"></textarea>
+                        placeholder="Please provide a reason for rejection..."></textarea>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>

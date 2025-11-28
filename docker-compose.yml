@@ -29,6 +29,7 @@ services:
     container_name: teller_nginx
     restart: unless-stopped
     ports:
+      # Expose container port 80 (nginx default) on host port 8081
       - "8081:80"
     environment:
       TZ: Asia/Bangkok

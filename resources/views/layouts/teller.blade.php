@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="lo">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -14,10 +15,12 @@
 
     <style>
         :root {
-            --apb-primary: #0f766e;
-            --apb-secondary: #0d5c56;
-            --apb-accent: #14b8a6;
+            --apb-primary: #14b8a6;
+            --apb-secondary: #0f766e;
+            --apb-accent: #2dd4bf;
             --apb-dark: #0b3f3a;
+            --apb-bg: #f1f5f9;
+            --apb-border: #e2e8f0;
         }
 
         * {
@@ -108,8 +111,15 @@
         }
 
         @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.1); }
+
+            0%,
+            100% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.1);
+            }
         }
 
         /* 👤 Profile Section */
@@ -496,6 +506,7 @@
                 opacity: 0;
                 transform: translateY(-10px);
             }
+
             to {
                 opacity: 1;
                 transform: translateY(0);
@@ -503,83 +514,98 @@
         }
 
         @keyframes popAndFade {
-            0% { transform: scale(1); opacity: 1; }
-            50% { transform: scale(1.3); opacity: 0.5; }
-            100% { transform: scale(0); opacity: 0; }
+            0% {
+                transform: scale(1);
+                opacity: 1;
+            }
+
+            50% {
+                transform: scale(1.3);
+                opacity: 0.5;
+            }
+
+            100% {
+                transform: scale(0);
+                opacity: 0;
+            }
         }
+
         .navbar-apb .navbar-brand img {
-  height: 50px;
-  width: auto;
-  transition: transform 0.2s ease;
-}
-.navbar-apb .navbar-brand:hover img {
-  transform: scale(1.05);
-}
-.brand-text .brand-name {
-  font-weight: 700;
-  font-size: 1.05rem;
-  color: #ffffff;
-}
-.brand-text .brand-subtitle {
-  font-size: 0.8rem;
-  color: #ffffff;
-  font-size: 12px;
+            height: 50px;
+            width: auto;
+            transition: transform 0.2s ease;
+        }
 
-}
+        .navbar-apb .navbar-brand:hover img {
+            transform: scale(1.05);
+        }
 
+        .brand-text .brand-name {
+            font-weight: 700;
+            font-size: 1.05rem;
+            color: #ffffff;
+        }
+
+        .brand-text .brand-subtitle {
+            font-size: 0.8rem;
+            color: #ffffff;
+            font-size: 12px;
+
+        }
     </style>
 </head>
+
 <body>
-@php
+    @php
     $tellerAuthUser = auth()->user();
     if ($tellerAuthUser) {
-        $tellerAuthUser->loadMissing(['branch', 'unit']);
+    $tellerAuthUser->loadMissing(['branch', 'unit']);
     }
     $profileErrorBag = session('errors') instanceof \Illuminate\Support\ViewErrorBag
-        ? session('errors')->getBag('profileSetup')
-        : null;
+    ? session('errors')->getBag('profileSetup')
+    : null;
     $shouldShowProfileSetupModal = $tellerAuthUser && (
-        is_null($tellerAuthUser->profile_completed_at) ||
-        ($profileErrorBag?->any() ?? false)
+    is_null($tellerAuthUser->profile_completed_at) ||
+    ($profileErrorBag?->any() ?? false)
     );
     $profilePrefillName = old('name');
     if ($profilePrefillName === null) {
-        $profilePrefillName = $tellerAuthUser && $tellerAuthUser->profile_completed_at
-            ? $tellerAuthUser->name
-            : '';
+    $profilePrefillName = $tellerAuthUser && $tellerAuthUser->profile_completed_at
+    ? $tellerAuthUser->name
+    : '';
     }
     $profilePrefillPhone = old('phone');
     if ($profilePrefillPhone === null) {
-        $profilePrefillPhone = $tellerAuthUser && $tellerAuthUser->profile_completed_at
-            ? $tellerAuthUser->phone
-            : '';
+    $profilePrefillPhone = $tellerAuthUser && $tellerAuthUser->profile_completed_at
+    ? $tellerAuthUser->phone
+    : '';
     }
     $profileBranches = isset($profileBranches) ? $profileBranches : collect();
     $profileBranchUnitsPayload = $profileBranchUnitsPayload ?? [];
     $profilePrefillBranch = old('branch_id');
     if ($profilePrefillBranch === null) {
-        $profilePrefillBranch = $tellerAuthUser?->branch_id;
+    $profilePrefillBranch = $tellerAuthUser?->branch_id;
     }
     $profilePrefillUnit = old('unit_id');
     if ($profilePrefillUnit === null) {
-        $profilePrefillUnit = $tellerAuthUser?->unit_id;
+    $profilePrefillUnit = $tellerAuthUser?->unit_id;
     }
-@endphp
+    @endphp
 
     <!-- 🏦 Modern Navbar -->
     <nav class="navbar navbar-expand-lg navbar-apb">
         <div class="container-fluid px-4">
             <!-- Brand -->
             <a class="navbar-brand" href="{{ route('teller.dashboard') }}">
-  <img src="{{ asset('images/APB-logo.jpeg') }}" height="40">
+                <img src="{{ asset('images/APB-logo.jpeg') }}" height="40">
 
-</a>
+            </a>
 
-                <div class="brand-text">
+            <div class="brand-text">
 
-                    <span class="brand-name">ທະນາຄານ ສົ່ງເສີມກະສິກຳ ຈຳກັດ</span>
-                    <span class="brand-subtitle">AGRICULTURAL PROMOTION BANK CO., LTD</span>
-                </div>
+                <span class="brand-name">ທະນາຄານ ສົ່ງເສີມກະສິກຳ ຈຳກັດ</span>
+                <span class="brand-subtitle">AGRICULTURAL PROMOTION BANK CO., LTD</span>
+            </div>
             </a>
 
             <!-- Right Side Menu -->
@@ -589,7 +615,7 @@
                     <a class="notification-btn" href="#" id="notifDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                         <i class="bi bi-bell-fill"></i>
                         @if(isset($notifications) && count($notifications) > 0)
-                            <span class="notification-badge">{{ count($notifications) }}</span>
+                        <span class="notification-badge">{{ count($notifications) }}</span>
                         @endif
                     </a>
                     <ul class="dropdown-menu dropdown-menu-end animated--fade-in" aria-labelledby="notifDropdown">
@@ -597,29 +623,29 @@
                             📢 ການແຈ້ງເຕືອນລ່າສຸດ
                         </li>
                         @forelse($notifications as $n)
-                            <li>
-                                <div class="notification-item {{ $n->approval_status == 'approved' ? 'approved' : 'rejected' }}">
-<div class="notification-store">
-    <div>{{ $n->store_name }} ({{ $n->refer_code }})</div>
-    <div>POS Serial: {{ $n->pos_serial }}</div>
-</div>
-
-                                    <div class="notification-status {{ $n->approval_status == 'approved' ? 'text-success' : 'text-danger' }}">
-                                        {{ $n->approval_status == 'approved' ? '✅ Approved' : '❌ Rejected' }}
-                                    </div>
-                                    @if($n->approval_status == 'rejected' && $n->admin_remark)
-                                        <div class="notification-remark">
-                                            <i class="bi bi-chat-dots"></i>
-                                            <span>{{ \Illuminate\Support\Str::limit($n->admin_remark, 120) }}</span>
-                                        </div>
-                                    @endif
-                                    <div class="notification-time">
-                                        Updated {{ $n->updated_at->diffForHumans() }}
-                                    </div>
+                        <li>
+                            <div class="notification-item {{ $n->approval_status == 'approved' ? 'approved' : 'rejected' }}">
+                                <div class="notification-store">
+                                    <div>{{ $n->store_name }} ({{ $n->refer_code }})</div>
+                                    <div>POS Serial: {{ $n->pos_serial }}</div>
                                 </div>
-                            </li>
+
+                                <div class="notification-status {{ $n->approval_status == 'approved' ? 'text-success' : 'text-danger' }}">
+                                    {{ $n->approval_status == 'approved' ? '✅ Approved' : '❌ Rejected' }}
+                                </div>
+                                @if($n->approval_status == 'rejected' && $n->admin_remark)
+                                <div class="notification-remark">
+                                    <i class="bi bi-chat-dots"></i>
+                                    <span>{{ \Illuminate\Support\Str::limit($n->admin_remark, 120) }}</span>
+                                </div>
+                                @endif
+                                <div class="notification-time">
+                                    Updated {{ $n->updated_at->diffForHumans() }}
+                                </div>
+                            </div>
+                        </li>
                         @empty
-                            <li><span class="dropdown-item text-muted text-center small">No notifications yet</span></li>
+                        <li><span class="dropdown-item text-muted text-center small">No notifications yet</span></li>
                         @endforelse
                     </ul>
                 </li>
@@ -650,7 +676,9 @@
                                 <i class="bi bi-shield-lock-fill"></i> ປ່ຽນລະຫັດຜ່ານ
                             </a>
                         </li>
-                        <li><hr class="dropdown-divider"></li>
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
                         <li>
                             <form method="POST" action="{{ route('logout') }}">
                                 @csrf
@@ -667,35 +695,35 @@
 
     <!-- ✅ Toast Messages -->
     @if(session('profileSetupSuccess'))
-        <div class="toast align-items-center text-bg-success border-0 position-fixed bottom-0 end-0 m-3 show" role="alert">
-            <div class="d-flex">
-                <div class="toast-body">
-                    <i class="bi bi-check-circle-fill me-2"></i>{{ session('profileSetupSuccess') }}
-                </div>
-                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+    <div class="toast align-items-center text-bg-success border-0 position-fixed bottom-0 end-0 m-3 show" role="alert">
+        <div class="d-flex">
+            <div class="toast-body">
+                <i class="bi bi-check-circle-fill me-2"></i>{{ session('profileSetupSuccess') }}
             </div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
         </div>
+    </div>
     @endif
     @if(session('success'))
-        <div class="toast align-items-center text-bg-success border-0 position-fixed bottom-0 end-0 m-3 show" role="alert">
-            <div class="d-flex">
-                <div class="toast-body">
-                    <i class="bi bi-check-circle-fill me-2"></i>{{ session('success') }}
-                </div>
-                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+    <div class="toast align-items-center text-bg-success border-0 position-fixed bottom-0 end-0 m-3 show" role="alert">
+        <div class="d-flex">
+            <div class="toast-body">
+                <i class="bi bi-check-circle-fill me-2"></i>{{ session('success') }}
             </div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
         </div>
+    </div>
     @endif
 
     @if($errors->any())
-        <div class="toast align-items-center text-bg-danger border-0 position-fixed bottom-0 end-0 m-3 show" role="alert">
-            <div class="d-flex">
-                <div class="toast-body">
-                    <i class="bi bi-exclamation-circle-fill me-2"></i>{{ $errors->first() }}
-                </div>
-                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+    <div class="toast align-items-center text-bg-danger border-0 position-fixed bottom-0 end-0 m-3 show" role="alert">
+        <div class="d-flex">
+            <div class="toast-body">
+                <i class="bi bi-exclamation-circle-fill me-2"></i>{{ $errors->first() }}
             </div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
         </div>
+    </div>
     @endif
 
     <!-- 🧱 Main Content -->
@@ -779,9 +807,9 @@
                                     <span>ສາຂາ</span>
                                     <strong>
                                         @if($tellerAuthUser?->branch)
-                                            {{ $tellerAuthUser->branch->code }} - {{ $tellerAuthUser->branch->name }}
+                                        {{ $tellerAuthUser->branch->code }} - {{ $tellerAuthUser->branch->name }}
                                         @else
-                                            —
+                                        —
                                         @endif
                                     </strong>
                                 </div>
@@ -789,9 +817,9 @@
                                     <span>ຫນ່ວຍບໍລິການ</span>
                                     <strong>
                                         @if($tellerAuthUser?->unit)
-                                            {{ $tellerAuthUser->unit->unit_code }} - {{ $tellerAuthUser->unit->unit_name }}
+                                        {{ $tellerAuthUser->unit->unit_code }} - {{ $tellerAuthUser->unit->unit_name }}
                                         @else
-                                            —
+                                        —
                                         @endif
                                     </strong>
                                 </div>
@@ -829,59 +857,59 @@
                         <div class="mb-3">
                             <label for="profile_name" class="form-label">Full Name</label>
                             <input type="text" name="name" id="profile_name"
-                                   class="form-control @error('name', 'profileSetup') is-invalid @enderror"
-                                   value="{{ $profilePrefillName }}" required>
+                                class="form-control @error('name', 'profileSetup') is-invalid @enderror"
+                                value="{{ $profilePrefillName }}" required>
                             @error('name', 'profileSetup')
-                                <div class="invalid-feedback">{{ $message }}</div>
+                            <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
                         <div class="mb-3">
                             <label for="profile_phone" class="form-label">Phone Number</label>
                             <input type="text" name="phone" id="profile_phone"
-                                   class="form-control @error('phone', 'profileSetup') is-invalid @enderror"
-                                   value="{{ $profilePrefillPhone }}" required>
+                                class="form-control @error('phone', 'profileSetup') is-invalid @enderror"
+                                value="{{ $profilePrefillPhone }}" required>
                             @error('phone', 'profileSetup')
-                                <div class="invalid-feedback">{{ $message }}</div>
+                            <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
                         <div class="mb-3">
                             <label for="profile_branch" class="form-label">ສາຂາ</label>
                             <select name="branch_id" id="profile_branch"
-                                    class="form-select @error('branch_id', 'profileSetup') is-invalid @enderror"
-                                    required>
+                                class="form-select @error('branch_id', 'profileSetup') is-invalid @enderror"
+                                required>
                                 <option value="">-- ເລືອກສາຂາ --</option>
                                 @foreach($profileBranches as $branch)
-                                    <option value="{{ $branch->id }}"
-                                        {{ (string)$profilePrefillBranch === (string)$branch->id ? 'selected' : '' }}>
-                                        {{ $branch->code }} - {{ $branch->name }}
-                                    </option>
+                                <option value="{{ $branch->id }}"
+                                    {{ (string)$profilePrefillBranch === (string)$branch->id ? 'selected' : '' }}>
+                                    {{ $branch->code }} - {{ $branch->name }}
+                                </option>
                                 @endforeach
                             </select>
                             @error('branch_id', 'profileSetup')
-                                <div class="invalid-feedback">{{ $message }}</div>
+                            <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
                         @php
-                            $prefillBranchModel = $profileBranches->firstWhere('id', $profilePrefillBranch);
-                            $prefillHasUnits = $prefillBranchModel ? $prefillBranchModel->units->isNotEmpty() : false;
+                        $prefillBranchModel = $profileBranches->firstWhere('id', $profilePrefillBranch);
+                        $prefillHasUnits = $prefillBranchModel ? $prefillBranchModel->units->isNotEmpty() : false;
                         @endphp
                         <div class="mb-3" id="profile_unit_wrapper"
-                             style="{{ $prefillHasUnits ? '' : 'display:none;' }}">
+                            style="{{ $prefillHasUnits ? '' : 'display:none;' }}">
                             <label for="profile_unit" class="form-label">ຫນ່ວຍຍ່ອຍຂອງສາຂາ</label>
                             <select name="unit_id" id="profile_unit"
-                                    class="form-select @error('unit_id', 'profileSetup') is-invalid @enderror"
-                                    data-selected="{{ $profilePrefillUnit ?? '' }}"
-                                    {{ $prefillHasUnits ? '' : 'disabled' }}>
+                                class="form-select @error('unit_id', 'profileSetup') is-invalid @enderror"
+                                data-selected="{{ $profilePrefillUnit ?? '' }}"
+                                {{ $prefillHasUnits ? '' : 'disabled' }}>
                                 <option value="">-- ເລືອກຫນ່ວຍຍ່ອຍ --</option>
                             </select>
 
-                    </div>
-                    <div class="modal-footer">
-                        <span class="text-muted small me-auto">This step is required the first time you log in.</span>
-                        <button type="submit" class="btn btn-success">
-                            Save Information
-                        </button>
-                    </div>
+                        </div>
+                        <div class="modal-footer">
+                            <span class="text-muted small me-auto">This step is required the first time you log in.</span>
+                            <button type="submit" class="btn btn-success">
+                                Save Information
+                            </button>
+                        </div>
                 </form>
             </div>
         </div>
@@ -890,125 +918,130 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
-    document.addEventListener("DOMContentLoaded", function () {
-        const notifDropdown = document.getElementById('notifDropdown');
-        const badge = notifDropdown?.querySelector('.notification-badge');
+        document.addEventListener("DOMContentLoaded", function() {
+            const notifDropdown = document.getElementById('notifDropdown');
+            const badge = notifDropdown?.querySelector('.notification-badge');
 
-        if (localStorage.getItem("notifSeen") === "true" && badge) {
-            badge.remove();
-        }
-
-        notifDropdown?.addEventListener('click', function () {
-            const b = this.querySelector('.notification-badge');
-            if (b) {
-                b.style.animation = "popAndFade 0.6s ease forwards";
-                setTimeout(() => b.remove(), 600);
-                localStorage.setItem("notifSeen", "true");
-            }
-        });
-
-        const toasts = document.querySelectorAll('.toast');
-        toasts.forEach(toast => {
-            setTimeout(() => {
-                const bsToast = bootstrap.Toast.getInstance(toast);
-                if (bsToast) bsToast.hide();
-            }, 5000);
-        });
-
-        const branchUnitsMap = @json($profileBranchUnitsPayload);
-        const profileBranchSelect = document.getElementById('profile_branch');
-        const profileUnitWrapper = document.getElementById('profile_unit_wrapper');
-        const profileUnitSelect = document.getElementById('profile_unit');
-        const profileUnitPreview = document.getElementById('profile_unit_preview');
-
-        const renderProfileUnitPreview = (units) => {
-            if (!profileUnitPreview) {
-                return;
+            if (localStorage.getItem("notifSeen") === "true" && badge) {
+                badge.remove();
             }
 
-            if (!units.length) {
-                profileUnitPreview.style.display = 'none';
-                profileUnitPreview.innerHTML = '';
-                return;
-            }
-
-            profileUnitPreview.style.display = '';
-
-            const list = document.createElement('div');
-            list.className = 'profile-unit-preview-list';
-            units.forEach(unit => {
-                const item = document.createElement('div');
-                item.className = 'profile-unit-preview-item';
-                item.innerHTML = `<strong>${unit.code}</strong><span>${unit.name}</span>`;
-                list.appendChild(item);
-            });
-            profileUnitPreview.innerHTML = '';
-            profileUnitPreview.appendChild(list);
-        };
-
-        const populateProfileUnits = (branchId, preserveSelection = true) => {
-            if (!profileUnitSelect || !profileUnitWrapper) {
-                return;
-            }
-
-            const units = branchUnitsMap[branchId] || [];
-            profileUnitSelect.innerHTML = `<option value="">-- ເລືອກຫນ່ວຍຍ່ອຍ --</option>`;
-
-            if (!units.length) {
-                profileUnitWrapper.style.display = 'none';
-                profileUnitSelect.disabled = true;
-                if (!preserveSelection) {
-                    profileUnitSelect.dataset.selected = '';
+            notifDropdown?.addEventListener('click', function() {
+                const b = this.querySelector('.notification-badge');
+                if (b) {
+                    b.style.animation = "popAndFade 0.6s ease forwards";
+                    setTimeout(() => b.remove(), 600);
+                    localStorage.setItem("notifSeen", "true");
                 }
-                renderProfileUnitPreview([]);
-                return;
-            }
-
-            profileUnitWrapper.style.display = '';
-            profileUnitSelect.disabled = false;
-
-            units.forEach(unit => {
-                const option = document.createElement('option');
-                option.value = unit.id;
-                option.textContent = `${unit.code} - ${unit.name}`;
-                profileUnitSelect.appendChild(option);
             });
 
-            const desired = preserveSelection ? (profileUnitSelect.dataset.selected || '') : '';
-            if (desired) {
-                profileUnitSelect.value = desired;
-            } else {
-                profileUnitSelect.value = '';
-            }
-
-            renderProfileUnitPreview(units);
-        };
-
-        if (profileBranchSelect && profileUnitSelect) {
-            profileBranchSelect.addEventListener('change', (event) => {
-                profileUnitSelect.dataset.selected = '';
-                populateProfileUnits(event.target.value, false);
+            const toasts = document.querySelectorAll('.toast');
+            toasts.forEach(toast => {
+                setTimeout(() => {
+                    const bsToast = bootstrap.Toast.getInstance(toast);
+                    if (bsToast) bsToast.hide();
+                }, 5000);
             });
 
-            if (profileBranchSelect.value) {
-                populateProfileUnits(profileBranchSelect.value, true);
-            } else if (profileUnitWrapper) {
-                profileUnitWrapper.style.display = 'none';
-                profileUnitSelect.disabled = true;
-                renderProfileUnitPreview([]);
-            }
-        }
+            const branchUnitsMap = @json($profileBranchUnitsPayload);
+            const profileBranchSelect = document.getElementById('profile_branch');
+            const profileUnitWrapper = document.getElementById('profile_unit_wrapper');
+            const profileUnitSelect = document.getElementById('profile_unit');
+            const profileUnitPreview = document.getElementById('profile_unit_preview');
 
-        const shouldShowProfileModal = {{ $shouldShowProfileSetupModal ? 'true' : 'false' }};
-        if (shouldShowProfileModal) {
-            const profileModalEl = document.getElementById('profileSetupModal');
-            if (profileModalEl) {
-                const profileModal = bootstrap.Modal.getOrCreateInstance(profileModalEl);
-                profileModal.show();
+            const renderProfileUnitPreview = (units) => {
+                if (!profileUnitPreview) {
+                    return;
+                }
+
+                if (!units.length) {
+                    profileUnitPreview.style.display = 'none';
+                    profileUnitPreview.innerHTML = '';
+                    return;
+                }
+
+                profileUnitPreview.style.display = '';
+
+                const list = document.createElement('div');
+                list.className = 'profile-unit-preview-list';
+                units.forEach(unit => {
+                    const item = document.createElement('div');
+                    item.className = 'profile-unit-preview-item';
+                    item.innerHTML = `<strong>${unit.code}</strong><span>${unit.name}</span>`;
+                    list.appendChild(item);
+                });
+                profileUnitPreview.innerHTML = '';
+                profileUnitPreview.appendChild(list);
+            };
+
+            const populateProfileUnits = (branchId, preserveSelection = true) => {
+                if (!profileUnitSelect || !profileUnitWrapper) {
+                    return;
+                }
+
+                const units = branchUnitsMap[branchId] || [];
+                profileUnitSelect.innerHTML = `<option value="">-- ເລືອກຫນ່ວຍຍ່ອຍ --</option>`;
+
+                if (!units.length) {
+                    profileUnitWrapper.style.display = 'none';
+                    profileUnitSelect.disabled = true;
+                    if (!preserveSelection) {
+                        profileUnitSelect.dataset.selected = '';
+                    }
+                    renderProfileUnitPreview([]);
+                    return;
+                }
+
+                profileUnitWrapper.style.display = '';
+                profileUnitSelect.disabled = false;
+
+                units.forEach(unit => {
+                    const option = document.createElement('option');
+                    option.value = unit.id;
+                    option.textContent = `${unit.code} - ${unit.name}`;
+                    profileUnitSelect.appendChild(option);
+                });
+
+                const desired = preserveSelection ? (profileUnitSelect.dataset.selected || '') : '';
+                if (desired) {
+                    profileUnitSelect.value = desired;
+                } else {
+                    profileUnitSelect.value = '';
+                }
+
+                renderProfileUnitPreview(units);
+            };
+
+            if (profileBranchSelect && profileUnitSelect) {
+                profileBranchSelect.addEventListener('change', (event) => {
+                    profileUnitSelect.dataset.selected = '';
+                    populateProfileUnits(event.target.value, false);
+                });
+
+                if (profileBranchSelect.value) {
+                    populateProfileUnits(profileBranchSelect.value, true);
+                } else if (profileUnitWrapper) {
+                    profileUnitWrapper.style.display = 'none';
+                    profileUnitSelect.disabled = true;
+                    renderProfileUnitPreview([]);
+                }
             }
-        }
-    });
+
+            const shouldShowProfileModal = {
+                {
+                    $shouldShowProfileSetupModal ? 'true' : 'false'
+                }
+            };
+            if (shouldShowProfileModal) {
+                const profileModalEl = document.getElementById('profileSetupModal');
+                if (profileModalEl) {
+                    const profileModal = bootstrap.Modal.getOrCreateInstance(profileModalEl);
+                    profileModal.show();
+                }
+            }
+        });
     </script>
 
 </body>
+
 </html>

@@ -378,7 +378,7 @@
 
     .pagination {
         display: flex;
-        justify-content: center;
+        justify-content: flex-end;
         gap: 8px;
         margin-top: 1.5rem;
         flex-wrap: wrap;
@@ -727,8 +727,8 @@
 
             <!-- Pagination -->
             <?php if($data->hasPages()): ?>
-            <div class="pagination-wrapper text-center mt-4">
-                <?php echo e($data->links('pagination::bootstrap-5')); ?>
+            <div class="pagination-wrapper d-flex justify-content-end mt-4">
+                <?php echo e($data->links('vendor.pagination.custom')); ?>
 
             </div>
             <?php endif; ?>
@@ -745,4 +745,5 @@
     });
 </script>
 <?php $__env->stopSection(); ?>
+
 <?php echo $__env->make('layouts.teller', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH /var/www/html/resources/views/teller/report/index.blade.php ENDPATH**/ ?>

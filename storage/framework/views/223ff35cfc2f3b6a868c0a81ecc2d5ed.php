@@ -1,17 +1,18 @@
 <?php
-    $pending_count = \Cache::remember('pending_onboarding_count', 30, function () {
-        try {
-            return \App\Models\TellerPortal\OnboardingRequest::where('approval_status', 'pending')->count();
-        } catch (\Exception $e) {
-            return 0;
-        }
-    });
+$pending_count = \Cache::remember('pending_onboarding_count', 30, function () {
+try {
+return \App\Models\TellerPortal\OnboardingRequest::where('approval_status', 'pending')->count();
+} catch (\Exception $e) {
+return 0;
+}
+});
 
-    $authUser = auth()->user();
+$authUser = auth()->user();
 ?>
 
 <!DOCTYPE html>
 <html lang="lo">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -29,6 +30,8 @@
             --apb-secondary: #0f766e;
             --apb-accent: #2dd4bf;
             --apb-dark: #0d5c56;
+            --apb-bg: #f1f5f9;
+            --apb-border: #e2e8f0;
         }
 
         * {
@@ -40,7 +43,7 @@
             min-height: 100vh;
         }
 
-         /* 🏦 Modern Navbar */
+        /* 🏦 Modern Navbar */
         .navbar-apb {
             background: linear-gradient(90deg, var(--apb-primary) 0%, var(--apb-secondary) 100%);
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
@@ -78,25 +81,29 @@
             font-weight: 400;
             letter-spacing: 1px;
         }
-                .navbar-apb .navbar-brand img {
-  height: 50px;
-  width: auto;
-  transition: transform 0.2s ease;
-}
-.navbar-apb .navbar-brand:hover img {
-  transform: scale(1.05);
-}
-.brand-text .brand-name {
-  font-weight: 700;
-  font-size: 1.05rem;
-  color: #ffffff;
-}
-.brand-text .brand-subtitle {
-  font-size: 0.8rem;
-  color: #ffffff;
-  font-size: 12px;
 
-}
+        .navbar-apb .navbar-brand img {
+            height: 50px;
+            width: auto;
+            transition: transform 0.2s ease;
+        }
+
+        .navbar-apb .navbar-brand:hover img {
+            transform: scale(1.05);
+        }
+
+        .brand-text .brand-name {
+            font-weight: 700;
+            font-size: 1.05rem;
+            color: #ffffff;
+        }
+
+        .brand-text .brand-subtitle {
+            font-size: 0.8rem;
+            color: #ffffff;
+            font-size: 12px;
+
+        }
 
         .notification-btn {
             position: relative;
@@ -140,8 +147,15 @@
         }
 
         @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.1); }
+
+            0%,
+            100% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.1);
+            }
         }
 
         .profile-section {
@@ -260,7 +274,7 @@
             padding: 24px;
             box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
             display: flex;
-            justify-content: space-between;
+            justify-content: center;
             align-items: center;
             flex-wrap: wrap;
             gap: 16px;
@@ -298,7 +312,7 @@
             flex-wrap: wrap;
         }
 
-        .page-actions > * {
+        .page-actions>* {
             margin: 0;
         }
 
@@ -486,6 +500,7 @@
                 opacity: 0;
                 transform: translateY(-10px);
             }
+
             to {
                 opacity: 1;
                 transform: translateY(0);
@@ -494,97 +509,97 @@
     </style>
     <?php echo $__env->yieldPushContent('styles'); ?>
 </head>
+
 <body>
     <!-- 🏦 Modern Navbar -->
     <nav class="navbar navbar-expand-lg navbar-apb">
         <div class="container-fluid px-4">
             <!-- Brand -->
             <a class="navbar-brand" href="<?php echo e(route('admin.dashboard')); ?>">
-  <img src="<?php echo e(asset('images/APB-logo.jpeg')); ?>" height="40">
-
-</a>
-
-                <div class="brand-text">
-
-                    <span class="brand-name">ທະນາຄານ ສົ່ງເສີມກະສິກຳ ຈຳກັດ</span>
-                    <span class="brand-subtitle">AGRICULTURAL PROMOTION BANK CO., LTD</span>
-                </div>
+                <img src="<?php echo e(asset('images/APB-logo.jpeg')); ?>" height="40">
             </a>
 
-        <ul class="navbar-nav ms-auto d-flex flex-row align-items-center gap-3">
-            <li class="nav-item">
-                <a href="<?php echo e(route('admin.onboarding.index')); ?>" class="notification-btn" title="Pending onboarding requests">
-                    <i class="bi bi-bell-fill"></i>
-                    <?php if($pending_count > 0): ?>
-                        <span class="notification-badge"><?php echo e($pending_count); ?></span>
-                    <?php endif; ?>
-                </a>
-            </li>
-            <li class="nav-item dropdown">
-                <a class="profile-section d-flex align-items-center gap-2" href="#" id="adminUserDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                    <div class="profile-icon">
-                        <i class="bi bi-person-fill"></i>
-                    </div>
-                    <div class="d-none d-md-block">
-                        <p class="profile-name">
-                            <?php echo e($authUser?->teller_id ? 'APB' . $authUser->teller_id : ($authUser?->name ?? 'Administrator')); ?>
-
-                        </p>
-                        <p class="profile-role">Admin</p>
-                    </div>
-                    <span class="profile-arrow"><i class="bi bi-chevron-down"></i></span>
-                </a>
-                <ul class="dropdown-menu dropdown-menu-end animated--fade-in" aria-labelledby="adminUserDropdown">
-                    <li class="dropdown-header"><?php echo e($authUser?->email ?? 'admin@apb-bank.test'); ?></li>
-                    <li>
-                        <a class="dropdown-item" href="<?php echo e(route('profile.edit')); ?>">
-                            <i class="bi bi-gear"></i>Account Settings
-                        </a>
-                    </li>
-                    <li><hr class="dropdown-divider"></li>
-                    <li>
-                        <a class="dropdown-item logout-btn" href="<?php echo e(route('logout')); ?>"
-                           onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-                            <i class="bi bi-box-arrow-right"></i>Logout
-                        </a>
-                    </li>
-                </ul>
-            </li>
-        </ul>
-    </div>
-</nav>
-
-<form id="logout-form" action="<?php echo e(route('logout')); ?>" method="POST" class="d-none">
-    <?php echo csrf_field(); ?>
-</form>
-
-<div class="app-body container-fluid py-4">
-    <div class="admin-card page-card">
-        <div class="page-header">
-            <div class="page-heading">
-                <?php if (! empty(trim($__env->yieldContent('page-eyebrow')))): ?>
-                    <p class="page-eyebrow"><?php echo $__env->yieldContent('page-eyebrow'); ?></p>
-                <?php endif; ?>
-                <h3 class="page-title"><?php echo $__env->yieldContent('title', 'Admin Dashboard'); ?></h3>
-                <?php if (! empty(trim($__env->yieldContent('page-subtitle')))): ?>
-                    <p class="page-subtitle"><?php echo $__env->yieldContent('page-subtitle'); ?></p>
-                <?php endif; ?>
+            <div class="brand-text">
+                <span class="brand-name">ທະນາຄານ ສົ່ງເສີມກະສິກຳ ຈຳກັດ</span>
+                <span class="brand-subtitle">AGRICULTURAL PROMOTION BANK CO., LTD</span>
             </div>
-            <?php if (! empty(trim($__env->yieldContent('page-actions')))): ?>
+
+            <ul class="navbar-nav ms-auto d-flex flex-row align-items-center gap-3">
+                <li class="nav-item">
+                    <a href="<?php echo e(route('admin.onboarding.index')); ?>" class="notification-btn" title="Pending onboarding requests">
+                        <i class="bi bi-bell-fill"></i>
+                        <?php if($pending_count > 0): ?>
+                        <span class="notification-badge"><?php echo e($pending_count); ?></span>
+                        <?php endif; ?>
+                    </a>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="profile-section d-flex align-items-center gap-2" href="#" id="adminUserDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <div class="profile-icon">
+                            <i class="bi bi-person-fill"></i>
+                        </div>
+                        <div class="d-none d-md-block">
+                            <p class="profile-name">
+                                <?php echo e($authUser?->teller_id ? 'APB' . $authUser->teller_id : ($authUser?->name ?? 'Administrator')); ?>
+
+                            </p>
+                            <p class="profile-role">Admin</p>
+                        </div>
+                        <span class="profile-arrow"><i class="bi bi-chevron-down"></i></span>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end animated--fade-in" aria-labelledby="adminUserDropdown">
+                        <li class="dropdown-header"><?php echo e($authUser?->email ?? 'admin@apb-bank.test'); ?></li>
+                        <li>
+                            <a class="dropdown-item" href="<?php echo e(route('profile.edit')); ?>">
+                                <i class="bi bi-gear"></i>Account Settings
+                            </a>
+                        </li>
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
+                        <li>
+                            <a class="dropdown-item logout-btn" href="<?php echo e(route('logout')); ?>"
+                                onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                                <i class="bi bi-box-arrow-right"></i>Logout
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <form id="logout-form" action="<?php echo e(route('logout')); ?>" method="POST" class="d-none">
+        <?php echo csrf_field(); ?>
+    </form>
+
+    <div class="app-body container-fluid py-4">
+        <div class="admin-card page-card">
+            <div class="page-header">
+                <div class="page-heading">
+                    <?php if (! empty(trim($__env->yieldContent('page-eyebrow')))): ?>
+                    <p class="page-eyebrow"><?php echo $__env->yieldContent('page-eyebrow'); ?></p>
+                    <?php endif; ?>
+                    <h3 class="page-title"><?php echo $__env->yieldContent('title', 'Admin Dashboard'); ?></h3>
+                    <?php if (! empty(trim($__env->yieldContent('page-subtitle')))): ?>
+                    <p class="page-subtitle"><?php echo $__env->yieldContent('page-subtitle'); ?></p>
+                    <?php endif; ?>
+                </div>
+                <?php if (! empty(trim($__env->yieldContent('page-actions')))): ?>
                 <div class="page-actions">
                     <?php echo $__env->yieldContent('page-actions'); ?>
                 </div>
-            <?php endif; ?>
-        </div>
+                <?php endif; ?>
+            </div>
 
-        <div class="page-body">
-            <?php echo $__env->yieldContent('content'); ?>
+            <div class="page-body">
+                <?php echo $__env->yieldContent('content'); ?>
+            </div>
         </div>
     </div>
-</div>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-<?php echo $__env->yieldPushContent('scripts'); ?>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <?php echo $__env->yieldPushContent('scripts'); ?>
 </body>
-</html>
-<?php /**PATH /var/www/html/resources/views/layouts/admin.blade.php ENDPATH**/ ?>
+
+</html><?php /**PATH /var/www/html/resources/views/layouts/admin.blade.php ENDPATH**/ ?>

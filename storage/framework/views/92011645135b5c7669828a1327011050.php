@@ -7,8 +7,10 @@
     }
 
     :root {
-        --apb-primary: #14b8a6; /* Tailwind Teal 500 */
-        --apb-secondary: #0f766e; /* darker teal */
+        --apb-primary: #14b8a6;
+        /* Tailwind Teal 500 */
+        --apb-secondary: #0f766e;
+        /* darker teal */
         --apb-dark: #0d5c56;
     }
 
@@ -250,24 +252,27 @@
         margin: 0;
     }
 
-.pagination svg {
-    width: 16px !important;
-    height: 16px !important;
-}
-.pagination {
-    display: flex;
-    justify-content: center;
-    gap: 4px;
-    margin-top: 1rem;
-}
-.pagination .page-link {
-    color: #2d5f3f;
-    border-radius: 6px;
-}
-.pagination .page-link:hover {
-    background: #ffffff;
-    color: rgb(0, 0, 0);
-}
+    .pagination svg {
+        width: 16px !important;
+        height: 16px !important;
+    }
+
+    .pagination {
+        display: flex;
+        justify-content: center;
+        gap: 4px;
+        margin-top: 1rem;
+    }
+
+    .pagination .page-link {
+        color: #2d5f3f;
+        border-radius: 6px;
+    }
+
+    .pagination .page-link:hover {
+        background: #ffffff;
+        color: rgb(0, 0, 0);
+    }
 
     @media (max-width: 768px) {
         .page-header {
@@ -322,7 +327,7 @@
         </div>
     </div>
 
-<!-- Pending + Rejected Requests Table -->
+    <!-- Pending + Rejected Requests Table -->
     <div class="dashboard-card">
         <div class="card-header-custom">
             <div class="card-title">
@@ -352,92 +357,92 @@
                 </thead>
                 <tbody>
                     <?php $__empty_1 = true; $__currentLoopData = $requests; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $r): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
-                        <tr class="table-row-clickable" data-href="<?php echo e(route('teller.requests.show', $r->id)); ?>">
+                    <tr class="table-row-clickable" data-href="<?php echo e(route('teller.requests.show', $r->id)); ?>">
 
-                            <td>
-                                <span class="reference-code">
-                                    <i class="bi bi-hash"></i><?php echo e($r->refer_code); ?>
+                        <td>
+                            <span class="reference-code">
+                                <i class="bi bi-hash"></i><?php echo e($r->refer_code); ?>
 
-                                </span>
-                            </td>
-                             <td>
-                                <span class="store-name">
-                                <i class="bi bi-computer text-muted" ></i>
+                            </span>
+                        </td>
+                        <td>
+                            <span class="store-name">
+                                <i class="bi bi-computer text-muted"></i>
                                 <?php echo e($r->pos_serial ?: '-'); ?>
 
-                                </span>
-                            </td>
-                            <td>
-                                <span class="store-name">
-                                    <i class="bi bi-shop text-muted me-1"></i>
-                                    <?php echo e($r->store_name); ?>
+                            </span>
+                        </td>
+                        <td>
+                            <span class="store-name">
+                                <i class="bi bi-shop text-muted me-1"></i>
+                                <?php echo e($r->store_name); ?>
 
-                                </span>
-                            </td>
-                            <td>
-                                <span class="store-name">
-                                    <?php echo e($r->business_type); ?>
+                            </span>
+                        </td>
+                        <td>
+                            <span class="store-name">
+                                <?php echo e($r->business_type); ?>
 
-                                </span>
-                            </td>
+                            </span>
+                        </td>
 
-                            <td>
-                                <span class="store-name">
+                        <td>
+                            <span class="store-name">
                                 <i class="bi bi-calendar3 text-muted"></i>
                                 <?php echo e($r->installation_date); ?>
 
+                            </span>
+                        </td>
+
+
+                        <td>
+                            <span class="store-name text-danger fw-semibold">
+                                <?php echo e($r->admin_remark); ?>
+
+                            </span>
+                        </td>
+                        <td class="text-center">
+                            <span class="status-badge <?php echo e($r->approval_status === 'rejected' ? 'rejected' : ''); ?>">
+                                <?php
+                                $statusLabel = match ($r->approval_status) {
+                                'pending' => 'ລໍຖ້າອະນຸມັດ',
+                                'approved' => 'ອະນຸມັດ',
+                                'rejected' => 'ປະຕິເສດ',
+                                default => ucfirst($r->approval_status),
+                                };
+                                ?>
+                                <?php echo e($statusLabel); ?>
+
+                                <?php if($r->approval_status === 'rejected'): ?>
+                                <span class="status-note">
+                                    <i class="bi bi-arrow-repeat"></i>
+                                    <a href="<?php echo e(route('teller.requests.edit', $r->id)); ?>" class="resubmit-link">
+                                        Resubmit
+                                    </a>
                                 </span>
-                            </td>
-
-
-                            <td>
-                                <span class="store-name text-danger fw-semibold">
-                                    <?php echo e($r->admin_remark); ?>
-
-                                </span>
-                            </td>
-                            <td class="text-center">
-                                <span class="status-badge <?php echo e($r->approval_status === 'rejected' ? 'rejected' : ''); ?>">
-                                    <?php
-                                        $statusLabel = match ($r->approval_status) {
-                                            'pending' => 'ລໍຖ້າອະນຸມັດ',
-                                            'approved' => 'ອະນຸມັດ',
-                                            'rejected' => 'ປະຕິເສດ',
-                                            default => ucfirst($r->approval_status),
-                                        };
-                                    ?>
-                                    <?php echo e($statusLabel); ?>
-
-                                    <?php if($r->approval_status === 'rejected'): ?>
-                                        <span class="status-note">
-                                            <i class="bi bi-arrow-repeat"></i>
-                                            <a href="<?php echo e(route('teller.requests.edit', $r->id)); ?>" class="resubmit-link">
-                                                Resubmit
-                                            </a>
-                                        </span>
-                                    <?php endif; ?>
-                                </span>
-                            </td>
-                        </tr>
+                                <?php endif; ?>
+                            </span>
+                        </td>
+                    </tr>
                     <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
-                        <tr>
-                            <td colspan="7" class="empty-state">
-                                <i class="bi bi-inbox"></i>
-                                <p>ບໍ່ມີຂໍ້ມູນ
-                            </td>
-                        </tr>
+                    <tr>
+                        <td colspan="7" class="empty-state">
+                            <i class="bi bi-inbox"></i>
+                            <p>ບໍ່ມີຂໍ້ມູນ
+                        </td>
+                    </tr>
                     <?php endif; ?>
 
                 </tbody>
             </table>
         </div>
 
-<?php if($requests->hasPages()): ?>
-    <div class="pagination-wrapper text-center mt-4">
-        <?php echo e($requests->links('pagination::bootstrap-5')); ?>
+        <?php if($requests->hasPages()): ?>
+        <div class="pagination-wrapper text-center mt-4">
+            <?php echo e($requests->links('vendor.pagination.custom')); ?>
 
-    </div>
-<?php endif; ?>
+        </div>
+        <?php endif; ?>
     </div>
 
 
@@ -445,20 +450,19 @@
 
 
 <script>
-document.addEventListener('DOMContentLoaded', function () {
-    setInterval(() => window.location.reload(),  300000);
+    document.addEventListener('DOMContentLoaded', function() {
+        setInterval(() => window.location.reload(), 300000);
 
-    document.querySelectorAll('.table-row-clickable').forEach(row => {
-        row.addEventListener('click', () => {
-            window.location.href = row.dataset.href;
+        document.querySelectorAll('.table-row-clickable').forEach(row => {
+            row.addEventListener('click', () => {
+                window.location.href = row.dataset.href;
+            });
+        });
+
+        document.querySelectorAll('.resubmit-link').forEach(link => {
+            link.addEventListener('click', (event) => event.stopPropagation());
         });
     });
-
-    document.querySelectorAll('.resubmit-link').forEach(link => {
-        link.addEventListener('click', (event) => event.stopPropagation());
-    });
-});
 </script>
 <?php $__env->stopSection(); ?>
-
 <?php echo $__env->make('layouts.teller', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH /var/www/html/resources/views/teller/dashboard.blade.php ENDPATH**/ ?>

@@ -20,7 +20,7 @@ class UserController extends Controller
                 ->orWhere('email', 'like', "%{$search}%")
                 ->orWhere('phone', 'like', "%{$search}%"))
             ->orderByDesc('created_at')
-            ->paginate(10);
+            ->paginate(5);
 
         return view('admin.users.index', compact('users', 'search'));
     }
@@ -106,50 +106,48 @@ class UserController extends Controller
     }
 
     public function resetPassword($id)
-{
-    $user = User::findOrFail($id);
-    $newPassword = '123456';
+    {
+        $user = User::findOrFail($id);
+        $newPassword = '123456';
 
-    $user->update(['password' => Hash::make($newPassword)]);
+        $user->update(['password' => Hash::make($newPassword)]);
 
-    UserLog::create([
-        'admin_id' => Auth::id(),
-        'action' => 'reset_password',
-        'description' => 'Reset password for Teller: ' . $user->name,
-        'ip_address' => request()->ip(),
-        'user_agent' => request()->userAgent(),
-    ]);
+        UserLog::create([
+            'admin_id' => Auth::id(),
+            'action' => 'reset_password',
+            'description' => 'Reset password for Teller: ' . $user->name,
+            'ip_address' => request()->ip(),
+            'user_agent' => request()->userAgent(),
+        ]);
 
-    return back()->with('success', "🔑 Password reset to '{$newPassword}' for {$user->name}");
-}
-
-    public function updateStatus(Request $request, $id)
-{
-    $user = User::findOrFail($id);
-    $newStatus = $request->input('status');
-
-    // ตรวจสอบว่าค่าสถานะถูกต้อง
-    if (!in_array($newStatus, ['approved', 'pending', 'rejected'])) {
-        return back()->with('error', 'Invalid status.');
+        return back()->with('success', "🔑 Password reset to '{$newPassword}' for {$user->name}");
     }
 
-    $user->update(['status' => $newStatus]);
+    public function updateStatus(Request $request, $id)
+    {
+        $user = User::findOrFail($id);
+        $newStatus = $request->input('status');
 
-    UserLog::create([
-        'admin_id' => Auth::id(),
-        'action' => 'update_status',
-        'description' => "Changed status of Teller {$user->name} to {$newStatus}",
-        'ip_address' => $request->ip(),
-        'user_agent' => $request->userAgent(),
-    ]);
+        // ตรวจสอบว่าค่าสถานะถูกต้อง
+        if (!in_array($newStatus, ['approved', 'pending', 'rejected'])) {
+            return back()->with('error', 'Invalid status.');
+        }
 
-    return back()->with('success', "Teller {$user->name} has been {$newStatus}.");
-}
-public function show($id)
-{
-    $user = User::findOrFail($id);
-    return view('admin.users.show', compact('user'));
-}
+        $user->update(['status' => $newStatus]);
 
+        UserLog::create([
+            'admin_id' => Auth::id(),
+            'action' => 'update_status',
+            'description' => "Changed status of Teller {$user->name} to {$newStatus}",
+            'ip_address' => $request->ip(),
+            'user_agent' => $request->userAgent(),
+        ]);
 
+        return back()->with('success', "Teller {$user->name} has been {$newStatus}.");
+    }
+    public function show($id)
+    {
+        $user = User::findOrFail($id);
+        return view('admin.users.show', compact('user'));
+    }
 }

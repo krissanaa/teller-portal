@@ -11,7 +11,11 @@
     <!-- Noto Sans Lao Font -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Lao:wght@300;400;500;600;700;800&family=Noto+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Noto+Sans+Lao:wght@300;400;500;600;700;800&family=Noto+Sans:wght@300;400;500;600;700;800&display=swap">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+Lao:wght@300;400;500;600;700;800&family=Noto+Sans:wght@300;400;500;600;700;800&display=swap" media="print" onload="this.media='all'">
+    <noscript>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+Lao:wght@300;400;500;600;700;800&family=Noto+Sans:wght@300;400;500;600;700;800&display=swap">
+    </noscript>
 
     <style>
         :root {
@@ -974,7 +978,7 @@ unset($__errorArgs, $__bag); ?>"
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" defer></script>
 
     <script>
         document.addEventListener("DOMContentLoaded", function() {
@@ -1103,4 +1107,5 @@ unset($__errorArgs, $__bag); ?>"
 
 </body>
 
-</html><?php /**PATH /var/www/html/resources/views/layouts/teller.blade.php ENDPATH**/ ?>
+</html>
+<?php /**PATH /var/www/html/resources/views/layouts/teller.blade.php ENDPATH**/ ?>

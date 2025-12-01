@@ -503,7 +503,7 @@
                     <span class="status-icon">⏳</span>
                     <div class="status-label">ລໍຖ້າອະນຸມັດ</div>
                     <div class="status-count">
-                        {{ \App\Models\TellerPortal\OnboardingRequest::where('teller_id', $tellerIdentifier)->where('approval_status','pending')->count() }}
+                        {{ $statusCounts['pending'] ?? 0 }}
                     </div>
                 </div>
             </a>
@@ -514,7 +514,7 @@
                     <span class="status-icon">✅</span>
                     <div class="status-label">ອະນຸມັດ</div>
                     <div class="status-count">
-                        {{ \App\Models\TellerPortal\OnboardingRequest::where('teller_id', $tellerIdentifier)->where('approval_status','approved')->count() }}
+                        {{ $statusCounts['approved'] ?? 0 }}
                     </div>
                 </div>
             </a>
@@ -525,7 +525,7 @@
                     <span class="status-icon">❌</span>
                     <div class="status-label">ປະຕິເສດ</div>
                     <div class="status-count">
-                        {{ \App\Models\TellerPortal\OnboardingRequest::where('teller_id', $tellerIdentifier)->where('approval_status','rejected')->count() }}
+                        {{ $statusCounts['rejected'] ?? 0 }}
                     </div>
                 </div>
             </a>

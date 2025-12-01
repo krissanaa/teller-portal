@@ -3,8 +3,8 @@
 <?php $__env->startSection('content'); ?>
 <style>
     :root {
-        --apb-primary: #0f766e;
-        --apb-secondary: #0d5c56;
+        --apb-primary: #14b8a6;
+        --apb-secondary: #0f766e;
         --apb-accent: #14b8a6;
         --apb-dark: #0b3f3a;
         --bg-color: #f8f9fa;
@@ -480,14 +480,14 @@
             </table>
         </div>
         <?php if($data->hasPages()): ?>
-        <div class="pagination-wrapper">
-            <div class="pagination-info">
-                Showing <strong><?php echo e($data->firstItem()); ?></strong> to <strong><?php echo e($data->lastItem()); ?></strong> of <strong><?php echo e($data->total()); ?></strong> records
+        <div class="d-flex flex-column align-items-end mt-3 p-3 border-top">
+            <div class="text-muted small mb-2">
+                Showing <?php echo e($data->firstItem()); ?> to <?php echo e($data->lastItem()); ?> of <?php echo e($data->total()); ?> results
             </div>
-            <nav aria-label="Page navigation">
+            <div>
                 <?php echo e($data->links('vendor.pagination.custom')); ?>
 
-            </nav>
+            </div>
         </div>
         <?php endif; ?>
     </div>

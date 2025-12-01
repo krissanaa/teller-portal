@@ -5,10 +5,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>@yield('title', 'Teller Portal')</title>
 
-    {{-- ✅ Google Fonts: Noto Sans Thai + Lao --}}
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@300;400;500;700&family=Noto+Sans+Lao:wght@300;400;500;700&display=swap" rel="stylesheet">
+    {{-- Fonts --}}
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@300;400;500;700&family=Noto+Sans+Lao:wght@300;400;500;700&display=swap">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@300;400;500;700&family=Noto+Sans+Lao:wght@300;400;500;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+    <noscript>
+        <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@300;400;500;700&family=Noto+Sans+Lao:wght@300;400;500;700&display=swap" rel="stylesheet">
+    </noscript>
 
-    {{-- ✅ Bootstrap 5 --}}
+    {{-- Bootstrap 5 --}}
+    <link rel="preload" as="style" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 
     <style>
@@ -44,10 +51,10 @@
     </style>
 </head>
 <body>
-    {{-- ✅ Navbar --}}
+    {{-- Navbar --}}
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm">
         <div class="container">
-            <a class="navbar-brand" href="{{ url('/') }}">🏦 Teller Portal</a>
+            <a class="navbar-brand" href="{{ url('/') }}">Teller Portal</a>
 
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
                 aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -94,20 +101,20 @@
         </div>
     </nav>
 
-    {{-- ✅ Main content --}}
+    {{-- Main content --}}
     <main class="py-4">
         @yield('content')
     </main>
 
-    {{-- ✅ Footer --}}
+    {{-- Footer --}}
     <footer class="text-center">
         <div class="container">
-            <p>© {{ date('Y') }} Teller Portal System — All Rights Reserved.</p>
+            <p>&copy; {{ date('Y') }} Teller Portal System — All Rights Reserved.</p>
             <p class="small text-muted">Designed for Teller and Admin operations management.</p>
         </div>
     </footer>
 
-    {{-- ✅ Bootstrap JS --}}
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    {{-- Bootstrap JS --}}
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" defer></script>
 </body>
 </html>

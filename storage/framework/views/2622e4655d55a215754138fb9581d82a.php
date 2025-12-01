@@ -1,9 +1,7 @@
-@extends('layouts.admin')
+<?php $__env->startSection('title', 'Onboarding Requests'); ?>
 
-@section('title', 'Onboarding Requests')
-
-@section('content')
-@php
+<?php $__env->startSection('content'); ?>
+<?php
 use Illuminate\Support\Str;
 
 $statusClassMap = [
@@ -11,7 +9,7 @@ $statusClassMap = [
 'rejected' => 'status-pill rejected',
 'pending' => 'status-pill pending',
 ];
-@endphp
+?>
 
 <style>
     :root {
@@ -504,44 +502,50 @@ $statusClassMap = [
 
 
 <div class="card-stack">
-    @forelse ($requests as $req)
+    <?php $__empty_1 = true; $__currentLoopData = $requests; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $req): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
 
-    @php
+    <?php
     $created = optional($req->created_at)?->format('M d, Y \\a\\t h:i A');
     $attachments = is_array($req->attachments)
     ? $req->attachments
     : (is_string($req->attachments) ? json_decode($req->attachments ?? '[]', true) : []);
-    @endphp
+    ?>
     <div class="request-card">
         <div class="d-flex justify-content-between flex-wrap gap-2">
             <div>
-                <span class="{{ $statusClassMap[$req->approval_status] ?? 'status-pill pending' }}">
-                    {{ ucfirst($req->approval_status) }}
+                <span class="<?php echo e($statusClassMap[$req->approval_status] ?? 'status-pill pending'); ?>">
+                    <?php echo e(ucfirst($req->approval_status)); ?>
+
                 </span>
-                <h2 class="request-title mb-0">{{ $req->store_name ?? 'Unnamed Store' }}</h2>
+                <h2 class="request-title mb-0"><?php echo e($req->store_name ?? 'Unnamed Store'); ?></h2>
                 <div class="text-black fw-bold mt-1" style="font-size: 15px">
-                    <i class="bi bi-location"></i> {{ $req->business_type ?? '-' }}
+                    <i class="bi bi-location"></i> <?php echo e($req->business_type ?? '-'); ?>
+
                 </div>
 
                 <div class="text-black fw-bold small mt-1" style="font-size: 15px">
-                    <i class="bi bi-location"></i> {{ $req->store_address ?? 'N/A' }}
+                    <i class="bi bi-location"></i> <?php echo e($req->store_address ?? 'N/A'); ?>
+
                 </div>
 
                 <div class="text-black fw-bold small mt-1" style="font-size: 15px">
-                    <i class="bi bi-location"></i> {{ optional($req->branch)->name ?? '-' }}
+                    <i class="bi bi-location"></i> <?php echo e(optional($req->branch)->name ?? '-'); ?>
+
                 </div>
 
 
             </div>
             <div class="text-end">
                 <div class="fw-semibold">
-                    {{ optional($req->teller)->name ? optional($req->teller)->name .' ('. $req->teller_id .')' : ($req->teller_id ?? '-') }}
+                    <?php echo e(optional($req->teller)->name ? optional($req->teller)->name .' ('. $req->teller_id .')' : ($req->teller_id ?? '-')); ?>
+
                 </div>
-                @if ($created)
+                <?php if($created): ?>
                 <small class="text-muted d-block">
-                    <i class="bi bi-calendar-event"></i> Submitted {{ $created }}
+                    <i class="bi bi-calendar-event"></i> Submitted <?php echo e($created); ?>
+
                 </small>
-                @endif
+                <?php endif; ?>
             </div>
         </div>
 
@@ -550,7 +554,7 @@ $statusClassMap = [
                 <i class="bi bi-upc"></i>
                 <div class="text">
                     <small>Refer ID</small>
-                    <strong>{{ $req->refer_code ?? 'N/A' }}</strong>
+                    <strong><?php echo e($req->refer_code ?? 'N/A'); ?></strong>
                 </div>
             </div>
 
@@ -561,105 +565,107 @@ $statusClassMap = [
                 <i class="bi bi-bank"></i>
                 <div class="text">
                     <small>Bank Account</small>
-                    <strong>{{ $req->bank_account ?? '-' }}</strong>
+                    <strong><?php echo e($req->bank_account ?? '-'); ?></strong>
                 </div>
             </div>
             <div class="info-chip">
                 <i class="bi bi-calendar-check"></i>
                 <div class="text">
                     <small>Install Date</small>
-                    <strong>{{ $req->installation_date ? \Carbon\Carbon::parse($req->installation_date)->format('M d, Y') : '-' }}</strong>
+                    <strong><?php echo e($req->installation_date ? \Carbon\Carbon::parse($req->installation_date)->format('M d, Y') : '-'); ?></strong>
                 </div>
             </div>
         </div>
 
         <div class="tag-row">
-            <span><i class="bi bi-info-circle"></i> Store status: {{ Str::title(str_replace('_', ' ', $req->store_status ?? 'unknown')) }}</span>
-            <span><i class="bi bi-paperclip"></i> Attachments: {{ count($attachments) }}</span>
-            <span><i class="bi bi-chat-text"></i> Admin remark: {{ $req->admin_remark ?? '-' }}</span>
+            <span><i class="bi bi-info-circle"></i> Store status: <?php echo e(Str::title(str_replace('_', ' ', $req->store_status ?? 'unknown'))); ?></span>
+            <span><i class="bi bi-paperclip"></i> Attachments: <?php echo e(count($attachments)); ?></span>
+            <span><i class="bi bi-chat-text"></i> Admin remark: <?php echo e($req->admin_remark ?? '-'); ?></span>
         </div>
 
-        @if (count($attachments))
+        <?php if(count($attachments)): ?>
         <div class="attachment-box">
-            @foreach ($attachments as $path)
-            @php
+            <?php $__currentLoopData = $attachments; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $path): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+            <?php
             $fileName = basename($path);
             $url = asset('storage/' . ltrim($path, '/'));
             $extension = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
-            @endphp
+            ?>
             <button type="button"
                 class="attachment-pill"
-                onclick="openAdminPreview('{{ $url }}', '{{ addslashes($fileName) }}', '{{ $extension }}')">
-                @if(in_array($extension, ['jpg','jpeg','png','gif']))
+                onclick="openAdminPreview('<?php echo e($url); ?>', '<?php echo e(addslashes($fileName)); ?>', '<?php echo e($extension); ?>')">
+                <?php if(in_array($extension, ['jpg','jpeg','png','gif'])): ?>
                 <span style="width:42px;height:42px;border-radius:12px;overflow:hidden;display:inline-flex;">
-                    <img src="{{ $url }}" alt="{{ $fileName }}" style="width:100%;height:100%;object-fit:cover;">
+                    <img src="<?php echo e($url); ?>" alt="<?php echo e($fileName); ?>" style="width:100%;height:100%;object-fit:cover;">
                 </span>
-                @elseif($extension === 'pdf')
+                <?php elseif($extension === 'pdf'): ?>
                 <span style="width:42px;height:42px;border-radius:12px;display:inline-flex;align-items:center;justify-content:center;background:#fef2f2;color:#b91c1c;font-weight:700;">
                     PDF
                 </span>
-                @else
+                <?php else: ?>
                 <i class="bi bi-paperclip"></i>
-                @endif
-                {{ Str::limit($fileName, 24) }}
-            </button>
-            @endforeach
-        </div>
-        @endif
+                <?php endif; ?>
+                <?php echo e(Str::limit($fileName, 24)); ?>
 
-        @if ($req->approval_status === 'pending')
+            </button>
+            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+        </div>
+        <?php endif; ?>
+
+        <?php if($req->approval_status === 'pending'): ?>
         <div class="card-footer d-flex gap-2">
             <button class="btn btn-success btn-sm" type="button"
                 data-bs-toggle="modal"
                 data-bs-target="#approveModal"
-                data-request-id="{{ $req->id }}"
-                data-store="{{ $req->store_name }}"
-                data-refer="{{ $req->refer_code }}"
-                data-pos-serial="{{ $req->pos_serial ?? '' }}">
+                data-request-id="<?php echo e($req->id); ?>"
+                data-store="<?php echo e($req->store_name); ?>"
+                data-refer="<?php echo e($req->refer_code); ?>"
+                data-pos-serial="<?php echo e($req->pos_serial ?? ''); ?>">
                 Approve & assign POS
             </button>
             <button class="btn btn-danger btn-sm" type="button"
                 data-bs-toggle="modal"
                 data-bs-target="#rejectModal"
-                data-request-id="{{ $req->id }}"
-                data-store="{{ $req->store_name }}"
-                data-refer="{{ $req->refer_code }}">
+                data-request-id="<?php echo e($req->id); ?>"
+                data-store="<?php echo e($req->store_name); ?>"
+                data-refer="<?php echo e($req->refer_code); ?>">
                 Reject
             </button>
         </div>
-        @endif
+        <?php endif; ?>
     </div>
-    @empty
+    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
     <div class="text-center border rounded-4 py-5" style="border-color: rgba(28, 114, 75, 0.2); background: #f8fdf9;">
         <i class="bi bi-inbox fs-1 text-success mb-2"></i>
         <p class="mb-0 fw-semibold text-muted">No onboarding requests found.</p>
     </div>
-    @endforelse
+    <?php endif; ?>
 </div>
 
-@if($requests->hasPages())
+<?php if($requests->hasPages()): ?>
 <div class="position-relative mt-4">
     <div class="position-absolute top-50 start-50 translate-middle" style="z-index: 1;">
-        <a href="{{ route('admin.dashboard') }}" class="btn btn-outline-secondary">
+        <a href="<?php echo e(route('admin.dashboard')); ?>" class="btn btn-outline-secondary">
             <i class="bi bi-house"></i> Back to Home
         </a>
     </div>
     <div class="d-flex flex-column align-items-end">
         <div class="text-muted small mb-2">
-            Showing {{ $requests->firstItem() }} to {{ $requests->lastItem() }} of {{ $requests->total() }} results
+            Showing <?php echo e($requests->firstItem()); ?> to <?php echo e($requests->lastItem()); ?> of <?php echo e($requests->total()); ?> results
         </div>
         <div>
-            {{ $requests->links('vendor.pagination.custom') }}
+            <?php echo e($requests->links('vendor.pagination.custom')); ?>
+
         </div>
     </div>
 </div>
-@else
+<?php else: ?>
 <div class="text-center mt-4">
-    <a href="{{ route('admin.dashboard') }}" class="btn btn-outline-secondary">
+    <a href="<?php echo e(route('admin.dashboard')); ?>" class="btn btn-outline-secondary">
         <i class="bi bi-house"></i> Back to Home
     </a>
 </div>
-@endif
+<?php endif; ?>
 </div>
 
 <div id="attachmentLightbox" class="attachment-lightbox d-none">
@@ -681,10 +687,10 @@ $statusClassMap = [
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <form method="POST"
-                action="{{ route('admin.onboarding.approve', '__REQUEST_ID__') }}"
-                data-base-action="{{ route('admin.onboarding.approve', '__REQUEST_ID__') }}"
+                action="<?php echo e(route('admin.onboarding.approve', '__REQUEST_ID__')); ?>"
+                data-base-action="<?php echo e(route('admin.onboarding.approve', '__REQUEST_ID__')); ?>"
                 id="approveForm">
-                @csrf
+                <?php echo csrf_field(); ?>
                 <div class="modal-body">
                     <p class="text-muted mb-4" id="approve_request_info"></p>
                     <label for="modal_pos_serial" class="form-label fw-bold text-dark small text-uppercase">POS Serial (Required)</label>
@@ -717,10 +723,10 @@ $statusClassMap = [
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <form method="POST"
-                action="{{ route('admin.onboarding.reject', '__REQUEST_ID__') }}"
-                data-base-action="{{ route('admin.onboarding.reject', '__REQUEST_ID__') }}"
+                action="<?php echo e(route('admin.onboarding.reject', '__REQUEST_ID__')); ?>"
+                data-base-action="<?php echo e(route('admin.onboarding.reject', '__REQUEST_ID__')); ?>"
                 id="rejectForm">
-                @csrf
+                <?php echo csrf_field(); ?>
                 <div class="modal-body">
                     <input type="hidden" name="request_id" id="modal_request_id">
                     <p class="text-muted mb-4" id="modal_request_info"></p>
@@ -817,4 +823,5 @@ $statusClassMap = [
         });
     }
 </script>
-@endsection
+<?php $__env->stopSection(); ?>
+<?php echo $__env->make('layouts.admin', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH /var/www/html/resources/views/admin/onboarding/index.blade.php ENDPATH**/ ?>

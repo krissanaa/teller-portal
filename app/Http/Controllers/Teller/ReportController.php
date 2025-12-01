@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\TellerPortal\OnboardingRequest;
 use App\Models\TellerPortal\Branch;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 
 class ReportController extends Controller
 {
@@ -21,7 +22,22 @@ class ReportController extends Controller
         $unitId = $request->input('unit_id');
 
         $query = OnboardingRequest::where('teller_id', Auth::user()->teller_id)
-            ->with(['branch', 'unit'])
+            ->select([
+                'id',
+                'refer_code',
+                'pos_serial',
+                'store_name',
+                'business_type',
+                'installation_date',
+                'approval_status',
+                'branch_id',
+                'unit_id',
+                'created_at',
+            ])
+            ->with([
+                'branch:id,BRANCH_NAME,BRANCH_CODE',
+                'unit:id,branch_id,unit_name,unit_code',
+            ])
             ->orderByDesc('created_at');
 
         if ($search) {
@@ -70,9 +86,16 @@ class ReportController extends Controller
             $query->where('unit_id', $unitId);
         }
 
-        $data = $query->paginate(10);
+        $data = $query->paginate(10)->withQueryString();
 
-        $years = \Illuminate\Support\Facades\Cache::remember('teller_report_years_' . Auth::user()->teller_id, 60 * 60 * 24, function () {
+        $statusCounts = OnboardingRequest::where('teller_id', Auth::user()->teller_id)
+            ->selectRaw('approval_status, COUNT(*) as total')
+            ->groupBy('approval_status')
+            ->pluck('total', 'approval_status');
+
+        $cache = Cache::store('file');
+
+        $years = $cache->remember('teller_report_years_' . Auth::user()->teller_id, 60 * 60 * 24, function () {
             return OnboardingRequest::where('teller_id', Auth::user()->teller_id)
                 ->selectRaw('YEAR(created_at) as year')
                 ->distinct()
@@ -81,8 +104,11 @@ class ReportController extends Controller
                 ->toArray();
         });
 
-        $branches = \Illuminate\Support\Facades\Cache::remember('all_branches_with_units', 60 * 60 * 24, function () {
-            return Branch::with('units')->orderBy('BRANCH_NAME')->get();
+        $branches = $cache->remember('all_branches_with_units', 60 * 60 * 24, function () {
+            return Branch::select(['id', 'BRANCH_NAME', 'BRANCH_CODE'])
+                ->with(['units:id,branch_id,unit_name,unit_code'])
+                ->orderBy('BRANCH_NAME')
+                ->get();
         });
 
         return view('teller.report.index', [
@@ -96,6 +122,7 @@ class ReportController extends Controller
             'branchId' => $branchId,
             'unitId' => $unitId,
             'branches' => $branches,
+            'statusCounts' => $statusCounts,
         ]);
     }
 }

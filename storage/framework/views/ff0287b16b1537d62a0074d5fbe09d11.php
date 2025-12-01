@@ -25,9 +25,9 @@
     .background-hero {
         position: fixed;
         inset: 0;
+        background-color: #0b231f;
         background:
-            linear-gradient(135deg, rgba(0, 0, 0, 0.25), rgba(0, 0, 0, 0.15)),
-            url('<?php echo e(asset('images/apbBG.jpeg')); ?>') center center / cover no-repeat;
+            linear-gradient(135deg, rgba(0, 0, 0, 0.25), rgba(0, 0, 0, 0.15));
         filter: saturate(1.1) contrast(1.05) brightness(1.05);
         z-index: 0;
     }
@@ -692,7 +692,7 @@
         <div class="login-logo">
             <!-- OPTION 1: Use your logo image with green background -->
             <div class="logo-icon">
-                <img src="<?php echo e(asset('images/APB-logo.jpeg')); ?>" alt="APB Bank Logo">
+                <img src="<?php echo e(asset('images/APB-logo.jpeg')); ?>" alt="APB Bank Logo" width="160" height="160" loading="lazy" decoding="async">
             </div>
             <h3 class="login-title">APB BANK</h3>
             <p class="login-subtitle">Teller Portal System</p>
@@ -788,6 +788,19 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 </script>
 <?php endif; ?>
+
+<script>
+// Defer heavy background image until after first paint to improve LCP
+window.addEventListener('load', function() {
+    const bg = document.querySelector('.background-hero');
+    if (bg) {
+        bg.style.backgroundImage = "linear-gradient(135deg, rgba(0,0,0,0.25), rgba(0,0,0,0.15)), url('<?php echo e(asset('images/apbBG.jpeg')); ?>')";
+        bg.style.backgroundSize = 'cover';
+        bg.style.backgroundRepeat = 'no-repeat';
+        bg.style.backgroundPosition = 'center center';
+    }
+});
+</script>
 <?php $__env->stopSection(); ?>
 
 <?php echo $__env->make('layouts.guest', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH /var/www/html/resources/views/auth/login.blade.php ENDPATH**/ ?>

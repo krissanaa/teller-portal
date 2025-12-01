@@ -5,6 +5,7 @@ namespace App\Providers;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Cache;
 use App\Models\TellerPortal\OnboardingRequest;
 use App\Models\TellerPortal\Branch;
 use App\Models\TellerPortal\BranchUnit;
@@ -25,7 +26,17 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        $this->ensureBranchUnitsSynced();
+        $cache = Cache::store('file');
+
+        // Avoid running the sync logic on every request; only once per cache window.
+        try {
+            if ($cache->missing('branch_units_synced')) {
+                $this->ensureBranchUnitsSynced();
+                $cache->put('branch_units_synced', true, 60 * 60 * 24);
+            }
+        } catch (\Throwable $e) {
+            // If the DB/cache store is not reachable during boot, skip sync to keep app responsive.
+        }
 
         View::composer('layouts.teller', function ($view) {
             $notifications = collect();
@@ -41,23 +52,31 @@ class AppServiceProvider extends ServiceProvider
                     ->get();
 
                 try {
-                    $profileBranches = Branch::orderBy('id')->get();
+                    $cache = Cache::store('file');
 
-                    $branchUnits = BranchUnit::select('id', 'branch_id', 'unit_code', 'unit_name')
-                        ->get()
-                        ->groupBy('branch_id');
+                    $profileBranches = $cache->remember('nav_profile_branches', 60 * 60 * 24, function () {
+                        return Branch::select(['id', 'BRANCH_NAME', 'BRANCH_CODE'])
+                            ->orderBy('BRANCH_NAME')
+                            ->get();
+                    });
 
-                    $profileBranchUnitsPayload = $branchUnits->mapWithKeys(function ($units, $branchId) {
-                        return [
-                            (string) $branchId => $units->map(function ($unit) {
-                                return [
-                                    'id' => (string) $unit->id,
-                                    'code' => $unit->unit_code,
-                                    'name' => $unit->unit_name,
-                                ];
-                            })->values()->toArray(),
-                        ];
-                    })->toArray();
+                    $profileBranchUnitsPayload = $cache->remember('nav_profile_branch_units', 60 * 60 * 24, function () {
+                        $branchUnits = BranchUnit::select('id', 'branch_id', 'unit_code', 'unit_name')
+                            ->get()
+                            ->groupBy('branch_id');
+
+                        return $branchUnits->mapWithKeys(function ($units, $branchId) {
+                            return [
+                                (string) $branchId => $units->map(function ($unit) {
+                                    return [
+                                        'id' => (string) $unit->id,
+                                        'code' => $unit->unit_code,
+                                        'name' => $unit->unit_name,
+                                    ];
+                                })->values()->toArray(),
+                            ];
+                        })->toArray();
+                    });
                 } catch (\Throwable $e) {
                     $profileBranches = collect();
                     $profileBranchUnitsPayload = [];

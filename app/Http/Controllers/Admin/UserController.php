@@ -20,7 +20,7 @@ class UserController extends Controller
                 ->orWhere('email', 'like', "%{$search}%")
                 ->orWhere('phone', 'like', "%{$search}%"))
             ->orderByDesc('created_at')
-            ->paginate(5);
+            ->paginate($request->input('per_page', 5));
 
         return view('admin.users.index', compact('users', 'search'));
     }
@@ -57,6 +57,34 @@ class UserController extends Controller
         ]);
 
         return redirect()->route('admin.users.index')->with('success', 'Teller created successfully.');
+    }
+
+    public function storeAdmin(Request $request)
+    {
+        $validated = $request->validate([
+            'teller_id' => 'required|string|unique:users,teller_id',
+            'password'  => 'required|string|min:6',
+        ]);
+
+        $user = User::create([
+            'teller_id' => $validated['teller_id'],
+            'name'      => 'Admin ' . $validated['teller_id'],
+            'email'     => $validated['teller_id'] . '@apb.com.la',
+            'phone'     => '-',
+            'password'  => Hash::make($validated['password']),
+            'role'      => 'admin',
+            'status'    => 'approved',
+        ]);
+
+        UserLog::create([
+            'admin_id'    => Auth::id(),
+            'action'      => 'create_admin',
+            'description' => 'Created Admin user: ' . $user->name,
+            'ip_address'  => $request->ip(),
+            'user_agent'  => $request->userAgent(),
+        ]);
+
+        return redirect()->route('admin.users.index')->with('success', 'Admin created successfully.');
     }
 
     public function edit($id)

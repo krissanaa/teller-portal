@@ -101,6 +101,7 @@ Route::middleware(['auth', 'role:admin'])
             Route::get('/', [AdminUserController::class, 'index'])->name('index');
             Route::get('/create', [AdminUserController::class, 'create'])->name('create');
             Route::post('/', [AdminUserController::class, 'store'])->name('store');
+            Route::post('/store-admin', [AdminUserController::class, 'storeAdmin'])->name('storeAdmin');
             Route::get('/{id}', [AdminUserController::class, 'show'])->name('show');
             Route::get('/{id}/edit', [AdminUserController::class, 'edit'])->name('edit');
             Route::put('/{id}', [AdminUserController::class, 'update'])->name('update');

@@ -117,11 +117,12 @@
 
     .meta {
         font-size: 0.875rem;
-        color: var(--text-muted);
-        font-weight: 500;
-        background: #e2e8f0;
+        color: #000000;
+        font-weight: 600;
+        background: #FFC107;
         padding: 0.25rem 0.75rem;
         border-radius: 999px;
+        border: 1px solid #FFC107;
     }
 
     .table-modern {
@@ -325,26 +326,21 @@
         background: #f8fafc;
         padding: 1rem 1.5rem;
     }
+
+    .branch-topic td {
+        background-color: #e2e8f0;
+        color: #0f172a;
+        font-weight: 700;
+        border-top: 2px solid #cbd5e1;
+        font-size: 1rem;
+    }
+
+    .branch-topic:hover td {
+        background-color: #cbd5e1;
+    }
 </style>
 
-<div class="page-header">
-    <h1 class="page-title">
-        <i class="bi bi-diagram-3-fill text-primary"></i> Branch Management
-    </h1>
-</div>
 
-<div class="filter-card">
-    <div class="row g-3 align-items-end">
-        <div class="col-md-9">
-            <!-- Placeholder for search if needed in future, or just empty space -->
-        </div>
-        <div class="col-md-3 ms-auto">
-            <a href="<?php echo e(route('admin.branches.create')); ?>" class="create-btn w-100 justify-content-center">
-                <i class="bi bi-plus-circle"></i> Add Branch
-            </a>
-        </div>
-    </div>
-</div>
 
 <div class="table-card">
     <div class="table-card-header">
@@ -355,7 +351,7 @@
         <table class="table table-modern align-middle">
             <thead>
                 <tr>
-                    <th>#</th>
+                    <th>ID</th>
                     <th>Branch Code</th>
                     <th>Branch Name</th>
                     <th class="text-end">Action</th>
@@ -363,10 +359,16 @@
             </thead>
             <tbody>
                 <?php $__empty_1 = true; $__currentLoopData = $branches; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $b): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
-                <tr>
+                <tr class="branch-topic">
                     <td><?php echo e($b->id); ?></td>
-                    <td class="fw-bold text-primary"><?php echo e($b->code); ?></td>
-                    <td><?php echo e($b->name); ?></td>
+                    <td class="text-primary"><?php echo e($b->code); ?></td>
+                    <td>
+                        <div class="d-flex align-items-center gap-2">
+                            <i class="bi bi-bank2"></i>
+                            <?php echo e($b->name); ?>
+
+                        </div>
+                    </td>
                     <td>
                         <div class="action-buttons">
                             <a href="<?php echo e(route('admin.branches.edit', $b->id)); ?>" class="btn-action edit text-decoration-none">
@@ -403,23 +405,23 @@
                         </div>
                         <?php else: ?>
                         <div class="mb-3">
-                            <span class="unit-empty">No units registered for this branch.</span>
+                            <span class="unit-empty">ບໍ່ມີໜ່ວຍບໍລິການ</span>
                         </div>
                         <?php endif; ?>
 
                         <form method="POST" action="<?php echo e(route('admin.branches.units.store', $b->id)); ?>" class="row g-2 align-items-end">
                             <?php echo csrf_field(); ?>
                             <div class="col-md-3">
-                                <label class="form-label small text-muted mb-1">Unit Code</label>
-                                <input type="text" name="unit_code" class="form-control form-control-sm" placeholder="400201" required>
+                                <label class="form-label small text-muted mb-1">ລະຫັດໜ່ວຍບໍລິການ</label>
+                                <input type="text" name="unit_code" class="form-control form-control-sm" placeholder="" required>
                             </div>
                             <div class="col-md-6">
-                                <label class="form-label small text-muted mb-1">Unit Name</label>
-                                <input type="text" name="unit_name" class="form-control form-control-sm" placeholder="Unit Description" required>
+                                <label class="form-label small text-muted mb-1">ຊື່ໜ່ວຍບໍລິການ</label>
+                                <input type="text" name="unit_name" class="form-control form-control-sm" placeholder="" required>
                             </div>
                             <div class="col-md-3">
                                 <button type="submit" class="btn btn-sm btn-success w-100" style="background: var(--apb-primary); border: none;">
-                                    <i class="bi bi-plus-circle"></i> Add Unit
+                                    <i class="bi bi-plus-circle"></i> ເພີ່ມໜ່ວຍບໍລິການ
                                 </button>
                             </div>
                         </form>

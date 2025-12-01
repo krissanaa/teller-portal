@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="lo">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -14,10 +15,12 @@
 
     <style>
         :root {
-            --apb-primary: #0f766e;
-            --apb-secondary: #0d5c56;
-            --apb-accent: #14b8a6;
+            --apb-primary: #14b8a6;
+            --apb-secondary: #0f766e;
+            --apb-accent: #2dd4bf;
             --apb-dark: #0b3f3a;
+            --apb-bg: #f1f5f9;
+            --apb-border: #e2e8f0;
         }
 
         * {
@@ -108,8 +111,15 @@
         }
 
         @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.1); }
+
+            0%,
+            100% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.1);
+            }
         }
 
         /* 👤 Profile Section */
@@ -496,6 +506,7 @@
                 opacity: 0;
                 transform: translateY(-10px);
             }
+
             to {
                 opacity: 1;
                 transform: translateY(0);
@@ -503,83 +514,98 @@
         }
 
         @keyframes popAndFade {
-            0% { transform: scale(1); opacity: 1; }
-            50% { transform: scale(1.3); opacity: 0.5; }
-            100% { transform: scale(0); opacity: 0; }
+            0% {
+                transform: scale(1);
+                opacity: 1;
+            }
+
+            50% {
+                transform: scale(1.3);
+                opacity: 0.5;
+            }
+
+            100% {
+                transform: scale(0);
+                opacity: 0;
+            }
         }
+
         .navbar-apb .navbar-brand img {
-  height: 50px;
-  width: auto;
-  transition: transform 0.2s ease;
-}
-.navbar-apb .navbar-brand:hover img {
-  transform: scale(1.05);
-}
-.brand-text .brand-name {
-  font-weight: 700;
-  font-size: 1.05rem;
-  color: #ffffff;
-}
-.brand-text .brand-subtitle {
-  font-size: 0.8rem;
-  color: #ffffff;
-  font-size: 12px;
+            height: 50px;
+            width: auto;
+            transition: transform 0.2s ease;
+        }
 
-}
+        .navbar-apb .navbar-brand:hover img {
+            transform: scale(1.05);
+        }
 
+        .brand-text .brand-name {
+            font-weight: 700;
+            font-size: 1.05rem;
+            color: #ffffff;
+        }
+
+        .brand-text .brand-subtitle {
+            font-size: 0.8rem;
+            color: #ffffff;
+            font-size: 12px;
+
+        }
     </style>
 </head>
+
 <body>
-<?php
+    <?php
     $tellerAuthUser = auth()->user();
     if ($tellerAuthUser) {
-        $tellerAuthUser->loadMissing(['branch', 'unit']);
+    $tellerAuthUser->loadMissing(['branch', 'unit']);
     }
     $profileErrorBag = session('errors') instanceof \Illuminate\Support\ViewErrorBag
-        ? session('errors')->getBag('profileSetup')
-        : null;
+    ? session('errors')->getBag('profileSetup')
+    : null;
     $shouldShowProfileSetupModal = $tellerAuthUser && (
-        is_null($tellerAuthUser->profile_completed_at) ||
-        ($profileErrorBag?->any() ?? false)
+    is_null($tellerAuthUser->profile_completed_at) ||
+    ($profileErrorBag?->any() ?? false)
     );
     $profilePrefillName = old('name');
     if ($profilePrefillName === null) {
-        $profilePrefillName = $tellerAuthUser && $tellerAuthUser->profile_completed_at
-            ? $tellerAuthUser->name
-            : '';
+    $profilePrefillName = $tellerAuthUser && $tellerAuthUser->profile_completed_at
+    ? $tellerAuthUser->name
+    : '';
     }
     $profilePrefillPhone = old('phone');
     if ($profilePrefillPhone === null) {
-        $profilePrefillPhone = $tellerAuthUser && $tellerAuthUser->profile_completed_at
-            ? $tellerAuthUser->phone
-            : '';
+    $profilePrefillPhone = $tellerAuthUser && $tellerAuthUser->profile_completed_at
+    ? $tellerAuthUser->phone
+    : '';
     }
     $profileBranches = isset($profileBranches) ? $profileBranches : collect();
     $profileBranchUnitsPayload = $profileBranchUnitsPayload ?? [];
     $profilePrefillBranch = old('branch_id');
     if ($profilePrefillBranch === null) {
-        $profilePrefillBranch = $tellerAuthUser?->branch_id;
+    $profilePrefillBranch = $tellerAuthUser?->branch_id;
     }
     $profilePrefillUnit = old('unit_id');
     if ($profilePrefillUnit === null) {
-        $profilePrefillUnit = $tellerAuthUser?->unit_id;
+    $profilePrefillUnit = $tellerAuthUser?->unit_id;
     }
-?>
+    ?>
 
     <!-- 🏦 Modern Navbar -->
     <nav class="navbar navbar-expand-lg navbar-apb">
         <div class="container-fluid px-4">
             <!-- Brand -->
             <a class="navbar-brand" href="<?php echo e(route('teller.dashboard')); ?>">
-  <img src="<?php echo e(asset('images/APB-logo.jpeg')); ?>" height="40">
+                <img src="<?php echo e(asset('images/APB-logo.jpeg')); ?>" height="40">
 
-</a>
+            </a>
 
-                <div class="brand-text">
+            <div class="brand-text">
 
-                    <span class="brand-name">ທະນາຄານ ສົ່ງເສີມກະສິກຳ ຈຳກັດ</span>
-                    <span class="brand-subtitle">AGRICULTURAL PROMOTION BANK CO., LTD</span>
-                </div>
+                <span class="brand-name">ທະນາຄານ ສົ່ງເສີມກະສິກຳ ຈຳກັດ</span>
+                <span class="brand-subtitle">AGRICULTURAL PROMOTION BANK CO., LTD</span>
+            </div>
             </a>
 
             <!-- Right Side Menu -->
@@ -589,7 +615,7 @@
                     <a class="notification-btn" href="#" id="notifDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                         <i class="bi bi-bell-fill"></i>
                         <?php if(isset($notifications) && count($notifications) > 0): ?>
-                            <span class="notification-badge"><?php echo e(count($notifications)); ?></span>
+                        <span class="notification-badge"><?php echo e(count($notifications)); ?></span>
                         <?php endif; ?>
                     </a>
                     <ul class="dropdown-menu dropdown-menu-end animated--fade-in" aria-labelledby="notifDropdown">
@@ -597,31 +623,31 @@
                             📢 ການແຈ້ງເຕືອນລ່າສຸດ
                         </li>
                         <?php $__empty_1 = true; $__currentLoopData = $notifications; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $n): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
-                            <li>
-                                <div class="notification-item <?php echo e($n->approval_status == 'approved' ? 'approved' : 'rejected'); ?>">
-<div class="notification-store">
-    <div><?php echo e($n->store_name); ?> (<?php echo e($n->refer_code); ?>)</div>
-    <div>POS Serial: <?php echo e($n->pos_serial); ?></div>
-</div>
-
-                                    <div class="notification-status <?php echo e($n->approval_status == 'approved' ? 'text-success' : 'text-danger'); ?>">
-                                        <?php echo e($n->approval_status == 'approved' ? '✅ Approved' : '❌ Rejected'); ?>
-
-                                    </div>
-                                    <?php if($n->approval_status == 'rejected' && $n->admin_remark): ?>
-                                        <div class="notification-remark">
-                                            <i class="bi bi-chat-dots"></i>
-                                            <span><?php echo e(\Illuminate\Support\Str::limit($n->admin_remark, 120)); ?></span>
-                                        </div>
-                                    <?php endif; ?>
-                                    <div class="notification-time">
-                                        Updated <?php echo e($n->updated_at->diffForHumans()); ?>
-
-                                    </div>
+                        <li>
+                            <div class="notification-item <?php echo e($n->approval_status == 'approved' ? 'approved' : 'rejected'); ?>">
+                                <div class="notification-store">
+                                    <div><?php echo e($n->store_name); ?> (<?php echo e($n->refer_code); ?>)</div>
+                                    <div>POS Serial: <?php echo e($n->pos_serial); ?></div>
                                 </div>
-                            </li>
+
+                                <div class="notification-status <?php echo e($n->approval_status == 'approved' ? 'text-success' : 'text-danger'); ?>">
+                                    <?php echo e($n->approval_status == 'approved' ? '✅ Approved' : '❌ Rejected'); ?>
+
+                                </div>
+                                <?php if($n->approval_status == 'rejected' && $n->admin_remark): ?>
+                                <div class="notification-remark">
+                                    <i class="bi bi-chat-dots"></i>
+                                    <span><?php echo e(\Illuminate\Support\Str::limit($n->admin_remark, 120)); ?></span>
+                                </div>
+                                <?php endif; ?>
+                                <div class="notification-time">
+                                    Updated <?php echo e($n->updated_at->diffForHumans()); ?>
+
+                                </div>
+                            </div>
+                        </li>
                         <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
-                            <li><span class="dropdown-item text-muted text-center small">No notifications yet</span></li>
+                        <li><span class="dropdown-item text-muted text-center small">No notifications yet</span></li>
                         <?php endif; ?>
                     </ul>
                 </li>
@@ -653,7 +679,9 @@
                                 <i class="bi bi-shield-lock-fill"></i> ປ່ຽນລະຫັດຜ່ານ
                             </a>
                         </li>
-                        <li><hr class="dropdown-divider"></li>
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
                         <li>
                             <form method="POST" action="<?php echo e(route('logout')); ?>">
                                 <?php echo csrf_field(); ?>
@@ -670,38 +698,38 @@
 
     <!-- ✅ Toast Messages -->
     <?php if(session('profileSetupSuccess')): ?>
-        <div class="toast align-items-center text-bg-success border-0 position-fixed bottom-0 end-0 m-3 show" role="alert">
-            <div class="d-flex">
-                <div class="toast-body">
-                    <i class="bi bi-check-circle-fill me-2"></i><?php echo e(session('profileSetupSuccess')); ?>
+    <div class="toast align-items-center text-bg-success border-0 position-fixed bottom-0 end-0 m-3 show" role="alert">
+        <div class="d-flex">
+            <div class="toast-body">
+                <i class="bi bi-check-circle-fill me-2"></i><?php echo e(session('profileSetupSuccess')); ?>
 
-                </div>
-                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
             </div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
         </div>
+    </div>
     <?php endif; ?>
     <?php if(session('success')): ?>
-        <div class="toast align-items-center text-bg-success border-0 position-fixed bottom-0 end-0 m-3 show" role="alert">
-            <div class="d-flex">
-                <div class="toast-body">
-                    <i class="bi bi-check-circle-fill me-2"></i><?php echo e(session('success')); ?>
+    <div class="toast align-items-center text-bg-success border-0 position-fixed bottom-0 end-0 m-3 show" role="alert">
+        <div class="d-flex">
+            <div class="toast-body">
+                <i class="bi bi-check-circle-fill me-2"></i><?php echo e(session('success')); ?>
 
-                </div>
-                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
             </div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
         </div>
+    </div>
     <?php endif; ?>
 
     <?php if($errors->any()): ?>
-        <div class="toast align-items-center text-bg-danger border-0 position-fixed bottom-0 end-0 m-3 show" role="alert">
-            <div class="d-flex">
-                <div class="toast-body">
-                    <i class="bi bi-exclamation-circle-fill me-2"></i><?php echo e($errors->first()); ?>
+    <div class="toast align-items-center text-bg-danger border-0 position-fixed bottom-0 end-0 m-3 show" role="alert">
+        <div class="d-flex">
+            <div class="toast-body">
+                <i class="bi bi-exclamation-circle-fill me-2"></i><?php echo e($errors->first()); ?>
 
-                </div>
-                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
             </div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
         </div>
+    </div>
     <?php endif; ?>
 
     <!-- 🧱 Main Content -->
@@ -786,10 +814,10 @@
                                     <span>ສາຂາ</span>
                                     <strong>
                                         <?php if($tellerAuthUser?->branch): ?>
-                                            <?php echo e($tellerAuthUser->branch->code); ?> - <?php echo e($tellerAuthUser->branch->name); ?>
+                                        <?php echo e($tellerAuthUser->branch->code); ?> - <?php echo e($tellerAuthUser->branch->name); ?>
 
                                         <?php else: ?>
-                                            —
+                                        —
                                         <?php endif; ?>
                                     </strong>
                                 </div>
@@ -797,10 +825,10 @@
                                     <span>ຫນ່ວຍບໍລິການ</span>
                                     <strong>
                                         <?php if($tellerAuthUser?->unit): ?>
-                                            <?php echo e($tellerAuthUser->unit->unit_code); ?> - <?php echo e($tellerAuthUser->unit->unit_name); ?>
+                                        <?php echo e($tellerAuthUser->unit->unit_code); ?> - <?php echo e($tellerAuthUser->unit->unit_name); ?>
 
                                         <?php else: ?>
-                                            —
+                                        —
                                         <?php endif; ?>
                                     </strong>
                                 </div>
@@ -838,7 +866,7 @@
                         <div class="mb-3">
                             <label for="profile_name" class="form-label">Full Name</label>
                             <input type="text" name="name" id="profile_name"
-                                   class="form-control <?php $__errorArgs = ['name', 'profileSetup'];
+                                class="form-control <?php $__errorArgs = ['name', 'profileSetup'];
 $__bag = $errors->getBag($__errorArgs[1] ?? 'default');
 if ($__bag->has($__errorArgs[0])) :
 if (isset($message)) { $__messageOriginal = $message; }
@@ -846,13 +874,13 @@ $message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
 if (isset($__messageOriginal)) { $message = $__messageOriginal; }
 endif;
 unset($__errorArgs, $__bag); ?>"
-                                   value="<?php echo e($profilePrefillName); ?>" required>
+                                value="<?php echo e($profilePrefillName); ?>" required>
                             <?php $__errorArgs = ['name', 'profileSetup'];
 $__bag = $errors->getBag($__errorArgs[1] ?? 'default');
 if ($__bag->has($__errorArgs[0])) :
 if (isset($message)) { $__messageOriginal = $message; }
 $message = $__bag->first($__errorArgs[0]); ?>
-                                <div class="invalid-feedback"><?php echo e($message); ?></div>
+                            <div class="invalid-feedback"><?php echo e($message); ?></div>
                             <?php unset($message);
 if (isset($__messageOriginal)) { $message = $__messageOriginal; }
 endif;
@@ -861,7 +889,7 @@ unset($__errorArgs, $__bag); ?>
                         <div class="mb-3">
                             <label for="profile_phone" class="form-label">Phone Number</label>
                             <input type="text" name="phone" id="profile_phone"
-                                   class="form-control <?php $__errorArgs = ['phone', 'profileSetup'];
+                                class="form-control <?php $__errorArgs = ['phone', 'profileSetup'];
 $__bag = $errors->getBag($__errorArgs[1] ?? 'default');
 if ($__bag->has($__errorArgs[0])) :
 if (isset($message)) { $__messageOriginal = $message; }
@@ -869,13 +897,13 @@ $message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
 if (isset($__messageOriginal)) { $message = $__messageOriginal; }
 endif;
 unset($__errorArgs, $__bag); ?>"
-                                   value="<?php echo e($profilePrefillPhone); ?>" required>
+                                value="<?php echo e($profilePrefillPhone); ?>" required>
                             <?php $__errorArgs = ['phone', 'profileSetup'];
 $__bag = $errors->getBag($__errorArgs[1] ?? 'default');
 if ($__bag->has($__errorArgs[0])) :
 if (isset($message)) { $__messageOriginal = $message; }
 $message = $__bag->first($__errorArgs[0]); ?>
-                                <div class="invalid-feedback"><?php echo e($message); ?></div>
+                            <div class="invalid-feedback"><?php echo e($message); ?></div>
                             <?php unset($message);
 if (isset($__messageOriginal)) { $message = $__messageOriginal; }
 endif;
@@ -884,7 +912,7 @@ unset($__errorArgs, $__bag); ?>
                         <div class="mb-3">
                             <label for="profile_branch" class="form-label">ສາຂາ</label>
                             <select name="branch_id" id="profile_branch"
-                                    class="form-select <?php $__errorArgs = ['branch_id', 'profileSetup'];
+                                class="form-select <?php $__errorArgs = ['branch_id', 'profileSetup'];
 $__bag = $errors->getBag($__errorArgs[1] ?? 'default');
 if ($__bag->has($__errorArgs[0])) :
 if (isset($message)) { $__messageOriginal = $message; }
@@ -892,14 +920,14 @@ $message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
 if (isset($__messageOriginal)) { $message = $__messageOriginal; }
 endif;
 unset($__errorArgs, $__bag); ?>"
-                                    required>
+                                required>
                                 <option value="">-- ເລືອກສາຂາ --</option>
                                 <?php $__currentLoopData = $profileBranches; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $branch): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                    <option value="<?php echo e($branch->id); ?>"
-                                        <?php echo e((string)$profilePrefillBranch === (string)$branch->id ? 'selected' : ''); ?>>
-                                        <?php echo e($branch->code); ?> - <?php echo e($branch->name); ?>
+                                <option value="<?php echo e($branch->id); ?>"
+                                    <?php echo e((string)$profilePrefillBranch === (string)$branch->id ? 'selected' : ''); ?>>
+                                    <?php echo e($branch->code); ?> - <?php echo e($branch->name); ?>
 
-                                    </option>
+                                </option>
                                 <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                             </select>
                             <?php $__errorArgs = ['branch_id', 'profileSetup'];
@@ -907,21 +935,21 @@ $__bag = $errors->getBag($__errorArgs[1] ?? 'default');
 if ($__bag->has($__errorArgs[0])) :
 if (isset($message)) { $__messageOriginal = $message; }
 $message = $__bag->first($__errorArgs[0]); ?>
-                                <div class="invalid-feedback"><?php echo e($message); ?></div>
+                            <div class="invalid-feedback"><?php echo e($message); ?></div>
                             <?php unset($message);
 if (isset($__messageOriginal)) { $message = $__messageOriginal; }
 endif;
 unset($__errorArgs, $__bag); ?>
                         </div>
                         <?php
-                            $prefillBranchModel = $profileBranches->firstWhere('id', $profilePrefillBranch);
-                            $prefillHasUnits = $prefillBranchModel ? $prefillBranchModel->units->isNotEmpty() : false;
+                        $prefillBranchModel = $profileBranches->firstWhere('id', $profilePrefillBranch);
+                        $prefillHasUnits = $prefillBranchModel ? $prefillBranchModel->units->isNotEmpty() : false;
                         ?>
                         <div class="mb-3" id="profile_unit_wrapper"
-                             style="<?php echo e($prefillHasUnits ? '' : 'display:none;'); ?>">
+                            style="<?php echo e($prefillHasUnits ? '' : 'display:none;'); ?>">
                             <label for="profile_unit" class="form-label">ຫນ່ວຍຍ່ອຍຂອງສາຂາ</label>
                             <select name="unit_id" id="profile_unit"
-                                    class="form-select <?php $__errorArgs = ['unit_id', 'profileSetup'];
+                                class="form-select <?php $__errorArgs = ['unit_id', 'profileSetup'];
 $__bag = $errors->getBag($__errorArgs[1] ?? 'default');
 if ($__bag->has($__errorArgs[0])) :
 if (isset($message)) { $__messageOriginal = $message; }
@@ -929,18 +957,18 @@ $message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
 if (isset($__messageOriginal)) { $message = $__messageOriginal; }
 endif;
 unset($__errorArgs, $__bag); ?>"
-                                    data-selected="<?php echo e($profilePrefillUnit ?? ''); ?>"
-                                    <?php echo e($prefillHasUnits ? '' : 'disabled'); ?>>
+                                data-selected="<?php echo e($profilePrefillUnit ?? ''); ?>"
+                                <?php echo e($prefillHasUnits ? '' : 'disabled'); ?>>
                                 <option value="">-- ເລືອກຫນ່ວຍຍ່ອຍ --</option>
                             </select>
 
-                    </div>
-                    <div class="modal-footer">
-                        <span class="text-muted small me-auto">This step is required the first time you log in.</span>
-                        <button type="submit" class="btn btn-success">
-                            Save Information
-                        </button>
-                    </div>
+                        </div>
+                        <div class="modal-footer">
+                            <span class="text-muted small me-auto">This step is required the first time you log in.</span>
+                            <button type="submit" class="btn btn-success">
+                                Save Information
+                            </button>
+                        </div>
                 </form>
             </div>
         </div>
@@ -949,126 +977,130 @@ unset($__errorArgs, $__bag); ?>"
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
-    document.addEventListener("DOMContentLoaded", function () {
-        const notifDropdown = document.getElementById('notifDropdown');
-        const badge = notifDropdown?.querySelector('.notification-badge');
+        document.addEventListener("DOMContentLoaded", function() {
+            const notifDropdown = document.getElementById('notifDropdown');
+            const badge = notifDropdown?.querySelector('.notification-badge');
 
-        if (localStorage.getItem("notifSeen") === "true" && badge) {
-            badge.remove();
-        }
-
-        notifDropdown?.addEventListener('click', function () {
-            const b = this.querySelector('.notification-badge');
-            if (b) {
-                b.style.animation = "popAndFade 0.6s ease forwards";
-                setTimeout(() => b.remove(), 600);
-                localStorage.setItem("notifSeen", "true");
-            }
-        });
-
-        const toasts = document.querySelectorAll('.toast');
-        toasts.forEach(toast => {
-            setTimeout(() => {
-                const bsToast = bootstrap.Toast.getInstance(toast);
-                if (bsToast) bsToast.hide();
-            }, 5000);
-        });
-
-        const branchUnitsMap = <?php echo json_encode($profileBranchUnitsPayload, 15, 512) ?>;
-        const profileBranchSelect = document.getElementById('profile_branch');
-        const profileUnitWrapper = document.getElementById('profile_unit_wrapper');
-        const profileUnitSelect = document.getElementById('profile_unit');
-        const profileUnitPreview = document.getElementById('profile_unit_preview');
-
-        const renderProfileUnitPreview = (units) => {
-            if (!profileUnitPreview) {
-                return;
+            if (localStorage.getItem("notifSeen") === "true" && badge) {
+                badge.remove();
             }
 
-            if (!units.length) {
-                profileUnitPreview.style.display = 'none';
-                profileUnitPreview.innerHTML = '';
-                return;
-            }
-
-            profileUnitPreview.style.display = '';
-
-            const list = document.createElement('div');
-            list.className = 'profile-unit-preview-list';
-            units.forEach(unit => {
-                const item = document.createElement('div');
-                item.className = 'profile-unit-preview-item';
-                item.innerHTML = `<strong>${unit.code}</strong><span>${unit.name}</span>`;
-                list.appendChild(item);
-            });
-            profileUnitPreview.innerHTML = '';
-            profileUnitPreview.appendChild(list);
-        };
-
-        const populateProfileUnits = (branchId, preserveSelection = true) => {
-            if (!profileUnitSelect || !profileUnitWrapper) {
-                return;
-            }
-
-            const units = branchUnitsMap[branchId] || [];
-            profileUnitSelect.innerHTML = `<option value="">-- ເລືອກຫນ່ວຍຍ່ອຍ --</option>`;
-
-            if (!units.length) {
-                profileUnitWrapper.style.display = 'none';
-                profileUnitSelect.disabled = true;
-                if (!preserveSelection) {
-                    profileUnitSelect.dataset.selected = '';
+            notifDropdown?.addEventListener('click', function() {
+                const b = this.querySelector('.notification-badge');
+                if (b) {
+                    b.style.animation = "popAndFade 0.6s ease forwards";
+                    setTimeout(() => b.remove(), 600);
+                    localStorage.setItem("notifSeen", "true");
                 }
-                renderProfileUnitPreview([]);
-                return;
-            }
-
-            profileUnitWrapper.style.display = '';
-            profileUnitSelect.disabled = false;
-
-            units.forEach(unit => {
-                const option = document.createElement('option');
-                option.value = unit.id;
-                option.textContent = `${unit.code} - ${unit.name}`;
-                profileUnitSelect.appendChild(option);
             });
 
-            const desired = preserveSelection ? (profileUnitSelect.dataset.selected || '') : '';
-            if (desired) {
-                profileUnitSelect.value = desired;
-            } else {
-                profileUnitSelect.value = '';
-            }
-
-            renderProfileUnitPreview(units);
-        };
-
-        if (profileBranchSelect && profileUnitSelect) {
-            profileBranchSelect.addEventListener('change', (event) => {
-                profileUnitSelect.dataset.selected = '';
-                populateProfileUnits(event.target.value, false);
+            const toasts = document.querySelectorAll('.toast');
+            toasts.forEach(toast => {
+                setTimeout(() => {
+                    const bsToast = bootstrap.Toast.getInstance(toast);
+                    if (bsToast) bsToast.hide();
+                }, 5000);
             });
 
-            if (profileBranchSelect.value) {
-                populateProfileUnits(profileBranchSelect.value, true);
-            } else if (profileUnitWrapper) {
-                profileUnitWrapper.style.display = 'none';
-                profileUnitSelect.disabled = true;
-                renderProfileUnitPreview([]);
-            }
-        }
+            const branchUnitsMap = <?php echo json_encode($profileBranchUnitsPayload, 15, 512) ?>;
+            const profileBranchSelect = document.getElementById('profile_branch');
+            const profileUnitWrapper = document.getElementById('profile_unit_wrapper');
+            const profileUnitSelect = document.getElementById('profile_unit');
+            const profileUnitPreview = document.getElementById('profile_unit_preview');
 
-        const shouldShowProfileModal = <?php echo e($shouldShowProfileSetupModal ? 'true' : 'false'); ?>;
-        if (shouldShowProfileModal) {
-            const profileModalEl = document.getElementById('profileSetupModal');
-            if (profileModalEl) {
-                const profileModal = bootstrap.Modal.getOrCreateInstance(profileModalEl);
-                profileModal.show();
+            const renderProfileUnitPreview = (units) => {
+                if (!profileUnitPreview) {
+                    return;
+                }
+
+                if (!units.length) {
+                    profileUnitPreview.style.display = 'none';
+                    profileUnitPreview.innerHTML = '';
+                    return;
+                }
+
+                profileUnitPreview.style.display = '';
+
+                const list = document.createElement('div');
+                list.className = 'profile-unit-preview-list';
+                units.forEach(unit => {
+                    const item = document.createElement('div');
+                    item.className = 'profile-unit-preview-item';
+                    item.innerHTML = `<strong>${unit.code}</strong><span>${unit.name}</span>`;
+                    list.appendChild(item);
+                });
+                profileUnitPreview.innerHTML = '';
+                profileUnitPreview.appendChild(list);
+            };
+
+            const populateProfileUnits = (branchId, preserveSelection = true) => {
+                if (!profileUnitSelect || !profileUnitWrapper) {
+                    return;
+                }
+
+                const units = branchUnitsMap[branchId] || [];
+                profileUnitSelect.innerHTML = `<option value="">-- ເລືອກຫນ່ວຍຍ່ອຍ --</option>`;
+
+                if (!units.length) {
+                    profileUnitWrapper.style.display = 'none';
+                    profileUnitSelect.disabled = true;
+                    if (!preserveSelection) {
+                        profileUnitSelect.dataset.selected = '';
+                    }
+                    renderProfileUnitPreview([]);
+                    return;
+                }
+
+                profileUnitWrapper.style.display = '';
+                profileUnitSelect.disabled = false;
+
+                units.forEach(unit => {
+                    const option = document.createElement('option');
+                    option.value = unit.id;
+                    option.textContent = `${unit.code} - ${unit.name}`;
+                    profileUnitSelect.appendChild(option);
+                });
+
+                const desired = preserveSelection ? (profileUnitSelect.dataset.selected || '') : '';
+                if (desired) {
+                    profileUnitSelect.value = desired;
+                } else {
+                    profileUnitSelect.value = '';
+                }
+
+                renderProfileUnitPreview(units);
+            };
+
+            if (profileBranchSelect && profileUnitSelect) {
+                profileBranchSelect.addEventListener('change', (event) => {
+                    profileUnitSelect.dataset.selected = '';
+                    populateProfileUnits(event.target.value, false);
+                });
+
+                if (profileBranchSelect.value) {
+                    populateProfileUnits(profileBranchSelect.value, true);
+                } else if (profileUnitWrapper) {
+                    profileUnitWrapper.style.display = 'none';
+                    profileUnitSelect.disabled = true;
+                    renderProfileUnitPreview([]);
+                }
             }
-        }
-    });
+
+            const shouldShowProfileModal = {
+                {
+                    $shouldShowProfileSetupModal ? 'true' : 'false'
+                }
+            };
+            if (shouldShowProfileModal) {
+                const profileModalEl = document.getElementById('profileSetupModal');
+                if (profileModalEl) {
+                    const profileModal = bootstrap.Modal.getOrCreateInstance(profileModalEl);
+                    profileModal.show();
+                }
+            }
+        });
     </script>
 
 </body>
-</html>
-<?php /**PATH /var/www/html/resources/views/layouts/teller.blade.php ENDPATH**/ ?>
+
+</html><?php /**PATH /var/www/html/resources/views/layouts/teller.blade.php ENDPATH**/ ?>

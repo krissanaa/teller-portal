@@ -3,11 +3,11 @@
 <?php $__env->startSection('content'); ?>
 <style>
     :root {
-        --apb-primary: #0f766e;
-        --apb-secondary: #0d5c56;
-        --apb-accent: #14b8a6;
-        --apb-dark: #0b3f3a;
-        --bg-color: #f8f9fa;
+        --apb-primary: #14b8a6;
+        --apb-secondary: #0f766e;
+        --apb-accent: #2dd4bf;
+        --apb-dark: #0d5c56;
+        --bg-color: #f1f5f9;
         --card-bg: #ffffff;
         --text-dark: #334155;
         --text-muted: #64748b;
@@ -117,11 +117,12 @@
 
     .meta {
         font-size: 0.875rem;
-        color: var(--text-muted);
-        font-weight: 500;
-        background: #e2e8f0;
+        color: #000000;
+        font-weight: 600;
+        background: #FFC107;
         padding: 0.25rem 0.75rem;
         border-radius: 999px;
+        border: 1px solid #FFC107;
     }
 
     .table-modern {
@@ -341,9 +342,9 @@
         </div>
         <?php endif; ?>
         <div class="col-md-3 ms-auto">
-            <a href="<?php echo e(route('admin.users.create')); ?>" class="create-btn w-100 justify-content-center">
+            <button type="button" class="create-btn w-100 justify-content-center" data-bs-toggle="modal" data-bs-target="#createAdminModal">
                 <i class="bi bi-person-plus-fill"></i> Create Admin
-            </a>
+            </button>
         </div>
     </form>
 </div>
@@ -351,13 +352,26 @@
 <div class="table-card">
     <div class="table-card-header">
         <h5>All Admin Accounts</h5>
-        <span class="meta"><?php echo e($users->total()); ?> total</span>
+        <div class="d-flex align-items-center gap-2">
+            <form method="GET" class="d-flex align-items-center gap-2 m-0">
+                <?php $__currentLoopData = request()->except(['per_page', 'page']); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $key => $value): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                <input type="hidden" name="<?php echo e($key); ?>" value="<?php echo e($value); ?>">
+                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                <label for="per_page_header" class="text-muted small mb-0">Show</label>
+                <select name="per_page" id="per_page_header" class="form-select form-select-sm" style="width: auto;" onchange="this.form.submit()">
+                    <?php $__currentLoopData = [5, 10, 25, 50, 100]; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $limit): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                    <option value="<?php echo e($limit); ?>" <?php echo e(request('per_page', 5) == $limit ? 'selected' : ''); ?>><?php echo e($limit); ?></option>
+                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                </select>
+            </form>
+            <span class="meta"><?php echo e($users->total()); ?> total</span>
+        </div>
     </div>
     <div class="table-responsive flex-grow-1">
         <table class="table table-modern align-middle">
             <thead>
                 <tr>
-                    <th>#</th>
+                    <th>ID</th>
                     <th>Name</th>
                     <th>Email</th>
                     <th>Phone</th>
@@ -454,6 +468,36 @@
         </a>
     </div>
     <?php endif; ?>
+</div>
+
+<!-- Create Admin Modal -->
+<div class="modal fade" id="createAdminModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg" style="border-radius: 16px;">
+            <div class="modal-header border-0 pb-0">
+                <h5 class="modal-title fw-bold">Create New Admin</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-4">
+                <form action="<?php echo e(route('admin.users.storeAdmin')); ?>" method="POST">
+                    <?php echo csrf_field(); ?>
+                    <div class="mb-3">
+                        <label for="teller_id" class="form-label">Teller ID</label>
+                        <input type="text" class="form-control" id="teller_id" name="teller_id" required placeholder="e.g. 9999">
+                    </div>
+                    <div class="mb-4">
+                        <label for="password" class="form-label">Password</label>
+                        <input type="password" class="form-control" id="password" name="password" required minlength="6" placeholder="Enter password">
+                    </div>
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary" style="background: var(--apb-primary); border: none; padding: 10px; font-weight: 600;">
+                            Create Admin Account
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 </div>
 <?php $__env->stopSection(); ?>
 <?php echo $__env->make('layouts.admin', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH /var/www/html/resources/views/admin/users/index.blade.php ENDPATH**/ ?>

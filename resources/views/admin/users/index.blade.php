@@ -119,11 +119,12 @@
 
     .meta {
         font-size: 0.875rem;
-        color: var(--text-muted);
-        font-weight: 500;
-        background: #e2e8f0;
+        color: #000000;
+        font-weight: 600;
+        background: #FFC107;
         padding: 0.25rem 0.75rem;
         border-radius: 999px;
+        border: 1px solid #FFC107;
     }
 
     .table-modern {
@@ -343,9 +344,9 @@
         </div>
         @endif
         <div class="col-md-3 ms-auto">
-            <a href="{{ route('admin.users.create') }}" class="create-btn w-100 justify-content-center">
+            <button type="button" class="create-btn w-100 justify-content-center" data-bs-toggle="modal" data-bs-target="#createAdminModal">
                 <i class="bi bi-person-plus-fill"></i> Create Admin
-            </a>
+            </button>
         </div>
     </form>
 </div>
@@ -353,13 +354,26 @@
 <div class="table-card">
     <div class="table-card-header">
         <h5>All Admin Accounts</h5>
-        <span class="meta">{{ $users->total() }} total</span>
+        <div class="d-flex align-items-center gap-2">
+            <form method="GET" class="d-flex align-items-center gap-2 m-0">
+                @foreach(request()->except(['per_page', 'page']) as $key => $value)
+                <input type="hidden" name="{{ $key }}" value="{{ $value }}">
+                @endforeach
+                <label for="per_page_header" class="text-muted small mb-0">Show</label>
+                <select name="per_page" id="per_page_header" class="form-select form-select-sm" style="width: auto;" onchange="this.form.submit()">
+                    @foreach([5, 10, 25, 50, 100] as $limit)
+                    <option value="{{ $limit }}" {{ request('per_page', 5) == $limit ? 'selected' : '' }}>{{ $limit }}</option>
+                    @endforeach
+                </select>
+            </form>
+            <span class="meta">{{ $users->total() }} total</span>
+        </div>
     </div>
     <div class="table-responsive flex-grow-1">
         <table class="table table-modern align-middle">
             <thead>
                 <tr>
-                    <th>#</th>
+                    <th>ID</th>
                     <th>Name</th>
                     <th>Email</th>
                     <th>Phone</th>
@@ -453,5 +467,35 @@
         </a>
     </div>
     @endif
+</div>
+
+<!-- Create Admin Modal -->
+<div class="modal fade" id="createAdminModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg" style="border-radius: 16px;">
+            <div class="modal-header border-0 pb-0">
+                <h5 class="modal-title fw-bold">Create New Admin</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-4">
+                <form action="{{ route('admin.users.storeAdmin') }}" method="POST">
+                    @csrf
+                    <div class="mb-3">
+                        <label for="teller_id" class="form-label">Teller ID</label>
+                        <input type="text" class="form-control" id="teller_id" name="teller_id" required placeholder="e.g. 9999">
+                    </div>
+                    <div class="mb-4">
+                        <label for="password" class="form-label">Password</label>
+                        <input type="password" class="form-control" id="password" name="password" required minlength="6" placeholder="Enter password">
+                    </div>
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary" style="background: var(--apb-primary); border: none; padding: 10px; font-weight: 600;">
+                            Create Admin Account
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 </div>
 @endsection

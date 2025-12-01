@@ -392,8 +392,13 @@ $authUser = auth()->user();
         }
 
         .table-card-header .meta {
-            color: #6c757d;
+            font-size: 0.875rem;
+            color: #000000;
             font-weight: 600;
+            background: #FFC107;
+            padding: 0.25rem 0.75rem;
+            border-radius: 999px;
+            border: 1px solid #FFC107;
         }
 
         .table-modern {

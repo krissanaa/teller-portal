@@ -29,7 +29,7 @@
 
     .page-header h4 {
         margin: 0;
-        color: rgb(0, 0, 0);
+        color: #1e293b;
         font-weight: 700;
         font-size: 1.5rem;
         display: flex;
@@ -103,7 +103,7 @@
 
     .card-title {
         font-weight: 700;
-        color: #000000;
+        color: #1e293b;
         display: flex;
         align-items: center;
         gap: 10px;
@@ -133,9 +133,9 @@
         font-weight: 600;
         border: none;
         text-transform: uppercase;
-        font-size: 1rem;
+        font-size: 0.875rem;
         letter-spacing: 0.5px;
-        color: #000000;
+        color: #475569;
     }
 
     .modern-table tbody tr {
@@ -152,17 +152,18 @@
     .modern-table tbody td {
         padding: 14px 16px;
         vertical-align: middle;
-        font-size: 0.9rem;
+        font-size: 0.9375rem;
+        color: #334155;
     }
 
     .store-name {
-        color: #000000;
+        color: #1e293b;
         font-weight: 600;
     }
 
     .reference-code {
         background: #f8f9fa;
-        color: #212529;
+        color: #334155;
         padding: 4px 10px;
         border-radius: 6px;
         font-weight: 600;
@@ -224,7 +225,7 @@
         background: #f8f9fa;
         border: 1px dashed #ced4da;
         font-size: 0.85rem;
-        color: #495057;
+        color: #64748b;
     }
 
     .btn-resubmit {
@@ -238,18 +239,19 @@
     .empty-state {
         padding: 60px 20px;
         text-align: center;
-        color: #6c757d;
+        color: #64748b;
     }
 
     .empty-state i {
         font-size: 4rem;
-        color: #6c757d;
+        color: #94a3b8;
         margin-bottom: 16px;
     }
 
     .empty-state p {
         font-size: 1.1rem;
         margin: 0;
+        color: #64748b;
     }
 
     .pagination svg {
@@ -265,13 +267,13 @@
     }
 
     .pagination .page-link {
-        color: #2d5f3f;
+        color: #475569;
         border-radius: 6px;
     }
 
     .pagination .page-link:hover {
-        background: #ffffff;
-        color: rgb(0, 0, 0);
+        background: #f1f5f9;
+        color: #1e293b;
     }
 
     @media (max-width: 768px) {

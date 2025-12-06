@@ -42,7 +42,7 @@
 
     .page-header h4 {
         margin: 0;
-        color: rgb(0, 0, 0);
+        color: #1e293b;
         font-weight: 700;
         font-size: 1.5rem;
         display: flex;
@@ -59,7 +59,7 @@
     .btn-create {
         background: rgb(255, 255, 255);
         border: 2px solid #ff0000;
-        color: #000000;
+        color: #1e293b;
         padding: 10px 18px;
         border-radius: 10px;
         font-weight: 700;
@@ -116,14 +116,14 @@
         text-transform: uppercase;
         letter-spacing: 0.3px;
         margin-bottom: 4px;
-        color: #000000;
+        color: #475569;
     }
 
     .status-count {
         font-size: 1.6rem;
         font-weight: 700;
         line-height: 1;
-        color: #000000;
+        color: #1e293b;
     }
 
     /* Color borders */
@@ -165,7 +165,7 @@
     }
 
     .filter-title {
-        color: #000000;
+        color: #1e293b;
         font-weight: 700;
         margin-bottom: 16px;
         display: flex;
@@ -196,7 +196,7 @@
     .btn-reset {
         background: white;
         border: 1px solid #ced4da;
-        color: #000000;
+        color: #475569;
         border-radius: 8px;
         padding: 11px 24px;
         font-weight: 600;
@@ -206,7 +206,7 @@
     .btn-reset:hover {
         background: #f8f9fa;
         border-color: #adb5bd;
-        color: #000000;
+        color: #1e293b;
     }
 
     /* Table Card */
@@ -228,7 +228,7 @@
 
     .table-header-title {
         font-weight: 700;
-        color: #000000;
+        color: #1e293b;
         display: flex;
         align-items: center;
         gap: 8px;
@@ -257,9 +257,9 @@
         font-weight: 600;
         border: none;
         text-transform: uppercase;
-        font-size: 1rem;
+        font-size: 0.875rem;
         letter-spacing: 0.5px;
-        color: #000000;
+        color: #475569;
         white-space: nowrap;
     }
 
@@ -277,17 +277,18 @@
     .modern-table tbody td {
         padding: 14px 16px;
         vertical-align: middle;
-        font-size: 0.9rem;
+        font-size: 0.9375rem;
+        color: #334155;
     }
 
     .store-name {
-        color: #000000;
+        color: #1e293b;
         font-weight: 600;
     }
 
     .reference-code {
         background: #f8f9fa;
-        color: #000000;
+        color: #334155;
         padding: 4px 10px;
         border-radius: 6px;
         font-weight: 600;
@@ -348,18 +349,19 @@
     .empty-state {
         padding: 60px 20px;
         text-align: center;
-        color: #6c757d;
+        color: #64748b;
     }
 
     .empty-state i {
         font-size: 4rem;
-        color: #dee2e6;
+        color: #94a3b8;
         margin-bottom: 16px;
     }
 
     .empty-state p {
         font-size: 1.1rem;
         margin: 0;
+        color: #64748b;
     }
 
     @media (max-width: 768px) {

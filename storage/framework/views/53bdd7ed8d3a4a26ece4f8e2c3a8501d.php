@@ -1,6 +1,15 @@
 <?php $__env->startSection('title', 'Onboarding Requests'); ?>
 
 <?php $__env->startSection('content'); ?>
+<?php
+$search = $search ?? '';
+$start_date = $start_date ?? '';
+$end_date = $end_date ?? '';
+$status = $status ?? '';
+$branch_id = $branch_id ?? '';
+$unit_id = $unit_id ?? '';
+$teller_id = $teller_id ?? '';
+?>
 <style>
     :root {
         --apb-primary: #14b8a6;
@@ -480,14 +489,27 @@
             </table>
         </div>
         <?php if($data->hasPages()): ?>
-        <div class="d-flex flex-column align-items-end mt-3 p-3 border-top">
-            <div class="text-muted small mb-2">
-                Showing <?php echo e($data->firstItem()); ?> to <?php echo e($data->lastItem()); ?> of <?php echo e($data->total()); ?> results
+        <div class="position-relative mt-3 p-3 border-top">
+            <div class="position-absolute top-50 start-50 translate-middle" style="z-index: 1;">
+                <a href="<?php echo e(route('admin.dashboard')); ?>" class="btn btn-outline-danger">
+                    <i class="bi bi-house"></i> Back to Home
+                </a>
             </div>
-            <div>
-                <?php echo e($data->links('vendor.pagination.custom')); ?>
+            <div class="d-flex flex-column align-items-end">
+                <div class="text-muted small mb-2">
+                    Showing <?php echo e($data->firstItem()); ?> to <?php echo e($data->lastItem()); ?> of <?php echo e($data->total()); ?> results
+                </div>
+                <div>
+                    <?php echo e($data->links('vendor.pagination.custom')); ?>
 
+                </div>
             </div>
+        </div>
+        <?php else: ?>
+        <div class="text-center mt-3 p-3 border-top">
+            <a href="<?php echo e(route('admin.dashboard')); ?>" class="btn btn-outline-danger">
+                <i class="bi bi-house"></i> Back to Home
+            </a>
         </div>
         <?php endif; ?>
     </div>

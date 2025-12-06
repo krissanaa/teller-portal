@@ -515,30 +515,30 @@ $statusClassMap = [
     <div class="request-card">
         <div class="d-flex justify-content-between flex-wrap gap-2">
             <div>
+                @if($status !== 'pending')
                 <span class="{{ $statusClassMap[$req->approval_status] ?? 'status-pill pending' }}">
                     {{ ucfirst($req->approval_status) }}
                 </span>
+                @endif
                 <h2 class="request-title mb-0">{{ $req->store_name ?? 'Unnamed Store' }}</h2>
                 <div class="text-black fw-bold mt-1" style="font-size: 15px">
-                    <i class="bi bi-location"></i> {{ $req->business_type ?? '-' }}
+                    <i class="bi bi-briefcase"></i> {{ $req->business_type ?? '-' }}
                 </div>
-
                 <div class="text-black fw-bold small mt-1" style="font-size: 15px">
-                    <i class="bi bi-location"></i> {{ $req->store_address ?? 'N/A' }}
+                    <i class="bi bi-geo-alt"></i> {{ $req->store_address ?? 'N/A' }}
                 </div>
-
-                <div class="text-black fw-bold small mt-1" style="font-size: 15px">
-                    <i class="bi bi-location"></i> {{ optional($req->branch)->name ?? '-' }}
-                </div>
-
-
             </div>
             <div class="text-end">
-                <div class="fw-semibold">
+                <div class="fw-semibold" style="color: #0f172a;">
                     {{ optional($req->teller)->name ? optional($req->teller)->name .' ('. $req->teller_id .')' : ($req->teller_id ?? '-') }}
                 </div>
+                <div style="font-size: 0.8rem; color: #64748b; margin-top: 4px; display: flex; flex-direction: column; gap: 2px; align-items: flex-end;">
+                    <span><i class="bi bi-building" style="color: var(--apb-primary); margin-right: 4px;"></i>{{ optional($req->teller->branch)->name ?? '-' }}</span>
+                    <span><i class="bi bi-diagram-3" style="color: var(--apb-primary); margin-right: 4px;"></i>{{ optional($req->teller->unit)->name ?? '-' }}</span>
+                    <span><i class="bi bi-telephone" style="color: var(--apb-primary); margin-right: 4px;"></i>{{ optional($req->teller)->phone ?? '-' }}</span>
+                </div>
                 @if ($created)
-                <small class="text-muted d-block">
+                <small class="text-muted d-block mt-2">
                     <i class="bi bi-calendar-event"></i> Submitted {{ $created }}
                 </small>
                 @endif
@@ -553,10 +553,6 @@ $statusClassMap = [
                     <strong>{{ $req->refer_code ?? 'N/A' }}</strong>
                 </div>
             </div>
-
-
-
-
             <div class="info-chip">
                 <i class="bi bi-bank"></i>
                 <div class="text">
@@ -571,12 +567,6 @@ $statusClassMap = [
                     <strong>{{ $req->installation_date ? \Carbon\Carbon::parse($req->installation_date)->format('M d, Y') : '-' }}</strong>
                 </div>
             </div>
-        </div>
-
-        <div class="tag-row">
-            <span><i class="bi bi-info-circle"></i> Store status: {{ Str::title(str_replace('_', ' ', $req->store_status ?? 'unknown')) }}</span>
-            <span><i class="bi bi-paperclip"></i> Attachments: {{ count($attachments) }}</span>
-            <span><i class="bi bi-chat-text"></i> Admin remark: {{ $req->admin_remark ?? '-' }}</span>
         </div>
 
         @if (count($attachments))
@@ -640,7 +630,7 @@ $statusClassMap = [
 @if($requests->hasPages())
 <div class="position-relative mt-4">
     <div class="position-absolute top-50 start-50 translate-middle" style="z-index: 1;">
-        <a href="{{ route('admin.dashboard') }}" class="btn btn-outline-secondary">
+        <a href="{{ route('admin.dashboard') }}" class="btn btn-outline-danger">
             <i class="bi bi-house"></i> Back to Home
         </a>
     </div>
@@ -655,7 +645,7 @@ $statusClassMap = [
 </div>
 @else
 <div class="text-center mt-4">
-    <a href="{{ route('admin.dashboard') }}" class="btn btn-outline-secondary">
+    <a href="{{ route('admin.dashboard') }}" class="btn btn-outline-danger">
         <i class="bi bi-house"></i> Back to Home
     </a>
 </div>

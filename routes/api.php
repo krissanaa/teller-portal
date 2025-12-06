@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Routing\Middleware\ThrottleRequests;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\MetaController;
 use App\Http\Controllers\Api\TellerRequestController;
@@ -9,7 +10,9 @@ use App\Http\Controllers\Api\Admin\OnboardingController as AdminOnboardingContro
 use App\Http\Controllers\Api\Admin\LogController as AdminLogController;
 
 Route::prefix('auth')->group(function () {
-    Route::post('login', [AuthController::class, 'login'])->name('api.auth.login');
+    Route::post('login', [AuthController::class, 'login'])
+        ->name('api.auth.login')
+        ->withoutMiddleware([ThrottleRequests::class, 'throttle:api']);
 
     Route::middleware('auth:sanctum')->group(function () {
         Route::get('me', [AuthController::class, 'me'])->name('api.auth.me');

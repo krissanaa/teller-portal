@@ -44,6 +44,14 @@ class AuthController extends Controller
             ], 403);
         }
 
+        // Rehash to lower bcrypt cost for future logins (honors BCRYPT_ROUNDS env)
+        $rounds = (int) env('BCRYPT_ROUNDS', 10);
+        if (Hash::needsRehash($user->password, ['rounds' => $rounds])) {
+            $user->forceFill([
+                'password' => Hash::make($data['password'], ['rounds' => $rounds]),
+            ])->save();
+        }
+
         $token = $user->createToken('api-token', [$user->role])->plainTextToken;
 
         if (! $request->expectsJson()) {
@@ -54,7 +62,8 @@ class AuthController extends Controller
         return response()->json([
             'token' => $token,
             'token_type' => 'Bearer',
-            'user' => new UserResource($user->loadMissing(['branch', 'unit'])),
+            // Do not eager load relations here; keep response lean for login
+            'user' => new UserResource($user),
         ]);
     }
 
@@ -76,6 +85,19 @@ class AuthController extends Controller
     {
         $field = filter_var($identifier, FILTER_VALIDATE_EMAIL) ? 'email' : 'teller_id';
 
-        return User::where($field, $identifier)->first();
+        return User::query()
+            ->select([
+                'id',
+                'name',
+                'email',
+                'teller_id',
+                'password',
+                'role',
+                'status',
+                'branch_id',
+                'unit_id',
+            ])
+            ->where($field, $identifier)
+            ->first();
     }
 }

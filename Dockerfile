@@ -25,7 +25,7 @@ RUN if [ -f /etc/apt/sources.list ]; then \
 # Set PHP timezone
 RUN echo "date.timezone=${TZ}" > /usr/local/etc/php/conf.d/timezone.ini
 
-# Copy Composer from the official image
+# Copy Composer from the official imagedocker buildx build .
 COPY --from=composer:2.7 /usr/bin/composer /usr/bin/composer
 
 WORKDIR /var/www/html

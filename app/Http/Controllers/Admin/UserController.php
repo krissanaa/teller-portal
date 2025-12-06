@@ -16,9 +16,13 @@ class UserController extends Controller
         $search = $request->input('search');
 
         $users = User::where('role', 'teller')
-            ->when($search, fn($q) => $q->where('name', 'like', "%{$search}%")
+            ->with(['branch', 'unit'])
+            ->when($search, fn($q) => $q->where(function ($inner) use ($search) {
+                $inner->where('name', 'like', "%{$search}%")
+                    ->orWhere('teller_id', 'like', "%{$search}%")
                 ->orWhere('email', 'like', "%{$search}%")
-                ->orWhere('phone', 'like', "%{$search}%"))
+                    ->orWhere('phone', 'like', "%{$search}%");
+            }))
             ->orderByDesc('created_at')
             ->paginate($request->input('per_page', 5));
 
@@ -34,14 +38,14 @@ class UserController extends Controller
     {
         $validated = $request->validate([
             'name'     => 'required|string|max:100',
-            'email'    => 'required|email|unique:users',
+            'email'    => 'nullable|email|unique:users,email',
             'phone'    => 'required|string|max:20',
             'password' => 'required|string|min:6',
         ]);
 
         $user = User::create([
             'name'     => $validated['name'],
-            'email'    => $validated['email'],
+            'email'    => $validated['email'] ?? null,
             'phone'    => $validated['phone'],
             'password' => Hash::make($validated['password']),
             'role'     => 'teller',
@@ -98,7 +102,7 @@ class UserController extends Controller
         $user = User::findOrFail($id);
         $validated = $request->validate([
             'name' => 'required|string|max:100',
-            'email' => 'required|email|unique:users,email,' . $id,
+            'email' => 'nullable|email|unique:users,email,' . $id,
             'phone' => 'required|string|max:20',
             'status' => 'required|in:pending,approved,rejected',
         ]);

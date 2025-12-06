@@ -345,13 +345,26 @@
     </div>
     <!-- Pagination -->
     @if($logs->hasPages())
-    <div class="d-flex flex-column align-items-end mt-3">
-        <div class="text-muted small mb-2">
-            Showing {{ $logs->firstItem() }} to {{ $logs->lastItem() }} of {{ $logs->total() }} results
+    <div class="position-relative mt-3 p-3 border-top">
+        <div class="position-absolute top-50 start-50 translate-middle" style="z-index: 1;">
+            <a href="{{ route('admin.dashboard') }}" class="btn btn-outline-danger">
+                <i class="bi bi-house"></i> Back to Home
+            </a>
         </div>
-        <div>
-            {{ $logs->links('vendor.pagination.custom') }}
+        <div class="d-flex flex-column align-items-end">
+            <div class="text-muted small mb-2">
+                Showing {{ $logs->firstItem() }} to {{ $logs->lastItem() }} of {{ $logs->total() }} results
+            </div>
+            <div>
+                {{ $logs->links('vendor.pagination.custom') }}
+            </div>
         </div>
+    </div>
+    @else
+    <div class="text-center mt-3 p-3 border-top">
+        <a href="{{ route('admin.dashboard') }}" class="btn btn-outline-danger">
+            <i class="bi bi-house"></i> Back to Home
+        </a>
     </div>
     @endif
 </div>

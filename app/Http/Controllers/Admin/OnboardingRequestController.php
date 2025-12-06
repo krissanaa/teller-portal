@@ -14,7 +14,8 @@ class OnboardingRequestController extends Controller
     {
         $status = $request->query('status', 'pending');
 
-        $requests = OnboardingRequest::where('approval_status', $status)
+        $requests = OnboardingRequest::with(['teller.branch', 'teller.unit', 'branch', 'unit'])
+            ->where('approval_status', $status)
             ->orderBy('created_at', 'desc')
             ->paginate(5)
             ->appends(['status' => $status]);
@@ -24,7 +25,7 @@ class OnboardingRequestController extends Controller
 
     public function show($id)
     {
-        $req = OnboardingRequest::findOrFail($id);
+        $req = OnboardingRequest::with(['teller.branch', 'teller.unit', 'branch', 'unit'])->findOrFail($id);
         return view('admin.onboarding.show', compact('req'));
     }
 

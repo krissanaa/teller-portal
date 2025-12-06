@@ -349,14 +349,27 @@
     </div>
     <!-- Pagination -->
     <?php if($logs->hasPages()): ?>
-    <div class="d-flex flex-column align-items-end mt-3">
-        <div class="text-muted small mb-2">
-            Showing <?php echo e($logs->firstItem()); ?> to <?php echo e($logs->lastItem()); ?> of <?php echo e($logs->total()); ?> results
+    <div class="position-relative mt-3 p-3 border-top">
+        <div class="position-absolute top-50 start-50 translate-middle" style="z-index: 1;">
+            <a href="<?php echo e(route('admin.dashboard')); ?>" class="btn btn-outline-danger">
+                <i class="bi bi-house"></i> Back to Home
+            </a>
         </div>
-        <div>
-            <?php echo e($logs->links('vendor.pagination.custom')); ?>
+        <div class="d-flex flex-column align-items-end">
+            <div class="text-muted small mb-2">
+                Showing <?php echo e($logs->firstItem()); ?> to <?php echo e($logs->lastItem()); ?> of <?php echo e($logs->total()); ?> results
+            </div>
+            <div>
+                <?php echo e($logs->links('vendor.pagination.custom')); ?>
 
+            </div>
         </div>
+    </div>
+    <?php else: ?>
+    <div class="text-center mt-3 p-3 border-top">
+        <a href="<?php echo e(route('admin.dashboard')); ?>" class="btn btn-outline-danger">
+            <i class="bi bi-house"></i> Back to Home
+        </a>
     </div>
     <?php endif; ?>
 </div>

@@ -19,7 +19,7 @@
 
     .branch-card h4 {
         font-weight: 800;
-        color: #000000;
+        color: #1e293b;
         margin-bottom: 1.5rem;
     }
 
@@ -53,7 +53,7 @@
                 <button type="submit" class="btn btn-success">
                     <i class="bi bi-check-circle"></i> Save
                 </button>
-                <a href="{{ route('admin.branches.index') }}" class="btn btn-outline-secondary">
+                <a href="{{ route('admin.branches.index') }}" class="btn btn-outline-danger">
                     <i class="bi bi-arrow-left"></i> Back
                 </a>
             </div>

@@ -46,6 +46,7 @@ $authUser = auth()->user();
         body {
             background: #f4f6f3;
             min-height: 100vh;
+            color: #000;
         }
 
         /* 🏦 Modern Navbar */

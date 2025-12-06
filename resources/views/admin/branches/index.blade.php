@@ -119,7 +119,7 @@
 
     .meta {
         font-size: 0.875rem;
-        color: #000000;
+        color: #1e293b;
         font-weight: 600;
         background: #FFC107;
         padding: 0.25rem 0.75rem;
@@ -443,7 +443,7 @@
     @if($branches->hasPages())
     <div class="position-relative mt-4 p-4 border-top">
         <div class="position-absolute top-50 start-50 translate-middle" style="z-index: 1;">
-            <a href="{{ route('admin.dashboard') }}" class="btn btn-outline-secondary">
+            <a href="{{ route('admin.dashboard') }}" class="btn btn-outline-danger">
                 <i class="bi bi-house"></i> Back to Home
             </a>
         </div>
@@ -458,7 +458,7 @@
     </div>
     @else
     <div class="text-center mt-4 p-4 border-top">
-        <a href="{{ route('admin.dashboard') }}" class="btn btn-outline-secondary">
+        <a href="{{ route('admin.dashboard') }}" class="btn btn-outline-danger">
             <i class="bi bi-house"></i> Back to Home
         </a>
     </div>

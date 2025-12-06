@@ -3,6 +3,15 @@
 @section('title', 'Onboarding Requests')
 
 @section('content')
+@php
+$search = $search ?? '';
+$start_date = $start_date ?? '';
+$end_date = $end_date ?? '';
+$status = $status ?? '';
+$branch_id = $branch_id ?? '';
+$unit_id = $unit_id ?? '';
+$teller_id = $teller_id ?? '';
+@endphp
 <style>
     :root {
         --apb-primary: #14b8a6;
@@ -478,13 +487,26 @@
             </table>
         </div>
         @if($data->hasPages())
-        <div class="d-flex flex-column align-items-end mt-3 p-3 border-top">
-            <div class="text-muted small mb-2">
-                Showing {{ $data->firstItem() }} to {{ $data->lastItem() }} of {{ $data->total() }} results
+        <div class="position-relative mt-3 p-3 border-top">
+            <div class="position-absolute top-50 start-50 translate-middle" style="z-index: 1;">
+                <a href="{{ route('admin.dashboard') }}" class="btn btn-outline-danger">
+                    <i class="bi bi-house"></i> Back to Home
+                </a>
             </div>
-            <div>
-                {{ $data->links('vendor.pagination.custom') }}
+            <div class="d-flex flex-column align-items-end">
+                <div class="text-muted small mb-2">
+                    Showing {{ $data->firstItem() }} to {{ $data->lastItem() }} of {{ $data->total() }} results
+                </div>
+                <div>
+                    {{ $data->links('vendor.pagination.custom') }}
+                </div>
             </div>
+        </div>
+        @else
+        <div class="text-center mt-3 p-3 border-top">
+            <a href="{{ route('admin.dashboard') }}" class="btn btn-outline-danger">
+                <i class="bi bi-house"></i> Back to Home
+            </a>
         </div>
         @endif
     </div>

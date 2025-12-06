@@ -513,35 +513,34 @@ $statusClassMap = [
     <div class="request-card">
         <div class="d-flex justify-content-between flex-wrap gap-2">
             <div>
+                <?php if($status !== 'pending'): ?>
                 <span class="<?php echo e($statusClassMap[$req->approval_status] ?? 'status-pill pending'); ?>">
                     <?php echo e(ucfirst($req->approval_status)); ?>
 
                 </span>
+                <?php endif; ?>
                 <h2 class="request-title mb-0"><?php echo e($req->store_name ?? 'Unnamed Store'); ?></h2>
                 <div class="text-black fw-bold mt-1" style="font-size: 15px">
-                    <i class="bi bi-location"></i> <?php echo e($req->business_type ?? '-'); ?>
+                    <i class="bi bi-briefcase"></i> <?php echo e($req->business_type ?? '-'); ?>
 
                 </div>
-
                 <div class="text-black fw-bold small mt-1" style="font-size: 15px">
-                    <i class="bi bi-location"></i> <?php echo e($req->store_address ?? 'N/A'); ?>
+                    <i class="bi bi-geo-alt"></i> <?php echo e($req->store_address ?? 'N/A'); ?>
 
                 </div>
-
-                <div class="text-black fw-bold small mt-1" style="font-size: 15px">
-                    <i class="bi bi-location"></i> <?php echo e(optional($req->branch)->name ?? '-'); ?>
-
-                </div>
-
-
             </div>
             <div class="text-end">
-                <div class="fw-semibold">
+                <div class="fw-semibold" style="color: #0f172a;">
                     <?php echo e(optional($req->teller)->name ? optional($req->teller)->name .' ('. $req->teller_id .')' : ($req->teller_id ?? '-')); ?>
 
                 </div>
+                <div style="font-size: 0.8rem; color: #64748b; margin-top: 4px; display: flex; flex-direction: column; gap: 2px; align-items: flex-end;">
+                    <span><i class="bi bi-building" style="color: var(--apb-primary); margin-right: 4px;"></i><?php echo e(optional($req->teller->branch)->name ?? '-'); ?></span>
+                    <span><i class="bi bi-diagram-3" style="color: var(--apb-primary); margin-right: 4px;"></i><?php echo e(optional($req->teller->unit)->name ?? '-'); ?></span>
+                    <span><i class="bi bi-telephone" style="color: var(--apb-primary); margin-right: 4px;"></i><?php echo e(optional($req->teller)->phone ?? '-'); ?></span>
+                </div>
                 <?php if($created): ?>
-                <small class="text-muted d-block">
+                <small class="text-muted d-block mt-2">
                     <i class="bi bi-calendar-event"></i> Submitted <?php echo e($created); ?>
 
                 </small>
@@ -557,10 +556,6 @@ $statusClassMap = [
                     <strong><?php echo e($req->refer_code ?? 'N/A'); ?></strong>
                 </div>
             </div>
-
-
-
-
             <div class="info-chip">
                 <i class="bi bi-bank"></i>
                 <div class="text">
@@ -575,12 +570,6 @@ $statusClassMap = [
                     <strong><?php echo e($req->installation_date ? \Carbon\Carbon::parse($req->installation_date)->format('M d, Y') : '-'); ?></strong>
                 </div>
             </div>
-        </div>
-
-        <div class="tag-row">
-            <span><i class="bi bi-info-circle"></i> Store status: <?php echo e(Str::title(str_replace('_', ' ', $req->store_status ?? 'unknown'))); ?></span>
-            <span><i class="bi bi-paperclip"></i> Attachments: <?php echo e(count($attachments)); ?></span>
-            <span><i class="bi bi-chat-text"></i> Admin remark: <?php echo e($req->admin_remark ?? '-'); ?></span>
         </div>
 
         <?php if(count($attachments)): ?>
@@ -645,7 +634,7 @@ $statusClassMap = [
 <?php if($requests->hasPages()): ?>
 <div class="position-relative mt-4">
     <div class="position-absolute top-50 start-50 translate-middle" style="z-index: 1;">
-        <a href="<?php echo e(route('admin.dashboard')); ?>" class="btn btn-outline-secondary">
+        <a href="<?php echo e(route('admin.dashboard')); ?>" class="btn btn-outline-danger">
             <i class="bi bi-house"></i> Back to Home
         </a>
     </div>
@@ -661,7 +650,7 @@ $statusClassMap = [
 </div>
 <?php else: ?>
 <div class="text-center mt-4">
-    <a href="<?php echo e(route('admin.dashboard')); ?>" class="btn btn-outline-secondary">
+    <a href="<?php echo e(route('admin.dashboard')); ?>" class="btn btn-outline-danger">
         <i class="bi bi-house"></i> Back to Home
     </a>
 </div>

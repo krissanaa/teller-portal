@@ -1,8 +1,6 @@
-@extends('layouts.admin')
+<?php $__env->startSection('title', 'Onboarding Detail'); ?>
 
-@section('title', 'Onboarding Detail')
-
-@section('content')
+<?php $__env->startSection('content'); ?>
 <style>
     :root {
         --apb-primary: #14b8a6;
@@ -255,20 +253,20 @@
                 <i class="bi bi-file-text-fill"></i>
                 <span>ລາຍລະອຽດຄຳຂໍເປີດບັນຊີ</span>
                 <div style="margin-left: auto;">
-                    @if($req->approval_status == 'approved')
+                    <?php if($req->approval_status == 'approved'): ?>
                     <span class="status-badge status-approved"><i class="bi bi-check-circle-fill"></i> ອະນຸມັດ</span>
-                    @elseif($req->approval_status == 'pending')
+                    <?php elseif($req->approval_status == 'pending'): ?>
                     <span class="status-badge status-pending"><i class="bi bi-clock-fill"></i> ລໍຖ້າອະນຸມັດ</span>
-                    @else
+                    <?php else: ?>
                     <span class="status-badge status-rejected"><i class="bi bi-x-circle-fill"></i> ປະຕິເສດ</span>
-                    @endif
+                    <?php endif; ?>
                 </div>
             </div>
             <div style="font-size: 0.8125rem; font-weight: 500; color: #64748b; margin-top: 6px; display: flex; flex-wrap: wrap; gap: 16px;">
-                <span><i class="bi bi-person-badge" style="color: var(--apb-primary); margin-right: 4px;"></i>{{ optional($req->teller)->name ?? '-' }} ({{ $req->teller_id ?? '-' }})</span>
-                <span><i class="bi bi-building" style="color: var(--apb-primary); margin-right: 4px;"></i>{{ optional($req->teller->branch)->name ?? '-' }}</span>
-                <span><i class="bi bi-diagram-3" style="color: var(--apb-primary); margin-right: 4px;"></i>{{ optional($req->teller->unit)->name ?? '-' }}</span>
-                <span><i class="bi bi-telephone" style="color: var(--apb-primary); margin-right: 4px;"></i>{{ optional($req->teller)->phone ?? '-' }}</span>
+                <span><i class="bi bi-person-badge" style="color: var(--apb-primary); margin-right: 4px;"></i><?php echo e(optional($req->teller)->name ?? '-'); ?> (<?php echo e($req->teller_id ?? '-'); ?>)</span>
+                <span><i class="bi bi-building" style="color: var(--apb-primary); margin-right: 4px;"></i><?php echo e(optional($req->teller->branch)->name ?? '-'); ?></span>
+                <span><i class="bi bi-diagram-3" style="color: var(--apb-primary); margin-right: 4px;"></i><?php echo e(optional($req->teller->unit)->name ?? '-'); ?></span>
+                <span><i class="bi bi-telephone" style="color: var(--apb-primary); margin-right: 4px;"></i><?php echo e(optional($req->teller)->phone ?? '-'); ?></span>
             </div>
         </div>
 
@@ -276,100 +274,101 @@
             <!-- Row 1 -->
             <div class="form-group">
                 <label>ຊື່ຮ້ານຄ້າ</label>
-                <div class="form-value">{{ $req->store_name }}</div>
+                <div class="form-value"><?php echo e($req->store_name); ?></div>
             </div>
 
             <div class="form-group">
                 <label>ປະເພດທຸລະກິດ</label>
-                <div class="form-value">{{ $req->business_type }}</div>
+                <div class="form-value"><?php echo e($req->business_type); ?></div>
             </div>
 
             <div class="form-group">
                 <label>ເລກບັນຊີທະນາຄານ</label>
-                <div class="form-value">{{ $req->bank_account ?? '-' }}</div>
+                <div class="form-value"><?php echo e($req->bank_account ?? '-'); ?></div>
             </div>
 
             <div class="form-group">
                 <label>ວັນທີຕິດຕັ້ງ</label>
-                <div class="form-value">{{ \Carbon\Carbon::parse($req->installation_date)->format('d/m/Y') }}</div>
+                <div class="form-value"><?php echo e(\Carbon\Carbon::parse($req->installation_date)->format('d/m/Y')); ?></div>
             </div>
 
             <!-- Row 2 -->
             <div class="form-group col-span-2">
                 <label>ທີ່ຢູ່ຮ້ານຄ້າ</label>
-                <div class="form-value" style="height: auto; min-height: 42px;">{{ $req->store_address }}</div>
+                <div class="form-value" style="height: auto; min-height: 42px;"><?php echo e($req->store_address); ?></div>
             </div>
 
             <div class="form-group">
                 <label>ລະຫັດອ້າງອີງ</label>
-                <div class="form-value">{{ $req->refer_code }}</div>
+                <div class="form-value"><?php echo e($req->refer_code); ?></div>
             </div>
 
             <div class="form-group">
                 <label>ລະຫັດເຄື່ອງ POS</label>
-                <div class="form-value">{{ $req->pos_serial ?? '-' }}</div>
+                <div class="form-value"><?php echo e($req->pos_serial ?? '-'); ?></div>
             </div>
 
             <!-- Additional Info -->
             <div class="form-group">
                 <label>ສາຂາ</label>
-                <div class="form-value">{{ optional($req->branch)->name ?? '-' }}</div>
+                <div class="form-value"><?php echo e(optional($req->branch)->name ?? '-'); ?></div>
             </div>
 
             <div class="form-group">
                 <label>ໜ່ວຍບໍລິການ</label>
-                <div class="form-value">{{ optional($req->unit)->name ?? '-' }}</div>
+                <div class="form-value"><?php echo e(optional($req->unit)->name ?? '-'); ?></div>
             </div>
 
 
 
             <!-- Row 3: Attachments -->
-            @if(!empty($req->attachments))
+            <?php if(!empty($req->attachments)): ?>
             <div class="form-group col-span-4">
                 <label>ເອກະສານແນບ</label>
                 <div class="file-preview-grid">
-                    @php
+                    <?php
                     $attachments = is_array($req->attachments)
                     ? $req->attachments
                     : (is_string($req->attachments) ? json_decode($req->attachments ?? '[]', true) : []);
-                    @endphp
-                    @foreach($attachments as $filePath)
-                    @php
+                    ?>
+                    <?php $__currentLoopData = $attachments; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $filePath): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                    <?php
                     $fileUrl = asset('storage/' . $filePath);
                     $fileName = basename($filePath);
                     $extension = strtolower(pathinfo($filePath, PATHINFO_EXTENSION));
-                    @endphp
-                    <div class="file-item" onclick="openPreview('{{ $fileUrl }}', '{{ $fileName }}', '{{ $extension }}')">
-                        @if(in_array($extension, ['jpg','jpeg','png']))
-                        <img src="{{ $fileUrl }}" class="file-preview-img">
-                        @elseif($extension === 'pdf')
+                    ?>
+                    <div class="file-item" onclick="openPreview('<?php echo e($fileUrl); ?>', '<?php echo e($fileName); ?>', '<?php echo e($extension); ?>')">
+                        <?php if(in_array($extension, ['jpg','jpeg','png'])): ?>
+                        <img src="<?php echo e($fileUrl); ?>" class="file-preview-img">
+                        <?php elseif($extension === 'pdf'): ?>
                         <i class="bi bi-file-pdf-fill" style="color: #ef4444; font-size: 1.5rem;"></i>
-                        @else
+                        <?php else: ?>
                         <i class="bi bi-file-earmark-text"></i>
-                        @endif
+                        <?php endif; ?>
                         <div class="file-details">
-                            <div class="file-name" title="{{ $fileName }}">{{ $fileName }}</div>
-                            <div class="file-size">{{ strtoupper($extension) }}</div>
+                            <div class="file-name" title="<?php echo e($fileName); ?>"><?php echo e($fileName); ?></div>
+                            <div class="file-size"><?php echo e(strtoupper($extension)); ?></div>
                         </div>
                     </div>
-                    @endforeach
+                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                 </div>
             </div>
-            @endif
+            <?php endif; ?>
 
             <!-- Admin Remark if rejected -->
-            @if($req->admin_remark)
+            <?php if($req->admin_remark): ?>
             <div class="form-group col-span-4">
                 <label>ໝາຍເຫດຈາກຜູ້ອະນຸມັດ</label>
                 <div class="form-value" style="background: #fff1f2; color: #991b1b; border-color: #fecaca;">
-                    {{ $req->admin_remark }}
+                    <?php echo e($req->admin_remark); ?>
+
                 </div>
             </div>
-            @endif
+            <?php endif; ?>
         </div>
 
         <div class="form-actions">
-            <a href="{{ route('admin.reports.index') }}" class="btn btn-outline-danger">
+            <a href="<?php echo e(route('admin.reports.index')); ?>" class="btn btn-outline-danger">
                 <i class="bi bi-arrow-left"></i> ກັບຄືນ
             </a>
 
@@ -461,4 +460,5 @@
         });
     }
 </script>
-@endsection
+<?php $__env->stopSection(); ?>
+<?php echo $__env->make('layouts.admin', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH /var/www/html/resources/views/admin/onboarding/show.blade.php ENDPATH**/ ?>

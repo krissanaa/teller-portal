@@ -491,8 +491,8 @@ $statusClassMap = [
 
                 </div>
                 <div style="font-size: 0.8rem; color: #64748b; margin-top: 4px; display: flex; flex-direction: column; gap: 2px; align-items: flex-end;">
-                    <span><i class="bi bi-building" style="color: var(--apb-primary); margin-right: 4px;"></i><?php echo e(optional($req->teller->branch)->name ?? '-'); ?></span>
-                    <span><i class="bi bi-diagram-3" style="color: var(--apb-primary); margin-right: 4px;"></i><?php echo e(optional($req->teller->unit)->name ?? '-'); ?></span>
+                    <span><i class="bi bi-building" style="color: var(--apb-primary); margin-right: 4px;"></i><?php echo e(optional(optional($req->teller)->branch)->name ?? '-'); ?></span>
+                    <span><i class="bi bi-diagram-3" style="color: var(--apb-primary); margin-right: 4px;"></i><?php echo e(optional(optional($req->teller)->unit)->name ?? '-'); ?></span>
                     <span><i class="bi bi-telephone" style="color: var(--apb-primary); margin-right: 4px;"></i><?php echo e(optional($req->teller)->phone ?? '-'); ?></span>
                 </div>
                 <?php if($created): ?>
@@ -595,7 +595,6 @@ $statusClassMap = [
     <?php endif; ?>
 </div>
 
-<?php if($requests->hasPages()): ?>
 <div class="position-relative mt-4">
     <div class="position-absolute top-50 start-50 translate-middle" style="z-index: 1;">
         <a href="<?php echo e(route('admin.dashboard')); ?>" class="btn btn-secondary">
@@ -604,21 +603,27 @@ $statusClassMap = [
     </div>
     <div class="d-flex flex-column align-items-end">
         <div class="text-muted small mb-2">
-            Showing <?php echo e($requests->firstItem()); ?> to <?php echo e($requests->lastItem()); ?> of <?php echo e($requests->total()); ?> results
+            <?php
+                $start = $requests->firstItem() ?? 0;
+                $end = $requests->lastItem() ?? 0;
+                $total = $requests->total() ?? 0;
+            ?>
+            Showing <?php echo e($start); ?> to <?php echo e($end); ?> of <?php echo e($total); ?> results
         </div>
         <div>
-            <?php echo e($requests->links('vendor.pagination.custom')); ?>
+            <?php if($requests->hasPages()): ?>
+                <?php echo e($requests->links('vendor.pagination.custom')); ?>
 
+            <?php else: ?>
+                <ul class="apb-pagination">
+                    <li class="page-item disabled"><span class="page-link" aria-hidden="true"><i class="bi bi-chevron-left"></i></span></li>
+                    <li class="page-item active" aria-current="page"><span class="page-link">1</span></li>
+                    <li class="page-item disabled"><span class="page-link" aria-hidden="true"><i class="bi bi-chevron-right"></i></span></li>
+                </ul>
+            <?php endif; ?>
         </div>
     </div>
 </div>
-<?php else: ?>
-<div class="text-center mt-4">
-    <a href="<?php echo e(route('admin.dashboard')); ?>" class="btn btn-secondary">
-        <i class="bi bi-house"></i> Back to Home
-    </a>
-</div>
-<?php endif; ?>
 </div>
 
 <div id="attachmentLightbox" class="attachment-lightbox d-none">
@@ -792,4 +797,5 @@ $statusClassMap = [
     }
 </script>
 <?php $__env->stopSection(); ?>
+
 <?php echo $__env->make('layouts.admin', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH /var/www/html/resources/views/admin/onboarding/index.blade.php ENDPATH**/ ?>

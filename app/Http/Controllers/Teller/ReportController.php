@@ -21,9 +21,11 @@ class ReportController extends Controller
         $branchId = $request->input('branch_id');
         $unitId = $request->input('unit_id');
 
-        $query = OnboardingRequest::where('teller_id', Auth::user()->teller_id)
+        // RBAC: Use accessibleBy scope
+        $query = OnboardingRequest::accessibleBy(Auth::user())
             ->select([
                 'id',
+                'teller_id', // Needed for teller name
                 'refer_code',
                 'pos_serial',
                 'store_name',
@@ -37,6 +39,7 @@ class ReportController extends Controller
             ->with([
                 'branch:id,BRANCH_NAME,BRANCH_CODE',
                 'unit:id,branch_id,unit_name,unit_code',
+                'teller', // Load full teller model to ensure teller_id is available
             ])
             ->orderByDesc('created_at');
 
@@ -51,6 +54,11 @@ class ReportController extends Controller
                     ->orWhere('store_address', 'like', $like)
                     ->orWhere('bank_account', 'like', $like)
                     ->orWhere('installation_date', 'like', $like)
+                    // Search by Teller Name
+                    ->orWhereHas('teller', function ($t) use ($like) {
+                        $t->where('name', 'like', $like)
+                            ->orWhere('teller_id', 'like', $like);
+                    })
                     ->orWhereHas('branch', function ($branchQuery) use ($like) {
                         $branchQuery->where('BRANCH_NAME', 'like', $like)
                             ->orWhere('BRANCH_CODE', 'like', $like);

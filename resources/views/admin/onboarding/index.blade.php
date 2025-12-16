@@ -489,8 +489,8 @@ $statusClassMap = [
                     {{ optional($req->teller)->name ? optional($req->teller)->name .' ('. $req->teller_id .')' : ($req->teller_id ?? '-') }}
                 </div>
                 <div style="font-size: 0.8rem; color: #64748b; margin-top: 4px; display: flex; flex-direction: column; gap: 2px; align-items: flex-end;">
-                    <span><i class="bi bi-building" style="color: var(--apb-primary); margin-right: 4px;"></i>{{ optional($req->teller->branch)->name ?? '-' }}</span>
-                    <span><i class="bi bi-diagram-3" style="color: var(--apb-primary); margin-right: 4px;"></i>{{ optional($req->teller->unit)->name ?? '-' }}</span>
+                    <span><i class="bi bi-building" style="color: var(--apb-primary); margin-right: 4px;"></i>{{ optional(optional($req->teller)->branch)->name ?? '-' }}</span>
+                    <span><i class="bi bi-diagram-3" style="color: var(--apb-primary); margin-right: 4px;"></i>{{ optional(optional($req->teller)->unit)->name ?? '-' }}</span>
                     <span><i class="bi bi-telephone" style="color: var(--apb-primary); margin-right: 4px;"></i>{{ optional($req->teller)->phone ?? '-' }}</span>
                 </div>
                 @if ($created)
@@ -591,7 +591,6 @@ $statusClassMap = [
     @endforelse
 </div>
 
-@if($requests->hasPages())
 <div class="position-relative mt-4">
     <div class="position-absolute top-50 start-50 translate-middle" style="z-index: 1;">
         <a href="{{ route('admin.dashboard') }}" class="btn btn-secondary">
@@ -600,20 +599,26 @@ $statusClassMap = [
     </div>
     <div class="d-flex flex-column align-items-end">
         <div class="text-muted small mb-2">
-            Showing {{ $requests->firstItem() }} to {{ $requests->lastItem() }} of {{ $requests->total() }} results
+            @php
+                $start = $requests->firstItem() ?? 0;
+                $end = $requests->lastItem() ?? 0;
+                $total = $requests->total() ?? 0;
+            @endphp
+            Showing {{ $start }} to {{ $end }} of {{ $total }} results
         </div>
         <div>
-            {{ $requests->links('vendor.pagination.custom') }}
+            @if($requests->hasPages())
+                {{ $requests->links('vendor.pagination.custom') }}
+            @else
+                <ul class="apb-pagination">
+                    <li class="page-item disabled"><span class="page-link" aria-hidden="true"><i class="bi bi-chevron-left"></i></span></li>
+                    <li class="page-item active" aria-current="page"><span class="page-link">1</span></li>
+                    <li class="page-item disabled"><span class="page-link" aria-hidden="true"><i class="bi bi-chevron-right"></i></span></li>
+                </ul>
+            @endif
         </div>
     </div>
 </div>
-@else
-<div class="text-center mt-4">
-    <a href="{{ route('admin.dashboard') }}" class="btn btn-secondary">
-        <i class="bi bi-house"></i> Back to Home
-    </a>
-</div>
-@endif
 </div>
 
 <div id="attachmentLightbox" class="attachment-lightbox d-none">

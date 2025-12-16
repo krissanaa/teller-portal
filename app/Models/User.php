@@ -49,6 +49,16 @@ class User extends Authenticatable
         return $this->role === 'teller';
     }
 
+    public function isBranchManager(): bool
+    {
+        return $this->role === 'branch_manager';
+    }
+
+    public function isUnitHead(): bool
+    {
+        return $this->role === 'unit_head';
+    }
+
     public function canLogin(): bool
     {
         return $this->isAdmin() || ($this->isTeller() && $this->status === 'approved');

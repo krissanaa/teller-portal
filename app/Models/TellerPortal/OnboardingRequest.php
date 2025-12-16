@@ -54,6 +54,36 @@ class OnboardingRequest extends Model
 
     public function teller()
     {
-        return $this->belongsTo(\App\Models\User::class, 'teller_id', 'teller_id');
+        return $this->belongsTo(\App\Models\User::class, 'teller_id');
+    }
+
+    /**
+     * Scope a query to only include records accessible by the given user.
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @param  \App\Models\User  $user
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeAccessibleBy($query, \App\Models\User $user)
+    {
+        if ($user->isAdmin()) {
+            return $query; // Admins see all
+        }
+
+        if ($user->isBranchManager()) {
+            // Branch Manager: See ALL records in their branch
+            return $query->where('branch_id', $user->branch_id);
+        }
+
+        if ($user->isUnitHead()) {
+            // Unit Head: See ALL records in their unit, but ONLY approved
+            return $query->where('unit_id', $user->unit_id)
+                ->where('approval_status', 'approved');
+        }
+
+        // Default Teller: See ALL records in their branch, but ONLY approved (for reports)
+        // Policy Update: Tellers can see team performance within the same branch.
+        return $query->where('branch_id', $user->branch_id)
+            ->where('approval_status', 'approved');
     }
 }

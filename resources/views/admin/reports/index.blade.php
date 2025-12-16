@@ -487,7 +487,6 @@ $teller_id = $teller_id ?? '';
                 </tbody>
             </table>
         </div>
-        @if($data->hasPages())
         <div class="position-relative mt-3 p-3 border-top">
             <div class="position-absolute top-50 start-50 translate-middle" style="z-index: 1;">
                 <a href="{{ route('admin.dashboard') }}" class="btn btn-secondary">
@@ -496,20 +495,26 @@ $teller_id = $teller_id ?? '';
             </div>
             <div class="d-flex flex-column align-items-end">
                 <div class="text-muted small mb-2">
-                    Showing {{ $data->firstItem() }} to {{ $data->lastItem() }} of {{ $data->total() }} results
+                    @php
+                        $start = $data->firstItem() ?? 0;
+                        $end = $data->lastItem() ?? 0;
+                        $total = $data->total() ?? 0;
+                    @endphp
+                    Showing {{ $start }} to {{ $end }} of {{ $total }} results
                 </div>
                 <div>
-                    {{ $data->links('vendor.pagination.custom') }}
+                    @if($data->hasPages())
+                        {{ $data->links('vendor.pagination.custom') }}
+                    @else
+                        <ul class="apb-pagination">
+                            <li class="page-item disabled"><span class="page-link" aria-hidden="true"><i class="bi bi-chevron-left"></i></span></li>
+                            <li class="page-item active" aria-current="page"><span class="page-link">1</span></li>
+                            <li class="page-item disabled"><span class="page-link" aria-hidden="true"><i class="bi bi-chevron-right"></i></span></li>
+                        </ul>
+                    @endif
                 </div>
             </div>
         </div>
-        @else
-        <div class="text-center mt-3 p-3 border-top">
-            <a href="{{ route('admin.dashboard') }}" class="btn btn-secondary">
-                <i class="bi bi-house"></i> Back to Home
-            </a>
-        </div>
-        @endif
     </div>
 </div>
 @endsection

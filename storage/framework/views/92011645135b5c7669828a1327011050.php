@@ -254,102 +254,7 @@
         color: #64748b;
     }
 
-    /* Pagination Styling */
-    .pagination svg {
-        width: 16px !important;
-        height: 16px !important;
-    }
 
-    .pagination {
-        display: flex;
-        justify-content: flex-end;
-        gap: 8px;
-        margin-top: 1.5rem;
-        flex-wrap: wrap;
-    }
-
-    .pagination .page-item {
-        margin: 0;
-    }
-
-    .pagination .page-link {
-        color: #64748b;
-        background: white;
-        border: 1px solid #e2e8f0;
-        border-radius: 4px;
-        padding: 4px 8px;
-        font-weight: 600;
-        font-size: 0.75rem;
-        transition: all 0.3s ease;
-        min-width: 28px;
-        text-align: center;
-        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
-    }
-
-    .pagination .page-link:hover {
-        background: linear-gradient(135deg, #14b8a6 0%, #0f766e 100%);
-        border-color: #14b8a6;
-        color: white;
-        transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(20, 184, 166, 0.3);
-    }
-
-    .pagination .page-item.active .page-link {
-        background: linear-gradient(135deg, #14b8a6 0%, #0f766e 100%);
-        border-color: #14b8a6;
-        color: white;
-        box-shadow: 0 4px 12px rgba(20, 184, 166, 0.4);
-        transform: scale(1.05);
-    }
-
-    .pagination .page-item.disabled .page-link {
-        background: #f1f5f9;
-        border-color: #e2e8f0;
-        color: #cbd5e1;
-        cursor: not-allowed;
-        box-shadow: none;
-    }
-
-    .pagination .page-item.disabled .page-link:hover {
-        background: #f1f5f9;
-        border-color: #e2e8f0;
-        color: #cbd5e1;
-        transform: none;
-        box-shadow: none;
-    }
-
-    @media (max-width: 768px) {
-        .page-header {
-            flex-direction: column;
-            align-items: stretch;
-        }
-
-        .page-header h4 {
-            font-size: 1.3rem;
-        }
-
-        .header-actions {
-            width: 100%;
-        }
-
-        .header-actions a {
-            flex: 1;
-            justify-content: center;
-        }
-
-        .modern-table {
-            font-size: 0.85rem;
-        }
-
-        .modern-table thead th {
-            font-size: 0.75rem;
-            padding: 10px 8px;
-        }
-
-        .modern-table tbody td {
-            padding: 10px 8px;
-        }
-    }
 
     /* Scrollable Table Styles */
     .table-scroll-area {
@@ -517,12 +422,7 @@
             </table>
         </div>
 
-        <?php if($requests->hasPages()): ?>
-        <div class="pagination-wrapper d-flex justify-content-end mt-4">
-            <?php echo e($requests->links('vendor.pagination.custom')); ?>
 
-        </div>
-        <?php endif; ?>
     </div>
 
 

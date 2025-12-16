@@ -246,6 +246,8 @@
 
     .modern-table {
         margin-bottom: 0;
+        width: 98%;
+        margin: 0 auto;
     }
 
     .modern-table thead {
@@ -375,24 +377,30 @@
     }
 
     /* Pagination Styling */
-    .pagination svg {
+    .pagination svg,
+    .apb-pagination svg {
         width: 16px !important;
         height: 16px !important;
     }
 
-    .pagination {
+    .pagination,
+    .apb-pagination {
         display: flex;
         justify-content: flex-end;
         gap: 8px;
         margin-top: 1.5rem;
         flex-wrap: wrap;
+        list-style: none;
+        padding: 0;
     }
 
-    .pagination .page-item {
+    .pagination .page-item,
+    .apb-pagination .page-item {
         margin: 0;
     }
 
-    .pagination .page-link {
+    .pagination .page-link,
+    .apb-pagination .page-link {
         color: #64748b;
         background: white;
         border: 1px solid #e2e8f0;
@@ -404,9 +412,12 @@
         min-width: 28px;
         text-align: center;
         box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+        text-decoration: none;
+        display: block;
     }
 
-    .pagination .page-link:hover {
+    .pagination .page-link:hover,
+    .apb-pagination .page-link:hover {
         background: linear-gradient(135deg, #14b8a6 0%, #0f766e 100%);
         border-color: #14b8a6;
         color: white;
@@ -414,7 +425,8 @@
         box-shadow: 0 4px 12px rgba(20, 184, 166, 0.3);
     }
 
-    .pagination .page-item.active .page-link {
+    .pagination .page-item.active .page-link,
+    .apb-pagination .page-item.active .page-link {
         background: linear-gradient(135deg, #14b8a6 0%, #0f766e 100%);
         border-color: #14b8a6;
         color: white;
@@ -422,7 +434,8 @@
         transform: scale(1.05);
     }
 
-    .pagination .page-item.disabled .page-link {
+    .pagination .page-item.disabled .page-link,
+    .apb-pagination .page-item.disabled .page-link {
         background: #f1f5f9;
         border-color: #e2e8f0;
         color: #cbd5e1;
@@ -430,7 +443,8 @@
         box-shadow: none;
     }
 
-    .pagination .page-item.disabled .page-link:hover {
+    .pagination .page-item.disabled .page-link:hover,
+    .apb-pagination .page-item.disabled .page-link:hover {
         background: #f1f5f9;
         border-color: #e2e8f0;
         color: #cbd5e1;
@@ -638,7 +652,7 @@
             </span>
             <span class="table-count">{{ $data->total() }} ລາຍການ</span>
         </div>
-        <div class="table-responsive">
+        <div class="table-responsive p-1"> <!-- Added p-1 to fix hover scroll glitch -->
             <table class="table modern-table">
                 <thead>
                     <tr>
@@ -647,10 +661,8 @@
                         <th>ລະຫັດເຄື່ອງ pos</th>
                         <th>ຊື່ຮ້ານຄ້າ</th>
                         <th>ປະເພດທຸລະກິດ</th>
-
                         <th>ວັນທີໄປຕິດຕັ້ງ</th>
-
-
+                        <th>ຜູ້ສ້າງ</th> <!-- Added Teller Header -->
                         <th width="120" class="text-center">ສະຖານະ</th>
                     </tr>
                 </thead>
@@ -675,21 +687,25 @@
                             <span class="store-name">
                                 <i class="bi bi-shop"></i>
                                 {{ $r->store_name }}
-                                </a>
+                            </span>
                         </td>
                         <td>
                             <span class="store-name">
                                 {{ $r->business_type }}
                             </span>
                         </td>
-
                         <td>
                             <SPAN class="store-name">
                                 <i class="bi bi-calendar3 text-muted"></i>
                                 {{ $r->installation_date }}
                             </SPAN>
                         </td>
-
+                        <td> {{-- Added Teller column data --}}
+                            <span class="store-name">
+                                <i class="bi bi-person-circle text-muted"></i>
+                                {{ $r->teller->teller_id ?? $r->teller_id ?? '-' }}
+                            </span>
+                        </td>
                         <td class="text-center">
                             @if($r->approval_status == 'approved')
                             <a href="{{ route('teller.report', ['status' => 'approved']) }}"
@@ -720,15 +736,39 @@
                 </tbody>
             </table>
 
-            <!-- Pagination -->
-            @if($data->hasPages())
-            <div class="pagination-wrapper d-flex justify-content-end mt-4">
-                {{ $data->links('vendor.pagination.custom') }}
+            <!-- Admin-Style Pagination -->
+            <div class="position-relative mt-4 p-4 border-top">
+                <div class="position-absolute top-50 start-50 translate-middle" style="z-index: 1;">
+                    <a href="{{ route('teller.dashboard') }}" class="btn btn-secondary">
+                        <i class="bi bi-house"></i> ກັບໜ້າຫຼັກ
+                    </a>
+                </div>
+                <div class="d-flex flex-column align-items-end">
+                    <div class="text-muted small mb-2">
+                        @php
+                        $start = $data->firstItem() ?? 0;
+                        $end = $data->lastItem() ?? 0;
+                        $total = $data->total() ?? 0;
+                        @endphp
+
+                    </div>
+                    <div>
+                        @if($data->hasPages())
+                        {{ $data->links('vendor.pagination.custom') }}
+                        @else
+                        <ul class="apb-pagination">
+                            <li class="page-item disabled"><span class="page-link" aria-hidden="true"><i class="bi bi-chevron-left"></i></span></li>
+                            <li class="page-item active" aria-current="page"><span class="page-link">1</span></li>
+                            <li class="page-item disabled"><span class="page-link" aria-hidden="true"><i class="bi bi-chevron-right"></i></span></li>
+                        </ul>
+                        @endif
+                    </div>
+                </div>
             </div>
-            @endif
         </div>
     </div>
 </div>
+
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         document.querySelectorAll('.table-row-clickable').forEach(row => {

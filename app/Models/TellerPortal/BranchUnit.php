@@ -35,4 +35,9 @@ class BranchUnit extends Model
     {
         return $this->belongsTo(Branch::class, 'branch_id');
     }
+
+    public function getNameAttribute(): ?string
+    {
+        return $this->attributes['unit_name'] ?? null;
+    }
 }

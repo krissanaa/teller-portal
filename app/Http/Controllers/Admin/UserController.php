@@ -20,7 +20,7 @@ class UserController extends Controller
             ->when($search, fn($q) => $q->where(function ($inner) use ($search) {
                 $inner->where('name', 'like', "%{$search}%")
                     ->orWhere('teller_id', 'like', "%{$search}%")
-                ->orWhere('email', 'like', "%{$search}%")
+                    ->orWhere('email', 'like', "%{$search}%")
                     ->orWhere('phone', 'like', "%{$search}%");
             }))
             ->orderByDesc('created_at')
@@ -105,6 +105,8 @@ class UserController extends Controller
             'email' => 'nullable|email|unique:users,email,' . $id,
             'phone' => 'required|string|max:20',
             'status' => 'required|in:pending,approved,rejected',
+            'branch_id' => 'nullable|exists:App\Models\TellerPortal\Branch,id',
+            'unit_id' => 'nullable|exists:App\Models\TellerPortal\BranchUnit,id',
         ]);
 
         $user->update($validated);
@@ -117,7 +119,7 @@ class UserController extends Controller
             'user_agent' => $request->userAgent(),
         ]);
 
-        return redirect()->route('admin.users.index')->with('success', 'Teller updated successfully.');
+        return redirect()->route('admin.users.show', $user->id)->with('success', 'Teller updated successfully.');
     }
 
     public function destroy($id)
@@ -160,7 +162,7 @@ class UserController extends Controller
         $user = User::findOrFail($id);
         $newStatus = $request->input('status');
 
-        // ตรวจสอบว่าค่าสถานะถูกต้อง
+        // ตรวจสอบວ່າค่าสถานะถูกต้อง
         if (!in_array($newStatus, ['approved', 'pending', 'rejected'])) {
             return back()->with('error', 'Invalid status.');
         }
@@ -180,6 +182,8 @@ class UserController extends Controller
     public function show($id)
     {
         $user = User::findOrFail($id);
-        return view('admin.users.show', compact('user'));
+        $branches = \App\Models\TellerPortal\Branch::orderBy('id')->get();
+        $units = \App\Models\TellerPortal\BranchUnit::orderBy('id')->get();
+        return view('admin.users.show', compact('user', 'branches', 'units'));
     }
 }

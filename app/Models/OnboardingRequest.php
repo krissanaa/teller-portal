@@ -25,6 +25,17 @@ class OnboardingRequest extends Model
         'teller_id',
         'status',
         'remark',
+        'store_name',
+        'business_type',
+        'store_address',
+        'bank_account',
+        'installation_date',
+        'branch_id',
+        'unit_id',
+        'attachments',
+        'refer_code',
+        'approval_status',
+        'admin_remark',
     ];
 
     /**

@@ -32,8 +32,9 @@ $teller_id = $teller_id ?? '';
     }
 
     .report-container {
-        max-width: 1600px;
-        margin: 0 auto;
+        width: 100%;
+        max-width: none;
+        margin: 0;
         padding: 1.5rem;
     }
 
@@ -55,7 +56,7 @@ $teller_id = $teller_id ?? '';
     }
 
     .form-label {
-        font-size: 0.875rem;
+        font-size: 0.95rem;
         font-weight: 600;
         color: #475569;
         margin-bottom: 0.5rem;
@@ -83,7 +84,7 @@ $teller_id = $teller_id ?? '';
         padding: 0.5rem 1.1rem;
         border-radius: 8px;
         font-weight: 600;
-        font-size: 0.92rem;
+        font-size: 0.95rem;
         transition: all 0.2s;
     }
 
@@ -99,7 +100,7 @@ $teller_id = $teller_id ?? '';
         padding: 0.5rem 1.1rem;
         border-radius: 8px;
         font-weight: 600;
-        font-size: 0.92rem;
+        font-size: 0.95rem;
         transition: all 0.2s;
     }
 
@@ -126,7 +127,7 @@ $teller_id = $teller_id ?? '';
         color: #475569;
         font-weight: 600;
         text-transform: uppercase;
-        font-size: 0.75rem;
+        font-size: 0.85rem;
         letter-spacing: 0.05em;
         padding: 1rem;
         text-align: left;
@@ -155,7 +156,7 @@ $teller_id = $teller_id ?? '';
         gap: 0.4rem;
         padding: 0.35rem 0.85rem;
         border-radius: 999px;
-        font-size: 0.75rem;
+        font-size: 0.8rem;
         font-weight: 700;
         text-transform: uppercase;
         letter-spacing: 0.025em;
@@ -325,10 +326,10 @@ $teller_id = $teller_id ?? '';
         <div class="d-flex justify-content-between align-items-center mb-3">
             <h5 class="mb-0 fw-bold text-dark">Filters</h5>
             <div class="d-flex gap-3">
-                <a href="{{ route('admin.reports.export.excel', request()->query()) }}" class="export-btn export-excel">
+                <a href="{{ route('admin.reports.export.excel', request()->query()) }}" class="btn btn-success">
                     <i class="bi bi-file-earmark-excel"></i> Export Excel
                 </a>
-                <a href="{{ route('admin.reports.export.pdf', request()->query()) }}" class="export-btn export-pdf">
+                <a href="{{ route('admin.reports.export.pdf', request()->query()) }}" class="btn btn-danger">
                     <i class="bi bi-file-earmark-pdf"></i> Export PDF
                 </a>
             </div>
@@ -403,10 +404,10 @@ $teller_id = $teller_id ?? '';
 
                 <!-- Actions -->
                 <div class="d-flex gap-2">
-                    <button type="submit" class="btn-filter w-100">
+                    <button type="submit" class="btn btn-primary w-100">
                         <i class="bi bi-funnel"></i> Filter
                     </button>
-                    <a href="{{ route('admin.reports.index') }}" class="btn-reset w-100 text-center text-decoration-none">
+                    <a href="{{ route('admin.reports.index') }}" class="btn btn-secondary w-100 text-center text-decoration-none">
                         Reset
                     </a>
                 </div>
@@ -420,7 +421,7 @@ $teller_id = $teller_id ?? '';
             <span class="fw-bold text-dark">
                 <i class="bi bi-list-ul me-2"></i> Report Data
             </span>
-            <span class="badge bg-primary rounded-pill px-3 py-2">
+            <span class="badge rounded-pill px-3 py-2" style="background-color: #FFC107; color: #000;">
                 {{ $data->total() }} Records Found
             </span>
         </div>
@@ -468,7 +469,7 @@ $teller_id = $teller_id ?? '';
                             </span>
                         </td>
                         <td>
-                            <a href="{{ route('admin.onboarding.show', $row->id) }}" class="btn btn-sm btn-outline-primary fw-bold">
+                            <a href="{{ route('admin.onboarding.show', $row->id) }}" class="btn btn-sm btn-info text-white fw-bold">
                                 View
                             </a>
                         </td>
@@ -489,7 +490,7 @@ $teller_id = $teller_id ?? '';
         @if($data->hasPages())
         <div class="position-relative mt-3 p-3 border-top">
             <div class="position-absolute top-50 start-50 translate-middle" style="z-index: 1;">
-                <a href="{{ route('admin.dashboard') }}" class="btn btn-outline-danger">
+                <a href="{{ route('admin.dashboard') }}" class="btn btn-secondary">
                     <i class="bi bi-house"></i> Back to Home
                 </a>
             </div>
@@ -504,7 +505,7 @@ $teller_id = $teller_id ?? '';
         </div>
         @else
         <div class="text-center mt-3 p-3 border-top">
-            <a href="{{ route('admin.dashboard') }}" class="btn btn-outline-danger">
+            <a href="{{ route('admin.dashboard') }}" class="btn btn-secondary">
                 <i class="bi bi-house"></i> Back to Home
             </a>
         </div>

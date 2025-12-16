@@ -1,379 +1,109 @@
 <?php $__env->startSection('title', 'Onboarding Detail'); ?>
 
 <?php $__env->startSection('content'); ?>
-<style>
-    :root {
-        --apb-primary: #14b8a6;
-        --apb-secondary: #0f766e;
-        --apb-accent: #14b8a6;
-        --apb-dark: #0b3f3a;
-        --bg-color: #f1f5f9;
-        --card-bg: #ffffff;
-        --text-dark: #334155;
-        --text-muted: #64748b;
-        --border-color: #e2e8f0;
-    }
+<div class="container-fluid">
+    <h4 class="mb-3">👁️ Onboarding Details</h4>
 
-    .onboarding-shell {
-        width: 100%;
-        display: flex;
-        justify-content: center;
-        padding: 1rem 0 1.5rem;
-    }
+    <div class="card shadow-sm mb-3">
+        <div class="card-body">
+            <h5 class="mb-3"><?php echo e($req->store_name); ?></h5>
 
-    .single-card {
-        width: 100%;
-        max-width: 1400px;
-        background: white;
-        border-radius: 12px;
-        box-shadow: 0 8px 22px rgba(0, 0, 0, 0.08);
-        padding: 1rem 1.5rem;
-        border: 1px solid var(--border-color);
-        border-left: 3px solid var(--apb-primary);
-    }
-
-    .detail-title {
-        font-size: 1.15rem;
-        font-weight: 700;
-        color: #1e293b;
-        margin-bottom: 12px;
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        padding-bottom: 10px;
-        border-bottom: 1px solid var(--apb-border);
-    }
-
-    .detail-title i {
-        color: var(--apb-primary);
-        font-size: 1.4rem;
-    }
-
-    /* Compact Grid Layout */
-    .form-grid {
-        display: grid;
-        grid-template-columns: repeat(4, 1fr);
-        gap: 10px;
-        margin-bottom: 12px;
-    }
-
-    .col-span-2 {
-        grid-column: span 2;
-    }
-
-    .col-span-4 {
-        grid-column: span 4;
-    }
-
-    .form-group label {
-        display: block;
-        font-weight: 600;
-        color: #475569;
-        margin-bottom: 4px;
-        font-size: 0.8125rem;
-    }
-
-    .form-value {
-        width: 100%;
-        padding: 6px 10px;
-        border: 1px solid #e2e8f0;
-        border-radius: 6px;
-        font-size: 0.875rem;
-        background: #f8fafc;
-        color: #334155;
-        min-height: 34px;
-        display: flex;
-        align-items: center;
-    }
-
-    /* Status Badge */
-    .status-badge {
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-        padding: 4px 12px;
-        border-radius: 6px;
-        font-size: 0.85rem;
-        font-weight: 600;
-    }
-
-    .status-approved {
-        background: #dcfce7;
-        color: #166534;
-    }
-
-    .status-pending {
-        background: #fef9c3;
-        color: #854d0e;
-    }
-
-    .status-rejected {
-        background: #fee2e2;
-        color: #991b1b;
-    }
-
-    /* File Preview Grid */
-    .file-preview-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-        gap: 8px;
-        margin-top: 6px;
-    }
-
-    .file-item {
-        background: white;
-        border: 1px solid #e2e8f0;
-        padding: 8px;
-        border-radius: 6px;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        cursor: pointer;
-        transition: all 0.2s;
-    }
-
-    .file-item:hover {
-        border-color: var(--apb-primary);
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-    }
-
-    .file-item i {
-        font-size: 1.2rem;
-        color: #64748b;
-    }
-
-    .file-preview-img {
-        width: 36px;
-        height: 36px;
-        object-fit: cover;
-        border-radius: 4px;
-    }
-
-    .file-details {
-        flex: 1;
-        overflow: hidden;
-    }
-
-    .file-name {
-        font-size: 0.8125rem;
-        font-weight: 600;
-        color: #334155;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-    }
-
-    .file-size {
-        font-size: 0.75rem;
-        color: #94a3b8;
-    }
-
-    /* Actions */
-    .form-actions {
-        margin-top: 20px;
-        padding-top: 16px;
-        border-top: 1px solid var(--apb-border);
-        display: flex;
-        justify-content: flex-end;
-        gap: 10px;
-    }
-
-    .btn {
-        padding: 10px 24px;
-        border-radius: 8px;
-        font-weight: 600;
-        border: none;
-        cursor: pointer;
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-        font-size: 0.95rem;
-        transition: all 0.2s;
-        text-decoration: none;
-    }
-
-    .btn-back {
-        background: white;
-        border: 1px solid #cbd5e1;
-        color: #64748b;
-    }
-
-    .btn-back:hover {
-        background: #f1f5f9;
-        color: #334155;
-    }
-
-    .btn-approve {
-        background: #10b981;
-        color: white;
-    }
-
-    .btn-approve:hover {
-        background: #059669;
-        color: white;
-    }
-
-    .btn-reject {
-        background: #ef4444;
-        color: white;
-    }
-
-    .btn-reject:hover {
-        background: #dc2626;
-        color: white;
-    }
-
-    @media (max-width: 992px) {
-        .form-grid {
-            grid-template-columns: repeat(2, 1fr);
-        }
-
-        .col-span-2,
-        .col-span-4 {
-            grid-column: span 2;
-        }
-    }
-
-    @media (max-width: 576px) {
-        .form-grid {
-            grid-template-columns: 1fr;
-        }
-
-        .col-span-2,
-        .col-span-4 {
-            grid-column: span 1;
-        }
-    }
-</style>
-
-<div class="onboarding-shell">
-    <div class="single-card">
-        <div class="detail-title" style="flex-direction: column; align-items: flex-start;">
-            <div style="display: flex; align-items: center; gap: 10px; width: 100%;">
-                <i class="bi bi-file-text-fill"></i>
-                <span>ລາຍລະອຽດຄຳຂໍເປີດບັນຊີ</span>
-                <div style="margin-left: auto;">
-                    <?php if($req->approval_status == 'approved'): ?>
-                    <span class="status-badge status-approved"><i class="bi bi-check-circle-fill"></i> ອະນຸມັດ</span>
-                    <?php elseif($req->approval_status == 'pending'): ?>
-                    <span class="status-badge status-pending"><i class="bi bi-clock-fill"></i> ລໍຖ້າອະນຸມັດ</span>
-                    <?php else: ?>
-                    <span class="status-badge status-rejected"><i class="bi bi-x-circle-fill"></i> ປະຕິເສດ</span>
-                    <?php endif; ?>
-                </div>
-            </div>
-            <div style="font-size: 0.8125rem; font-weight: 500; color: #64748b; margin-top: 6px; display: flex; flex-wrap: wrap; gap: 16px;">
-                <span><i class="bi bi-person-badge" style="color: var(--apb-primary); margin-right: 4px;"></i><?php echo e(optional($req->teller)->name ?? '-'); ?> (<?php echo e($req->teller_id ?? '-'); ?>)</span>
-                <span><i class="bi bi-building" style="color: var(--apb-primary); margin-right: 4px;"></i><?php echo e(optional($req->teller->branch)->name ?? '-'); ?></span>
-                <span><i class="bi bi-diagram-3" style="color: var(--apb-primary); margin-right: 4px;"></i><?php echo e(optional($req->teller->unit)->name ?? '-'); ?></span>
-                <span><i class="bi bi-telephone" style="color: var(--apb-primary); margin-right: 4px;"></i><?php echo e(optional($req->teller)->phone ?? '-'); ?></span>
-            </div>
-        </div>
-
-        <div class="form-grid">
-            <!-- Row 1 -->
-            <div class="form-group">
-                <label>ຊື່ຮ້ານຄ້າ</label>
-                <div class="form-value"><?php echo e($req->store_name); ?></div>
-            </div>
-
-            <div class="form-group">
-                <label>ປະເພດທຸລະກິດ</label>
-                <div class="form-value"><?php echo e($req->business_type); ?></div>
-            </div>
-
-            <div class="form-group">
-                <label>ເລກບັນຊີທະນາຄານ</label>
-                <div class="form-value"><?php echo e($req->bank_account ?? '-'); ?></div>
-            </div>
-
-            <div class="form-group">
-                <label>ວັນທີຕິດຕັ້ງ</label>
-                <div class="form-value"><?php echo e(\Carbon\Carbon::parse($req->installation_date)->format('d/m/Y')); ?></div>
-            </div>
-
-            <!-- Row 2 -->
-            <div class="form-group col-span-2">
-                <label>ທີ່ຢູ່ຮ້ານຄ້າ</label>
-                <div class="form-value" style="height: auto; min-height: 42px;"><?php echo e($req->store_address); ?></div>
-            </div>
-
-            <div class="form-group">
-                <label>ລະຫັດອ້າງອີງ</label>
-                <div class="form-value"><?php echo e($req->refer_code); ?></div>
-            </div>
-
-            <div class="form-group">
-                <label>ລະຫັດເຄື່ອງ POS</label>
-                <div class="form-value"><?php echo e($req->pos_serial ?? '-'); ?></div>
-            </div>
-
-            <!-- Additional Info -->
-            <div class="form-group">
-                <label>ສາຂາ</label>
-                <div class="form-value"><?php echo e(optional($req->branch)->name ?? '-'); ?></div>
-            </div>
-
-            <div class="form-group">
-                <label>ໜ່ວຍບໍລິການ</label>
-                <div class="form-value"><?php echo e(optional($req->unit)->name ?? '-'); ?></div>
-            </div>
-
-
-
-            <!-- Row 3: Attachments -->
-            <?php if(!empty($req->attachments)): ?>
-            <div class="form-group col-span-4">
-                <label>ເອກະສານແນບ</label>
-                <div class="file-preview-grid">
-                    <?php
-                    $attachments = is_array($req->attachments)
-                    ? $req->attachments
-                    : (is_string($req->attachments) ? json_decode($req->attachments ?? '[]', true) : []);
-                    ?>
-                    <?php $__currentLoopData = $attachments; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $filePath): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                    <?php
-                    $fileUrl = asset('storage/' . $filePath);
-                    $fileName = basename($filePath);
-                    $extension = strtolower(pathinfo($filePath, PATHINFO_EXTENSION));
-                    ?>
-                    <div class="file-item" onclick="openPreview('<?php echo e($fileUrl); ?>', '<?php echo e($fileName); ?>', '<?php echo e($extension); ?>')">
-                        <?php if(in_array($extension, ['jpg','jpeg','png'])): ?>
-                        <img src="<?php echo e($fileUrl); ?>" class="file-preview-img">
-                        <?php elseif($extension === 'pdf'): ?>
-                        <i class="bi bi-file-pdf-fill" style="color: #ef4444; font-size: 1.5rem;"></i>
+            <div class="row">
+                <div class="col-md-6">
+                    <p><strong>Store Name:</strong> <?php echo e($req->store_name); ?></p>
+                    <p><strong>Business Type:</strong> <?php echo e($req->business_type); ?></p>
+                    <p><strong>Bank Account:</strong> <?php echo e($req->bank_account ?? 'n/a'); ?></p>
+                    <p><strong>Installation Date:</strong> <?php echo e(\Carbon\Carbon::parse($req->installation_date)->format('d/m/Y')); ?></p>
+                    <p><strong>Status:</strong>
+                        <?php if($req->approval_status == 'approved'): ?>
+                        <span class="badge bg-success">Approved</span>
+                        <?php elseif($req->approval_status == 'pending'): ?>
+                        <span class="badge bg-warning text-dark">Pending</span>
                         <?php else: ?>
-                        <i class="bi bi-file-earmark-text"></i>
+                        <span class="badge bg-danger">Rejected</span>
                         <?php endif; ?>
-                        <div class="file-details">
-                            <div class="file-name" title="<?php echo e($fileName); ?>"><?php echo e($fileName); ?></div>
-                            <div class="file-size"><?php echo e(strtoupper($extension)); ?></div>
-                        </div>
+                    </p>
+                </div>
+                <div class="col-md-6">
+                    <p><strong>Address:</strong> <?php echo e($req->store_address); ?></p>
+                    <p><strong>Refer Code:</strong> <?php echo e($req->refer_code); ?></p>
+                    <p><strong>POS Serial:</strong> <?php echo e($req->pos_serial ?? 'n/a'); ?></p>
+                    <p><strong>Branch:</strong> <?php echo e(optional($req->branch)->name ?? 'n/a'); ?></p>
+                    <p><strong>Service Unit:</strong> <?php echo e(optional($req->unit)->name ?? 'n/a'); ?></p>
+                </div>
+            </div>
+
+            <hr>
+
+            <div class="mb-3">
+                <h6 class="fw-bold">Teller Info</h6>
+                <p class="mb-1"><strong>Name:</strong> <?php echo e(optional($req->teller)->name ?? '-'); ?> (<?php echo e($req->teller_id ?? '-'); ?>)</p>
+                <p class="mb-1"><strong>Phone:</strong> <?php echo e(optional($req->teller)->phone ?? '-'); ?></p>
+            </div>
+
+            <?php if(!empty($req->attachments)): ?>
+            <hr>
+            <h6 class="fw-bold mb-3">Attachments</h6>
+            <div class="d-flex flex-wrap gap-2">
+                <?php
+                $attachments = is_array($req->attachments)
+                ? $req->attachments
+                : (is_string($req->attachments) ? json_decode($req->attachments ?? '[]', true) : []);
+                ?>
+                <?php $__currentLoopData = $attachments; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $filePath): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                <?php
+                $fileUrl = asset('storage/' . $filePath);
+                $fileName = basename($filePath);
+                $extension = strtolower(pathinfo($filePath, PATHINFO_EXTENSION));
+                ?>
+                <div class="card p-2 shadow-sm d-flex align-items-center gap-2" style="cursor: pointer; width: 200px;"
+                    onclick="openPreview('<?php echo e($fileUrl); ?>', '<?php echo e($fileName); ?>', '<?php echo e($extension); ?>')">
+                    <div class="fs-2 text-secondary">
+                        <?php if(in_array($extension, ['jpg','jpeg','png'])): ?>
+                        <i class="bi bi-file-image"></i>
+                        <?php elseif($extension === 'pdf'): ?>
+                        <i class="bi bi-file-pdf text-danger"></i>
+                        <?php else: ?>
+                        <i class="bi bi-file-earmark"></i>
+                        <?php endif; ?>
                     </div>
-                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                    <div class="text-truncate" style="flex: 1;">
+                        <span class="d-block small fw-bold text-truncate" title="<?php echo e($fileName); ?>"><?php echo e($fileName); ?></span>
+                        <span class="d-block small text-muted"><?php echo e(strtoupper($extension)); ?></span>
+                    </div>
                 </div>
+                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
             </div>
             <?php endif; ?>
 
-            <!-- Admin Remark if rejected -->
             <?php if($req->admin_remark): ?>
-            <div class="form-group col-span-4">
-                <label>ໝາຍເຫດຈາກຜູ້ອະນຸມັດ</label>
-                <div class="form-value" style="background: #fff1f2; color: #991b1b; border-color: #fecaca;">
-                    <?php echo e($req->admin_remark); ?>
+            <div class="alert alert-danger mt-3">
+                <strong>Admin Remark:</strong> <?php echo e($req->admin_remark); ?>
 
-                </div>
             </div>
             <?php endif; ?>
         </div>
+    </div>
 
-        <div class="form-actions">
-            <a href="<?php echo e(route('admin.reports.index')); ?>" class="btn btn-outline-danger">
-                <i class="bi bi-arrow-left"></i> ກັບຄືນ
-            </a>
-
-
-        </div>
+    <div class="d-flex gap-2">
+        <?php if($req->approval_status == 'pending'): ?>
+        <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#approveModal"
+            data-request-id="<?php echo e($req->id); ?>"
+            data-store="<?php echo e($req->store_name); ?>"
+            data-refer="<?php echo e($req->refer_code); ?>"
+            data-pos-serial="<?php echo e($req->pos_serial); ?>">
+            <i class="bi bi-check-circle"></i> Approve
+        </button>
+        <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#rejectModal"
+            data-request-id="<?php echo e($req->id); ?>"
+            data-store="<?php echo e($req->store_name); ?>"
+            data-refer="<?php echo e($req->refer_code); ?>">
+            <i class="bi bi-x-circle"></i> Reject
+        </button>
+        <?php endif; ?>
+        <a href="<?php echo e(route('admin.reports.index')); ?>" class="btn btn-secondary">
+            <i class="bi bi-arrow-left"></i> Back
+        </a>
     </div>
 </div>
 

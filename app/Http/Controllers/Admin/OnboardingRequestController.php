@@ -32,13 +32,15 @@ class OnboardingRequestController extends Controller
     public function approve(Request $request, $id)
     {
         $data = $request->validate([
-            'pos_serial' => 'required|string|max:255',
+            'pos_serial'   => 'required|array',
+            'pos_serial.*' => 'required|string|max:255',
         ]);
 
         $req = OnboardingRequest::findOrFail($id);
         $req->approval_status = 'approved';
         $req->admin_remark = null;
-        $req->pos_serial = $data['pos_serial'];
+        // Join the array into a comma-separated string
+        $req->pos_serial = implode(',', $data['pos_serial']);
         $req->save();
 
         $tellerUserId = User::where('teller_id', $req->teller_id)->value('id');

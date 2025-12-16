@@ -2,10 +2,11 @@
 
 namespace App\Providers;
 
-use Illuminate\Support\ServiceProvider;
-use Illuminate\Support\Facades\View;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\URL;
+use Illuminate\Support\Facades\View;
+use Illuminate\Support\ServiceProvider;
 use App\Models\TellerPortal\OnboardingRequest;
 use App\Models\TellerPortal\Branch;
 use App\Models\TellerPortal\BranchUnit;
@@ -26,6 +27,11 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        // Force generated URLs to HTTPS in production when enabled.
+        if (app()->environment('production') && (bool) env('FORCE_HTTPS', false)) {
+            URL::forceScheme('https');
+        }
+
         $cache = Cache::store('file');
 
         // Avoid running the sync logic on every request; only once per cache window.

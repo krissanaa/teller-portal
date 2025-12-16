@@ -85,10 +85,10 @@
                 <input type="text" name="branch_name" class="form-control" value="{{ old('branch_name', $branch->name) }}" required>
             </div>
             <div class="d-flex gap-2 mt-3">
-                <button type="submit" class="btn btn-success" style="padding: 0.5rem 1.15rem;">
+                <button type="submit" class="btn btn-primary" style="padding: 0.5rem 1.15rem;">
                     <i class="bi bi-check-circle"></i> Save Changes
                 </button>
-                <a href="{{ route('admin.branches.index') }}" class="btn btn-outline-danger" style="padding: 0.5rem 1.15rem;">
+                <a href="{{ route('admin.branches.index') }}" class="btn btn-secondary" style="padding: 0.5rem 1.15rem;">
                     <i class="bi bi-arrow-left"></i> Back
                 </a>
             </div>
@@ -111,7 +111,7 @@
                     <input type="text" name="unit_name" class="form-control" required placeholder="Unit Description">
                 </div>
                 <div class="col-md-3">
-                    <button type="submit" class="btn btn-success w-100">
+                    <button type="submit" class="btn btn-primary w-100">
                         <i class="bi bi-plus-circle"></i> Add Unit
                     </button>
                 </div>
@@ -144,7 +144,7 @@
                             <button class="btn btn-sm btn-primary flex-grow-1" form="update-unit-{{ $unit->id }}">
                                 <i class="bi bi-save"></i> Save
                             </button>
-                            <button class="btn btn-sm btn-outline-danger flex-grow-1" form="delete-unit-{{ $unit->id }}" onclick="return confirm('Delete this unit?')">
+                            <button class="btn btn-sm btn-danger flex-grow-1" form="delete-unit-{{ $unit->id }}" onclick="return confirm('Delete this unit?')">
                                 <i class="bi bi-trash"></i> Delete
                             </button>
                         </div>

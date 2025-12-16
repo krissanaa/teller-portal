@@ -274,51 +274,7 @@ $statusClassMap = [
         gap: 0.5rem;
     }
 
-    .btn {
-        padding: 0.4rem 1rem;
-        font-size: 0.875rem;
-        /* Bigger button text */
-        font-weight: 600;
-        border-radius: 4px;
-        display: inline-flex;
-        align-items: center;
-        gap: 0.35rem;
-        transition: all 0.15s ease;
-    }
 
-    .btn-success {
-        background: var(--apb-primary);
-        border: 1px solid var(--apb-primary);
-        color: white;
-    }
-
-    .btn-success:hover {
-        background: var(--apb-secondary);
-        border-color: var(--apb-secondary);
-        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-    }
-
-    .btn-danger {
-        background: white;
-        border: 1px solid #ef4444;
-        color: #ef4444;
-    }
-
-    .btn-danger:hover {
-        background: #fef2f2;
-    }
-
-    .btn-outline-secondary {
-        background: white;
-        border: 1px solid #cbd5e1;
-        color: #475569;
-    }
-
-    .btn-outline-secondary:hover {
-        background: #f8fafc;
-        border-color: #94a3b8;
-        color: #0f172a;
-    }
 
     /* Modal Styles */
     .modal-content {
@@ -570,6 +526,13 @@ $statusClassMap = [
                     <strong><?php echo e($req->installation_date ? \Carbon\Carbon::parse($req->installation_date)->format('M d, Y') : '-'); ?></strong>
                 </div>
             </div>
+            <div class="info-chip">
+                <i class="bi bi-hdd-network"></i>
+                <div class="text">
+                    <small>Total POS</small>
+                    <strong><?php echo e($req->total_device_pos ?? '1'); ?></strong>
+                </div>
+            </div>
         </div>
 
         <?php if(count($attachments)): ?>
@@ -609,7 +572,8 @@ $statusClassMap = [
                 data-request-id="<?php echo e($req->id); ?>"
                 data-store="<?php echo e($req->store_name); ?>"
                 data-refer="<?php echo e($req->refer_code); ?>"
-                data-pos-serial="<?php echo e($req->pos_serial ?? ''); ?>">
+                data-pos-serial="<?php echo e($req->pos_serial ?? ''); ?>"
+                data-total-pos="<?php echo e($req->total_device_pos ?? 1); ?>">
                 Approve & assign POS
             </button>
             <button class="btn btn-danger btn-sm" type="button"
@@ -634,7 +598,7 @@ $statusClassMap = [
 <?php if($requests->hasPages()): ?>
 <div class="position-relative mt-4">
     <div class="position-absolute top-50 start-50 translate-middle" style="z-index: 1;">
-        <a href="<?php echo e(route('admin.dashboard')); ?>" class="btn btn-outline-danger">
+        <a href="<?php echo e(route('admin.dashboard')); ?>" class="btn btn-secondary">
             <i class="bi bi-house"></i> Back to Home
         </a>
     </div>
@@ -650,7 +614,7 @@ $statusClassMap = [
 </div>
 <?php else: ?>
 <div class="text-center mt-4">
-    <a href="<?php echo e(route('admin.dashboard')); ?>" class="btn btn-outline-danger">
+    <a href="<?php echo e(route('admin.dashboard')); ?>" class="btn btn-secondary">
         <i class="bi bi-house"></i> Back to Home
     </a>
 </div>
@@ -682,17 +646,14 @@ $statusClassMap = [
                 <?php echo csrf_field(); ?>
                 <div class="modal-body">
                     <p class="text-muted mb-4" id="approve_request_info"></p>
-                    <label for="modal_pos_serial" class="form-label fw-bold text-dark small text-uppercase">POS Serial (Required)</label>
-                    <input
-                        type="text"
-                        name="pos_serial"
-                        id="modal_pos_serial"
-                        class="form-control"
-                        required
-                        placeholder="">
+                    <label class="form-label fw-bold text-dark small text-uppercase">POS Serials (Required)</label>
+                    <input type="hidden" name="pos_serial" id="legacy_pos_serial_hidden"> <!-- Fallback/Container -->
+                    <div id="dynamic_pos_inputs">
+                        <!-- Inputs will be injected here via JS -->
+                    </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                     <button type="submit" class="btn btn-success">Confirm Approve</button>
                 </div>
             </form>
@@ -729,7 +690,7 @@ $statusClassMap = [
                         placeholder="Please provide a reason for rejection..."></textarea>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                     <button type="submit" class="btn btn-danger">Confirm Reject</button>
                 </div>
             </form>
@@ -780,21 +741,39 @@ $statusClassMap = [
     });
 
     const approveModal = document.getElementById('approveModal');
-    if (approveModal) {
-        approveModal.addEventListener('show.bs.modal', event => {
-            const button = event.relatedTarget;
-            const requestId = button.getAttribute('data-request-id');
-            const store = button.getAttribute('data-store') || '';
-            const refer = button.getAttribute('data-refer') || '';
-            const serial = button.getAttribute('data-pos-serial') || '';
+    approveModal.addEventListener('show.bs.modal', event => {
+        const button = event.relatedTarget;
+        const requestId = button.getAttribute('data-request-id');
+        const store = button.getAttribute('data-store') || '';
+        const refer = button.getAttribute('data-refer') || '';
+        const existingSerialStr = button.getAttribute('data-pos-serial') || '';
+        const totalPos = parseInt(button.getAttribute('data-total-pos') || '1');
 
-            approveModal.querySelector('#approve_request_info').textContent = `${store} (${refer})`;
-            approveModal.querySelector('#modal_pos_serial').value = serial;
+        approveModal.querySelector('#approve_request_info').textContent = `${store} (${refer})`;
 
-            const form = document.getElementById('approveForm');
-            form.action = form.dataset.baseAction.replace('__REQUEST_ID__', requestId);
-        });
-    }
+        // Dynamic Inputs Generation
+        const container = document.getElementById('dynamic_pos_inputs');
+        container.innerHTML = ''; // Clear previous
+
+        // Handle existing serials if any (comma separated)
+        let existingSerials = existingSerialStr.split(',').map(s => s.trim()).filter(s => s);
+
+        for (let i = 0; i < totalPos; i++) {
+            const val = existingSerials[i] || '';
+            const div = document.createElement('div');
+            div.className = 'mb-2';
+            div.innerHTML = `
+                    <label class="small text-muted mb-1">Device #${i + 1}</label>
+                    <input type="text" name="pos_serial[]" class="form-control" 
+                           placeholder="Enter Serial Number for Device ${i + 1}" 
+                           required value="${val}">
+                `;
+            container.appendChild(div);
+        }
+
+        const form = document.getElementById('approveForm');
+        form.action = form.dataset.baseAction.replace('__REQUEST_ID__', requestId);
+    });
 
     const rejectModal = document.getElementById('rejectModal');
     if (rejectModal) {

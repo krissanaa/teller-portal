@@ -26,6 +26,7 @@ class OnboardingRequest extends Model
         'approval_status',
         'admin_remark',
         'attachments',
+        'total_device_pos', // Added
     ];
 
     protected $casts = [
@@ -51,9 +52,8 @@ class OnboardingRequest extends Model
         return $this->belongsTo(BranchUnit::class, 'unit_id');
     }
 
-public function teller()
-{
-    return $this->belongsTo(\App\Models\User::class, 'teller_id', 'teller_id');
-}
-
+    public function teller()
+    {
+        return $this->belongsTo(\App\Models\User::class, 'teller_id', 'teller_id');
+    }
 }

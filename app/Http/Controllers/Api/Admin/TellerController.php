@@ -159,7 +159,7 @@ class TellerController extends Controller
 
         if (! $branchId) {
             throw ValidationException::withMessages([
-                'unit_id' => __('Please select a branch before assigning a unit.'),
+                'unit_id' => __('select a branch before assigning a unit.'),
             ]);
         }
 

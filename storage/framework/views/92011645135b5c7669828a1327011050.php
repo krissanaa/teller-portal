@@ -254,6 +254,7 @@
         color: #64748b;
     }
 
+    /* Pagination Styling */
     .pagination svg {
         width: 16px !important;
         height: 16px !important;
@@ -261,19 +262,60 @@
 
     .pagination {
         display: flex;
-        justify-content: center;
-        gap: 4px;
-        margin-top: 1rem;
+        justify-content: flex-end;
+        gap: 8px;
+        margin-top: 1.5rem;
+        flex-wrap: wrap;
+    }
+
+    .pagination .page-item {
+        margin: 0;
     }
 
     .pagination .page-link {
-        color: #475569;
-        border-radius: 6px;
+        color: #64748b;
+        background: white;
+        border: 1px solid #e2e8f0;
+        border-radius: 4px;
+        padding: 4px 8px;
+        font-weight: 600;
+        font-size: 0.75rem;
+        transition: all 0.3s ease;
+        min-width: 28px;
+        text-align: center;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
     }
 
     .pagination .page-link:hover {
+        background: linear-gradient(135deg, #14b8a6 0%, #0f766e 100%);
+        border-color: #14b8a6;
+        color: white;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(20, 184, 166, 0.3);
+    }
+
+    .pagination .page-item.active .page-link {
+        background: linear-gradient(135deg, #14b8a6 0%, #0f766e 100%);
+        border-color: #14b8a6;
+        color: white;
+        box-shadow: 0 4px 12px rgba(20, 184, 166, 0.4);
+        transform: scale(1.05);
+    }
+
+    .pagination .page-item.disabled .page-link {
         background: #f1f5f9;
-        color: #1e293b;
+        border-color: #e2e8f0;
+        color: #cbd5e1;
+        cursor: not-allowed;
+        box-shadow: none;
+    }
+
+    .pagination .page-item.disabled .page-link:hover {
+        background: #f1f5f9;
+        border-color: #e2e8f0;
+        color: #cbd5e1;
+        transform: none;
+        box-shadow: none;
     }
 
     @media (max-width: 768px) {
@@ -308,6 +350,43 @@
             padding: 10px 8px;
         }
     }
+
+    /* Scrollable Table Styles */
+    .table-scroll-area {
+        max-height: 65vh;
+        overflow-y: auto;
+        overflow-x: auto;
+        border-bottom: 1px solid #e9ecef;
+    }
+
+    .table-scroll-area thead th {
+        position: sticky;
+        top: 0;
+        background: #f8f9fa;
+        z-index: 10;
+        box-shadow: 0 1px 0 #e2e8f0;
+    }
+
+    /* Custom Scrollbar for smoothness */
+    .table-scroll-area::-webkit-scrollbar {
+        width: 6px;
+        height: 6px;
+    }
+
+    .table-scroll-area::-webkit-scrollbar-track {
+        background: #f1f5f9;
+        border-radius: 4px;
+    }
+
+    .table-scroll-area::-webkit-scrollbar-thumb {
+        background: #cbd5e1;
+        border-radius: 4px;
+        transition: background 0.2s;
+    }
+
+    .table-scroll-area::-webkit-scrollbar-thumb:hover {
+        background: #94a3b8;
+    }
 </style>
 
 <div class="container-fluid py-3">
@@ -318,11 +397,11 @@
             ໜ້າຫຼັກ
         </h4>
         <div class="header-actions">
-            <a href="<?php echo e(route('teller.requests.create')); ?>" class="btn-create">
+            <a href="<?php echo e(route('teller.requests.create')); ?>" class="btn btn-primary">
                 <i class="bi bi-plus-circle"></i>
                 ສ້າງຟອມໃໝ່
             </a>
-            <a href="<?php echo e(route('teller.report')); ?>" class="btn-report">
+            <a href="<?php echo e(route('teller.report')); ?>" class="btn btn-info text-white">
                 <i class="bi bi-graph-up"></i>
                 ລາຍງານ
             </a>
@@ -341,7 +420,7 @@
             </span>
         </div>
 
-        <div class="table-responsive">
+        <div class="table-responsive table-scroll-area">
             <table class="table modern-table">
                 <thead>
                     <tr>
@@ -404,26 +483,25 @@
                             </span>
                         </td>
                         <td class="text-center">
-                            <span class="status-badge <?php echo e($r->approval_status === 'rejected' ? 'rejected' : ''); ?>">
-                                <?php
-                                $statusLabel = match ($r->approval_status) {
-                                'pending' => 'ລໍຖ້າອະນຸມັດ',
-                                'approved' => 'ອະນຸມັດ',
-                                'rejected' => 'ປະຕິເສດ',
-                                default => ucfirst($r->approval_status),
-                                };
-                                ?>
-                                <?php echo e($statusLabel); ?>
+                            <div class="d-flex flex-column align-items-center gap-2">
+                                <span class="status-badge <?php echo e($r->approval_status === 'rejected' ? 'rejected' : ''); ?>">
+                                    <?php
+                                    $statusLabel = match ($r->approval_status) {
+                                    'pending' => 'ລໍຖ້າອະນຸມັດ',
+                                    'approved' => 'ອະນຸມັດ',
+                                    'rejected' => 'ປະຕິເສດ',
+                                    default => ucfirst($r->approval_status),
+                                    };
+                                    ?>
+                                    <?php echo e($statusLabel); ?>
 
-                                <?php if($r->approval_status === 'rejected'): ?>
-                                <span class="status-note">
-                                    <i class="bi bi-arrow-repeat"></i>
-                                    <a href="<?php echo e(route('teller.requests.edit', $r->id)); ?>" class="resubmit-link">
-                                        Resubmit
-                                    </a>
                                 </span>
+                                <?php if($r->approval_status === 'rejected'): ?>
+                                <a href="<?php echo e(route('teller.requests.edit', $r->id)); ?>" class="btn btn-sm btn-primary py-0 px-2" style="font-size: 0.75rem; width: 100%;">
+                                    <i class="bi bi-arrow-repeat"></i> Resubmit
+                                </a>
                                 <?php endif; ?>
-                            </span>
+                            </div>
                         </td>
                     </tr>
                     <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
@@ -440,7 +518,7 @@
         </div>
 
         <?php if($requests->hasPages()): ?>
-        <div class="pagination-wrapper text-center mt-4">
+        <div class="pagination-wrapper d-flex justify-content-end mt-4">
             <?php echo e($requests->links('vendor.pagination.custom')); ?>
 
         </div>

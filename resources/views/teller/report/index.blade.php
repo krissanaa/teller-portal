@@ -485,7 +485,7 @@
             ລາຍງານຮ້ານຄ້າຂອງຂ້ອຍ
         </h4>
         <div class="header-actions">
-            <a href="{{ route('teller.dashboard')}}" class="btn-create">
+            <a href="{{ route('teller.dashboard')}}" class="btn btn-secondary">
                 <i class="bi bi-arrow-left"></i>
                 ກັບໜ້າຫຼັກ
             </a>
@@ -540,21 +540,21 @@
             <i class="bi bi-funnel-fill"></i>
             ກັ່ນຕອງ ແລະ ຄົ້ນຫາ
         </div>
-        <form method="GET" class="row g-3 align-items-end">
-            <div class="col-md-5">
-                <label class="form-label fw-semibold text-muted small mb-2">
+        <form method="GET" class="row g-2 align-items-end">
+            <div class="col-md-4">
+                <label class="form-label fw-semibold text-muted small mb-1">
                     <i class="bi bi-search"></i> ຄົ້ນຫາ
                 </label>
                 <input type="text" name="search" value="{{ $search }}"
-                    class="form-control search-input filter-size-unify fw-semibold"
+                    class="form-control form-control-sm search-input filter-size-unify fw-semibold"
                     placeholder="ຊື່ຮ້ານ / ລະຫັດອ້າງອີງ / ປະເພດທຸລະກິດ"
                     onkeydown="if(event.key==='Enter'){this.form.submit();}">
             </div>
-            <div class="col-md-4">
-                <label class="form-label fw-semibold text-muted small mb-2">
+            <div class="col-md-3">
+                <label class="form-label fw-semibold text-muted small mb-1">
                     <i class="bi bi-filter"></i> ສະຖານະ
                 </label>
-                <select name="status" class="form-select filter-select text-muted fw-semibold filter-size-unify"
+                <select name="status" class="form-select form-select-sm filter-select text-muted fw-semibold filter-size-unify"
                     onchange="this.form.submit()">
                     <option value="">-- ສະຖານະທັງໝົດ --</option>
                     <option value="pending" {{ $status=='pending' ? 'selected' : '' }}>⏳ ລໍຖ້າອະນຸມັດ</option>
@@ -563,19 +563,17 @@
                 </select>
             </div>
             <div class="col-md-3">
-                <label class="form-label fw-semibold text-muted small mb-2">
+                <label class="form-label fw-semibold text-muted small mb-1">
                     <i class="bi bi-calendar2-range"></i> ຕັ້ງຄ່າວັນທີ
                 </label>
 
                 <div class="dropdown w-100">
-                    <button class="btn date-filter-btn w-100 d-flex justify-content-between align-items-center
+                    <button class="btn btn-sm date-filter-btn w-100 d-flex justify-content-between align-items-center
                text-muted fw-semibold filter-size-unify"
                         type="button" id="dateFilterDropdown" data-bs-toggle="dropdown" aria-expanded="false">
                         <span><i class="bi bi-sliders"></i> ເລືອກວັນທີ</span>
                         <i class="bi bi-chevron-down small"></i>
                     </button>
-
-
 
                     <div class="dropdown-menu p-3 w-100 date-dropdown" aria-labelledby="dateFilterDropdown"
                         style="min-width:260px;">
@@ -585,7 +583,7 @@
                             <label class="form-label fw-semibold small mb-1">
                                 <i class="bi bi-calendar2-week"></i> Year
                             </label>
-                            <select name="year" class="form-select filter-select" onchange="this.form.submit()">
+                            <select name="year" class="form-select form-select-sm filter-select" onchange="this.form.submit()">
                                 <option value="">All Years</option>
                                 @foreach($years as $y)
                                 <option value="{{ $y }}" {{ $year == $y ? 'selected' : '' }}>{{ $y }}</option>
@@ -598,7 +596,7 @@
                             <label class="form-label fw-semibold small mb-1">
                                 <i class="bi bi-calendar3"></i> Month
                             </label>
-                            <select name="month" class="form-select filter-select" onchange="this.form.submit()">
+                            <select name="month" class="form-select form-select-sm filter-select" onchange="this.form.submit()">
                                 <option value="">All Months</option>
                                 @foreach(range(1, 12) as $m)
                                 <option value="{{ $m }}" {{ $month == $m ? 'selected' : '' }}>
@@ -614,16 +612,19 @@
                                 <i class="bi bi-calendar-day"></i> Day
                             </label>
                             <input type="date" name="day" value="{{ $day }}"
-                                class="form-control filter-select"
+                                class="form-control form-control-sm filter-select"
                                 onchange="this.form.submit()">
                         </div>
 
                     </div>
                 </div>
             </div>
-            <div class="col-md-3">
-                <a href="{{ route('teller.report') }}" class="btn btn-reset w-100">
-                    <i class="bi bi-arrow-clockwise"></i> ລ້າງຕົວກອງ
+            <div class="col-md-2 d-flex gap-2">
+                <button type="submit" class="btn btn-primary btn-sm w-100">
+                    <i class="bi bi-search"></i> ຄົ້ນຫາ
+                </button>
+                <a href="{{ route('teller.report') }}" class="btn btn-secondary btn-sm w-100">
+                    <i class="bi bi-arrow-clockwise"></i> ລ້າງ
                 </a>
             </div>
         </form>

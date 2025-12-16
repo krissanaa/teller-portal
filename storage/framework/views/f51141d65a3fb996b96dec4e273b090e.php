@@ -187,7 +187,7 @@
     <div class="d-flex justify-content-between align-items-center mb-3">
         <h5 class="mb-0 fw-bold text-dark"><i class="bi bi-funnel me-2"></i> Filters</h5>
         <div>
-            <a href="<?php echo e(route('admin.logs.index', array_merge(request()->query(), ['export' => 'csv']))); ?>" class="btn btn-sm text-white" style="background: #10B981; border: none; font-weight: 600; padding: 0.6rem 1.5rem; border-radius: 8px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);">
+            <a href="<?php echo e(route('admin.logs.index', array_merge(request()->query(), ['export' => 'csv']))); ?>" class="btn btn-sm btn-success text-white">
                 <i class="bi bi-download me-2"></i> Export Excel
             </a>
         </div>
@@ -248,10 +248,10 @@
             </div>
             <!-- Filter Button -->
             <div class="col-md-4 d-flex align-items-end gap-2">
-                <button type="submit" class="btn btn-primary flex-grow-1 fw-bold" style="background: var(--apb-primary); border: none; padding: 0.6rem 1rem; border-radius: 8px;">
+                <button type="submit" class="btn btn-primary flex-grow-1 fw-bold">
                     <i class="bi bi-funnel-fill me-1"></i> Filter
                 </button>
-                <a href="<?php echo e(route('admin.logs.index')); ?>" class="btn btn-outline-secondary flex-grow-1 fw-bold text-center text-decoration-none" style="padding: 0.6rem 1rem; border-radius: 8px;">
+                <a href="<?php echo e(route('admin.logs.index')); ?>" class="btn btn-secondary flex-grow-1 fw-bold text-center text-decoration-none">
                     <i class="bi bi-arrow-clockwise me-1"></i> Reset
                 </a>
             </div>
@@ -325,7 +325,7 @@
                         </div>
                     </td>
                     <td class="text-end">
-                        <button type="button" class="btn btn-sm btn-outline-primary"
+                        <button type="button" class="btn btn-sm btn-info text-white"
                             onclick="showDetails(<?php echo e(json_encode($log->details)); ?>)"
                             title="View Details">
                             <i class="bi bi-eye"></i>
@@ -351,7 +351,7 @@
     <?php if($logs->hasPages()): ?>
     <div class="position-relative mt-3 p-3 border-top">
         <div class="position-absolute top-50 start-50 translate-middle" style="z-index: 1;">
-            <a href="<?php echo e(route('admin.dashboard')); ?>" class="btn btn-outline-danger">
+            <a href="<?php echo e(route('admin.dashboard')); ?>" class="btn btn-secondary">
                 <i class="bi bi-house"></i> Back to Home
             </a>
         </div>
@@ -367,7 +367,7 @@
     </div>
     <?php else: ?>
     <div class="text-center mt-3 p-3 border-top">
-        <a href="<?php echo e(route('admin.dashboard')); ?>" class="btn btn-outline-danger">
+        <a href="<?php echo e(route('admin.dashboard')); ?>" class="btn btn-secondary">
             <i class="bi bi-house"></i> Back to Home
         </a>
     </div>

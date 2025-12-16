@@ -264,7 +264,7 @@ $authUser = auth()->user();
 
         .app-body {
             padding: clamp(18px, 4vw, 32px);
-            max-width: 1280px;
+            max-width: 100%;
             margin: 0 auto;
         }
 
@@ -517,6 +517,109 @@ $authUser = auth()->user();
                 transform: translateY(0);
             }
         }
+
+        /* 🔘 Standardized Buttons (Matches Teller Theme) */
+        .btn-primary {
+            background: linear-gradient(90deg, var(--apb-primary) 0%, var(--apb-secondary) 100%);
+            border: none;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(20, 184, 166, 0.3);
+            background: linear-gradient(90deg, var(--apb-secondary) 0%, var(--apb-dark) 100%);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: #64748b;
+            border: none;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-secondary:hover {
+            background: #475569;
+            transform: translateY(-2px);
+            color: white;
+        }
+
+        .btn-success {
+            background: linear-gradient(90deg, #10b981 0%, #059669 100%);
+            border: none;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-success:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+            background: linear-gradient(90deg, #059669 0%, #047857 100%);
+            color: white;
+        }
+
+        .btn-danger {
+            background: linear-gradient(90deg, #ef4444 0%, #b91c1c 100%);
+            border: none;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-danger:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+            background: linear-gradient(90deg, #b91c1c 0%, #991b1b 100%);
+            color: white;
+        }
+
+        .btn-warning {
+            background: linear-gradient(90deg, #f59e0b 0%, #d97706 100%);
+            border: none;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-warning:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+            background: linear-gradient(90deg, #d97706 0%, #b45309 100%);
+            color: white;
+        }
+
+        .btn-info {
+            background: linear-gradient(90deg, #0ea5e9 0%, #0284c7 100%);
+            border: none;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-info:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(14, 165, 233, 0.3);
+            background: linear-gradient(90deg, #0284c7 0%, #0369a1 100%);
+            color: white;
+        }
     </style>
     <?php echo $__env->yieldPushContent('styles'); ?>
 </head>
@@ -613,5 +716,4 @@ $authUser = auth()->user();
     <?php echo $__env->yieldPushContent('scripts'); ?>
 </body>
 
-</html>
-<?php /**PATH /var/www/html/resources/views/layouts/admin.blade.php ENDPATH**/ ?>
+</html><?php /**PATH /var/www/html/resources/views/layouts/admin.blade.php ENDPATH**/ ?>

@@ -24,15 +24,18 @@ class User extends Authenticatable
         'role',
         'status',
         'profile_completed_at',
+        'attachments',
     ];
 
     protected $hidden = [
-        'password', 'remember_token',
+        'password',
+        'remember_token',
     ];
 
     protected $casts = [
         'email_verified_at' => 'datetime',
         'profile_completed_at' => 'datetime',
+        'attachments' => 'array',
     ];
 
     // 🔹 Helper functions
@@ -65,7 +68,7 @@ class User extends Authenticatable
     public function notifications()
     {
         return $this->morphMany(\Illuminate\Notifications\DatabaseNotification::class, 'notifiable')
-                    ->orderBy('created_at', 'desc');
+            ->orderBy('created_at', 'desc');
     }
 
     public function branch()
@@ -77,5 +80,4 @@ class User extends Authenticatable
     {
         return $this->belongsTo(BranchUnit::class, 'unit_id');
     }
-
 }

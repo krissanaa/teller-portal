@@ -6,341 +6,78 @@
 @php
 $tellerProfile = $tellerProfile ?? auth()->user()->loadMissing(['branch', 'unit']);
 @endphp
-<style>
-    * {
-        font-family: 'Noto Sans Lao', 'Noto Sans', sans-serif;
-    }
+<div class="container-fluid">
+    <h4 class="mb-3">👁️ ລາຍລະອຽດຄຳຂໍເປີດບັນຊີ</h4>
 
-    :root {
-        --apb-primary: #14b8a6;
-        --apb-bg: #f1f5f9;
-        --apb-border: #e2e8f0;
-    }
+    <div class="card shadow-sm mb-3">
+        <div class="card-body">
+            <h5 class="mb-3">{{ $request->store_name }}</h5>
 
-    body {
-        background: var(--apb-bg);
-    }
-
-    .main-container {
-        max-width: 1200px;
-        margin: 20px auto;
-        padding: 0 20px;
-    }
-
-    .single-card {
-        background: white;
-        border-radius: 16px;
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
-        padding: 30px;
-        border: 1px solid white;
-    }
-
-    .page-title {
-        font-size: 1.25rem;
-        font-weight: 700;
-        color: #1e293b;
-        margin-bottom: 24px;
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        padding-bottom: 16px;
-        border-bottom: 1px solid var(--apb-border);
-    }
-
-    .page-title i {
-        color: var(--apb-primary);
-        font-size: 1.4rem;
-    }
-
-    /* Compact Grid Layout */
-    .form-grid {
-        display: grid;
-        grid-template-columns: repeat(4, 1fr);
-        gap: 20px;
-        margin-bottom: 24px;
-    }
-
-    .col-span-2 {
-        grid-column: span 2;
-    }
-
-    .col-span-4 {
-        grid-column: span 4;
-    }
-
-    .form-group label {
-        display: block;
-        font-weight: 600;
-        color: #475569;
-        margin-bottom: 6px;
-        font-size: 0.9rem;
-    }
-
-    .form-value {
-        width: 100%;
-        padding: 10px 14px;
-        border: 1px solid #e2e8f0;
-        border-radius: 8px;
-        font-size: 0.95rem;
-        background: #f8fafc;
-        color: #334155;
-        min-height: 42px;
-        display: flex;
-        align-items: center;
-    }
-
-    /* Status Badge */
-    .status-badge {
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-        padding: 4px 12px;
-        border-radius: 6px;
-        font-size: 0.85rem;
-        font-weight: 600;
-    }
-
-    .status-approved {
-        background: #dcfce7;
-        color: #166534;
-    }
-
-    .status-pending {
-        background: #fef9c3;
-        color: #854d0e;
-    }
-
-    .status-rejected {
-        background: #fee2e2;
-        color: #991b1b;
-    }
-
-    /* File Preview Grid */
-    .file-preview-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-        gap: 12px;
-        margin-top: 8px;
-    }
-
-    .file-item {
-        background: white;
-        border: 1px solid #e2e8f0;
-        padding: 10px;
-        border-radius: 8px;
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        cursor: pointer;
-        transition: all 0.2s;
-    }
-
-    .file-item:hover {
-        border-color: var(--apb-primary);
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-    }
-
-    .file-item i {
-        font-size: 1.2rem;
-        color: #64748b;
-    }
-
-    .file-preview-img {
-        width: 40px;
-        height: 40px;
-        object-fit: cover;
-        border-radius: 6px;
-    }
-
-    .file-details {
-        flex: 1;
-        overflow: hidden;
-    }
-
-    .file-name {
-        font-size: 0.85rem;
-        font-weight: 600;
-        color: #334155;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-    }
-
-    .file-size {
-        font-size: 0.75rem;
-        color: #94a3b8;
-    }
-
-    /* Actions */
-    .form-actions {
-        margin-top: 30px;
-        padding-top: 20px;
-        border-top: 1px solid var(--apb-border);
-        display: flex;
-        justify-content: flex-end;
-        gap: 12px;
-    }
-
-    .btn {
-        padding: 10px 24px;
-        border-radius: 8px;
-        font-weight: 600;
-        border: none;
-        cursor: pointer;
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-        font-size: 0.95rem;
-        transition: all 0.2s;
-        text-decoration: none;
-    }
-
-    .btn-back {
-        background: white;
-        border: 1px solid #cbd5e1;
-        color: #64748b;
-    }
-
-    .btn-back:hover {
-        background: #f1f5f9;
-        color: #334155;
-    }
-
-    .btn-edit {
-        background: #f59e0b;
-        color: white;
-    }
-
-    .btn-edit:hover {
-        background: #d97706;
-    }
-
-    @media (max-width: 992px) {
-        .form-grid {
-            grid-template-columns: repeat(2, 1fr);
-        }
-
-        .col-span-2,
-        .col-span-4 {
-            grid-column: span 2;
-        }
-    }
-
-    @media (max-width: 576px) {
-        .form-grid {
-            grid-template-columns: 1fr;
-        }
-
-        .col-span-2,
-        .col-span-4 {
-            grid-column: span 1;
-        }
-    }
-</style>
-
-<div class="main-container">
-    <div class="single-card">
-        <div class="page-title">
-            <i class="bi bi-file-text-fill"></i>
-            <span>ລາຍລະອຽດຄຳຂໍເປີດບັນຊີ</span>
-            <div style="margin-left: auto;">
-                @if($request->approval_status == 'approved')
-                <span class="status-badge status-approved"><i class="bi bi-check-circle-fill"></i> ອະນຸມັດ</span>
-                @elseif($request->approval_status == 'pending')
-                <span class="status-badge status-pending"><i class="bi bi-clock-fill"></i> ລໍຖ້າອະນຸມັດ</span>
-                @else
-                <span class="status-badge status-rejected"><i class="bi bi-x-circle-fill"></i> ປະຕິເສດ</span>
-                @endif
-            </div>
-        </div>
-
-        <div class="form-grid">
-            <!-- Row 1 -->
-            <div class="form-group">
-                <label>ຊື່ຮ້ານຄ້າ</label>
-                <div class="form-value">{{ $request->store_name }}</div>
-            </div>
-
-            <div class="form-group">
-                <label>ປະເພດທຸລະກິດ</label>
-                <div class="form-value">{{ $request->business_type }}</div>
-            </div>
-
-            <div class="form-group">
-                <label>ເລກບັນຊີທະນາຄານ</label>
-                <div class="form-value">{{ $request->bank_account ?? '-' }}</div>
-            </div>
-
-            <div class="form-group">
-                <label>ວັນທີຕິດຕັ້ງ</label>
-                <div class="form-value">{{ \Carbon\Carbon::parse($request->installation_date)->format('d/m/Y') }}</div>
-            </div>
-
-            <!-- Row 2 -->
-            <div class="form-group col-span-2">
-                <label>ທີ່ຢູ່ຮ້ານຄ້າ</label>
-                <div class="form-value" style="height: auto; min-height: 42px;">{{ $request->store_address }}</div>
-            </div>
-
-            <div class="form-group">
-                <label>ລະຫັດອ້າງອີງ</label>
-                <div class="form-value">{{ $request->refer_code }}</div>
-            </div>
-
-            <div class="form-group">
-                <label>ລະຫັດເຄື່ອງ POS</label>
-                <div class="form-value">{{ $request->pos_serial ?? '-' }}</div>
-            </div>
-
-            <!-- Row 3: Attachments -->
-            @if(!empty($request->attachments))
-            <div class="form-group col-span-4">
-                <label>ເອກະສານແນບ</label>
-                <div class="file-preview-grid">
-                    @php $attachments = json_decode($request->attachments ?? '[]', true); @endphp
-                    @foreach($attachments as $filePath)
-                    @php
-                    $fileUrl = asset('storage/' . $filePath);
-                    $fileName = basename($filePath);
-                    $extension = strtolower(pathinfo($filePath, PATHINFO_EXTENSION));
-                    @endphp
-                    <div class="file-item" onclick="openPreview('{{ $fileUrl }}', '{{ $fileName }}', '{{ $extension }}')">
-                        @if(in_array($extension, ['jpg','jpeg','png']))
-                        <img src="{{ $fileUrl }}" class="file-preview-img">
-                        @elseif($extension === 'pdf')
-                        <i class="bi bi-file-pdf-fill" style="color: #ef4444; font-size: 1.5rem;"></i>
+            <div class="row">
+                <div class="col-md-6">
+                    <p><strong>ຊື່ຮ້ານຄ້າ:</strong> {{ $request->store_name }}</p>
+                    <p><strong>ປະເພດທຸລະກິດ:</strong> {{ $request->business_type }}</p>
+                    <p><strong>ເລກບັນຊີທະນາຄານ:</strong> {{ $request->bank_account ?? '-' }}</p>
+                    <p><strong>ວັນທີຕິດຕັ້ງ:</strong> {{ \Carbon\Carbon::parse($request->installation_date)->format('d/m/Y') }}</p>
+                    <p><strong>ສະຖານະ:</strong>
+                        @if($request->approval_status == 'approved')
+                        <span class="badge bg-success">ອະນຸມັດ</span>
+                        @elseif($request->approval_status == 'pending')
+                        <span class="badge bg-warning text-dark">ລໍຖ້າອະນຸມັດ</span>
                         @else
-                        <i class="bi bi-file-earmark-text"></i>
+                        <span class="badge bg-danger">ປະຕິເສດ</span>
                         @endif
-                        <div class="file-details">
-                            <div class="file-name" title="{{ $fileName }}">{{ $fileName }}</div>
-                            <div class="file-size">{{ strtoupper($extension) }}</div>
-                        </div>
+                    </p>
+                </div>
+                <div class="col-md-6">
+                    <p><strong>ທີ່ຢູ່ຮ້ານຄ້າ:</strong> {{ $request->store_address }}</p>
+                    <p><strong>ລະຫັດອ້າງອີງ:</strong> {{ $request->refer_code }}</p>
+                    <p><strong>ລະຫັດເຄື່ອງ POS:</strong> {{ $request->pos_serial ?? '-' }}</p>
+                </div>
+            </div>
+
+            @if(!empty($request->attachments))
+            <hr>
+            <h6 class="fw-bold mb-3">ເອກະສານແນບ</h6>
+            <div class="d-flex flex-wrap gap-2">
+                @php $attachments = json_decode($request->attachments ?? '[]', true); @endphp
+                @foreach($attachments as $filePath)
+                @php
+                $fileUrl = asset('storage/' . $filePath);
+                $fileName = basename($filePath);
+                $extension = strtolower(pathinfo($filePath, PATHINFO_EXTENSION));
+                @endphp
+                <div class="card p-2 shadow-sm d-flex align-items-center gap-2" style="cursor: pointer; width: 200px;"
+                    onclick="openPreview('{{ $fileUrl }}', '{{ $fileName }}', '{{ $extension }}')">
+                    <div class="fs-2 text-secondary">
+                        @if(in_array($extension, ['jpg','jpeg','png']))
+                        <i class="bi bi-file-image"></i>
+                        @elseif($extension === 'pdf')
+                        <i class="bi bi-file-pdf text-danger"></i>
+                        @else
+                        <i class="bi bi-file-earmark"></i>
+                        @endif
                     </div>
-                    @endforeach
+                    <div class="text-truncate" style="flex: 1;">
+                        <span class="d-block small fw-bold text-truncate" title="{{ $fileName }}">{{ $fileName }}</span>
+                        <span class="d-block small text-muted">{{ strtoupper($extension) }}</span>
+                    </div>
                 </div>
+                @endforeach
             </div>
             @endif
 
-            <!-- Admin Remark if rejected -->
             @if($request->admin_remark)
-            <div class="form-group col-span-4">
-                <label>ໝາຍເຫດຈາກຜູ້ອະນຸມັດ</label>
-                <div class="form-value" style="background: #fff1f2; color: #991b1b; border-color: #fecaca;">
-                    {{ $request->admin_remark }}
-                </div>
+            <div class="alert alert-danger mt-3">
+                <strong>ໝາຍເຫດຈາກຜູ້ອະນຸມັດ:</strong> {{ $request->admin_remark }}
             </div>
             @endif
         </div>
+    </div>
 
-        <div class="form-actions">
-            <a href="{{ route('teller.dashboard') }}" class="btn btn-back">
-                <i class="bi bi-arrow-left"></i> ກັບຄືນ
-            </a>
-            <a href="{{ route('teller.requests.edit', $request->id) }}" class="btn btn-edit">
-                <i class="bi bi-pencil-square"></i> ແກ້ໄຂຂໍ້ມູນ
-            </a>
-        </div>
+    <div class="d-flex gap-2">
+        <a href="{{ route('teller.requests.edit', $request->id) }}" class="btn btn-warning">✏️ ແກ້ໄຂຂໍ້ມູນ</a>
+        <a href="{{ route('teller.dashboard') }}" class="btn btn-secondary">⬅️ ກັບຄືນ</a>
     </div>
 </div>
 

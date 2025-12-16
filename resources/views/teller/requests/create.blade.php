@@ -303,6 +303,10 @@ $tellerProfile = $tellerProfile ?? auth()->user()->loadMissing(['branch', 'unit'
         </div>
 
         <div class="form-grid">
+
+
+
+
             <!-- Row 1 -->
             <div class="form-group">
                 <label>ຊື່ຮ້ານຄ້າ <span class="required">*</span></label>
@@ -317,11 +321,15 @@ $tellerProfile = $tellerProfile ?? auth()->user()->loadMissing(['branch', 'unit'
             <div class="form-group">
                 <label>ເລກບັນຊີທະນາຄານ</label>
                 <input type="text" name="bank_account" class="form-control" placeholder="ປ້ອນເລກບັນຊີ (ຖ້າມີ)" value="{{ old('bank_account') }}">
+                <label style="margin-top:8px;">CIF</label>
+                <input type="text" name="cif" class="form-control" placeholder="CIF" value="{{ old('cif') }}">
             </div>
 
             <div class="form-group">
-                <label>ວັນທີຕິດຕັ້ງ <span class="required">*</span></label>
+                <label>ວັນທີໄປຕິດຕັ້ງ <span class="required">*</span></label>
                 <input type="text" name="installation_date" class="form-control" required value="{{ old('installation_date', date('Y-m-d')) }}" placeholder="dd/mm/yyyy">
+                <label style="margin-top:8px;">ຈຳນວນເຄື່ອງ POS <span class="required">*</span></label>
+                <input type="number" name="total_device_pos" class="form-control" required value="{{ old('total_device_pos') }}" placeholder="ລະບຸຈຳນວນເຄື່ອງ" min="1">
             </div>
 
             <!-- Row 2 -->
@@ -348,10 +356,10 @@ $tellerProfile = $tellerProfile ?? auth()->user()->loadMissing(['branch', 'unit'
         </div>
 
         <div class="form-actions">
-            <a href="{{ route('teller.dashboard') }}" class="btn btn-cancel">
+            <a href="{{ route('teller.dashboard') }}" class="btn btn-secondary">
                 <i class="bi bi-x-lg"></i> ຍົກເລີກ
             </a>
-            <button type="submit" class="btn btn-submit">
+            <button type="submit" class="btn btn-primary">
                 <i class="bi bi-send-fill"></i> ສົ່ງຄຳຂໍ
             </button>
         </div>

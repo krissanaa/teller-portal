@@ -405,10 +405,10 @@ $tellerProfile = $tellerProfile ?? auth()->user()->loadMissing(['branch', 'unit'
                             <h6 style="font-size: 1rem; font-weight: 600; color: #1e293b; margin-bottom: 6px;">ລົບໄຟລ໌ນີ້?</h6>
                             <p style="color: #64748b; font-size: 0.85rem; margin-bottom: 20px;">ບໍ່ສາມາດຍົກເລີກໄດ້</p>
                             <div style="display: flex; gap: 8px; justify-content: center;">
-                                <button type="button" class="btn btn-sm" data-bs-dismiss="modal" style="background: #f1f5f9; color: #64748b; padding: 8px 16px; border-radius: 6px; font-weight: 600; border: none;">
+                                <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">
                                     ຍົກເລີກ
                                 </button>
-                                <button type="button" class="btn btn-sm" id="confirmDeleteBtn" style="background: #ef4444; color: white; padding: 8px 16px; border-radius: 6px; font-weight: 600; border: none;">
+                                <button type="button" class="btn btn-sm btn-danger" id="confirmDeleteBtn">
                                     ລົບ
                                 </button>
                             </div>
@@ -418,10 +418,10 @@ $tellerProfile = $tellerProfile ?? auth()->user()->loadMissing(['branch', 'unit'
             </div>
 
             <div class="form-actions">
-                <a href="{{ route('teller.requests.show', $request->id) }}" class="btn btn-cancel">
+                <a href="{{ route('teller.requests.show', $request->id) }}" class="btn btn-secondary">
                     <i class="bi bi-x-lg"></i> ຍົກເລີກ
                 </a>
-                <button type="submit" class="btn btn-submit">
+                <button type="submit" class="btn btn-primary">
                     <i class="bi bi-check-lg"></i> ບັນທຶກການແກ້ໄຂ
                 </button>
             </div>

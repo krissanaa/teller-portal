@@ -7,6 +7,7 @@ use App\Models\TellerPortal\Branch;
 use App\Models\TellerPortal\BranchUnit;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
 
@@ -19,6 +20,7 @@ class TellerDashboardController extends Controller
 
         $requestsQuery = OnboardingRequest::where('teller_id', $tellerId)
             ->with('branch')
+            ->orderByRaw("CASE WHEN approval_status = 'rejected' THEN 0 ELSE 1 END")
             ->orderByDesc('updated_at');
 
         // Default: show only pending + rejected; if searching, include all statuses and search across key fields.
@@ -38,12 +40,18 @@ class TellerDashboardController extends Controller
 
         $requests = $requestsQuery->paginate(10)->withQueryString();
 
-        $notifications = OnboardingRequest::where('teller_id', $tellerId)
-            ->whereIn('approval_status', ['approved', 'rejected'])
-            ->whereDate('updated_at', '>=', now()->subDays(7))
-            ->latest()
-            ->take(5)
-            ->get();
+        $notifications = Cache::remember(
+            "teller:{$tellerId}:notifications",
+            300,
+            function () use ($tellerId) {
+                return OnboardingRequest::where('teller_id', $tellerId)
+                    ->whereIn('approval_status', ['approved', 'rejected'])
+                    ->whereDate('updated_at', '>=', now()->subDays(7))
+                    ->latest()
+                    ->take(5)
+                    ->get();
+            }
+        );
 
         return view('teller.dashboard', compact('requests', 'notifications', 'search'));
     }
@@ -58,11 +66,17 @@ class TellerDashboardController extends Controller
             ->orderByDesc('created_at')
             ->paginate(10);
 
-        $notifications = OnboardingRequest::where('teller_id', $tellerId)
-            ->whereIn('approval_status', ['approved', 'rejected'])
-            ->latest()
-            ->take(5)
-            ->get();
+        $notifications = Cache::remember(
+            "teller:{$tellerId}:notifications",
+            300,
+            function () use ($tellerId) {
+                return OnboardingRequest::where('teller_id', $tellerId)
+                    ->whereIn('approval_status', ['approved', 'rejected'])
+                    ->latest()
+                    ->take(5)
+                    ->get();
+            }
+        );
 
         return view('teller.reports.index', compact('requests', 'notifications'));
     }
@@ -77,13 +91,13 @@ class TellerDashboardController extends Controller
         $user = Auth::user();
 
         if (!Hash::check($request->current_password, $user->password)) {
-            return back()->withErrors(['current_password' => '�?O �,��,��,�,��,o�1^�,��,T�,>�,�,^�,^�,,�,s�,�,T�1,�,��1^�,-�,1�,?�,�1%�,-�,�']);
+            return back()->withErrors(['current_password' => 'ລະຫັດຜ່ານປັດຈຸບັນບໍ່ຖືກຕ້ອງ']);
         }
 
         $user->password = Hash::make($request->new_password);
         $user->save();
 
-        return back()->with('success', '�o. �1?�,>�,��,�1^�,��,T�,��,��,�,��,o�1^�,��,T�,��,3�1?�,��1؅,^�1?�,��1%�,');
+        return back()->with('success', 'ປ່ຽນລະຫັດຜ່ານສຳເລັດ');
     }
 
     public function completeProfile(Request $request)

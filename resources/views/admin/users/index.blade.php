@@ -14,6 +14,7 @@
         --text-dark: #334155;
         --text-muted: #64748b;
         --border-color: #e2e8f0;
+        --row-hover-bg: #e6fffa;
     }
 
     body {
@@ -157,6 +158,33 @@
 
     .table-modern tbody tr:hover {
         background-color: #f8fafc;
+    }
+
+    .clickable-row {
+        cursor: pointer;
+        transition: background-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .table-modern tbody tr.clickable-row:hover,
+    .table-modern tbody tr.clickable-row:hover td {
+        background-color: var(--row-hover-bg) !important;
+    }
+
+    .table-modern tbody tr.clickable-row:hover {
+        box-shadow: inset 3px 0 0 var(--apb-primary), inset 0 1px 0 #e2e8f0, inset 0 -1px 0 #e2e8f0 !important;
+    }
+
+    .table-modern tbody tr.clickable-row:focus-within,
+    .table-modern tbody tr.clickable-row:focus,
+    .table-modern tbody tr.clickable-row:focus-within td,
+    .table-modern tbody tr.clickable-row:focus td {
+        background-color: var(--row-hover-bg) !important;
+        outline: none;
+    }
+
+    .table-modern tbody tr.clickable-row:focus-within,
+    .table-modern tbody tr.clickable-row:focus {
+        box-shadow: inset 3px 0 0 var(--apb-primary), inset 0 0 0 2px rgba(20, 184, 166, 0.15) !important;
     }
 
     .status-pill {
@@ -332,19 +360,19 @@
                 placeholder="Enter keyword...">
         </div>
         <div class="col-md-2">
-            <button type="submit" class="btn-filter w-100">
+            <button type="submit" class="btn btn-primary w-100">
                 <i class="bi bi-search"></i> Search
             </button>
         </div>
         @if(!empty($search))
         <div class="col-md-2">
-            <a href="{{ route('admin.users.index') }}" class="btn btn-outline-secondary w-100" style="border-radius: 8px; padding: 0.6rem 1.5rem; font-weight: 600;">
+            <a href="{{ route('admin.users.index') }}" class="btn btn-secondary w-100">
                 Clear
             </a>
         </div>
         @endif
         <div class="col-md-3 ms-auto">
-            <button type="button" class="create-btn w-100 justify-content-center" data-bs-toggle="modal" data-bs-target="#createAdminModal">
+            <button type="button" class="btn btn-primary w-100 justify-content-center" data-bs-toggle="modal" data-bs-target="#createAdminModal">
                 <i class="bi bi-person-plus-fill"></i> Create Admin
             </button>
         </div>
@@ -353,7 +381,7 @@
 
 <div class="table-card">
     <div class="table-card-header">
-        <h5>All Admin Accounts</h5>
+        <h5>All Users Accounts</h5>
         <div class="d-flex align-items-center gap-2">
             <form method="GET" class="d-flex align-items-center gap-2 m-0">
                 @foreach(request()->except(['per_page', 'page']) as $key => $value)
@@ -386,7 +414,7 @@
             </thead>
             <tbody>
                 @forelse($users as $u)
-                <tr>
+                <tr class="clickable-row" data-href="{{ route('admin.users.show', $u->id) }}" tabindex="0" role="link">
                     @php
                     $rowNumber = $users->firstItem() ? $users->firstItem() + $loop->index : $loop->index + 1;
                     @endphp
@@ -419,7 +447,7 @@
                             <form action="{{ route('admin.users.updateStatus', $u->id) }}" method="POST">
                                 @csrf
                                 <input type="hidden" name="status" value="approved">
-                                <button type="submit" class="btn-action approve">
+                                <button type="submit" class="btn btn-sm btn-success">
                                     <i class="bi bi-check-lg"></i> Approve
                                 </button>
                             </form>
@@ -429,7 +457,7 @@
                             <form action="{{ route('admin.users.updateStatus', $u->id) }}" method="POST">
                                 @csrf
                                 <input type="hidden" name="status" value="rejected">
-                                <button type="submit" class="btn-action reject">
+                                <button type="submit" class="btn btn-sm btn-danger">
                                     <i class="bi bi-x-lg"></i> Reject
                                 </button>
                             </form>
@@ -454,7 +482,7 @@
     @if($users->hasPages())
     <div class="position-relative mt-4 p-4 border-top">
         <div class="position-absolute top-50 start-50 translate-middle" style="z-index: 1;">
-            <a href="{{ route('admin.dashboard') }}" class="btn btn-outline-danger">
+            <a href="{{ route('admin.dashboard') }}" class="btn btn-secondary">
                 <i class="bi bi-house"></i> Back to Home
             </a>
         </div>
@@ -469,12 +497,43 @@
     </div>
     @else
     <div class="text-center mt-4 p-4 border-top">
-        <a href="{{ route('admin.dashboard') }}" class="btn btn-outline-danger">
+        <a href="{{ route('admin.dashboard') }}" class="btn btn-secondary">
             <i class="bi bi-house"></i> Back to Home
         </a>
     </div>
     @endif
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const shouldSkip = (el) => {
+            if (!el || !(el instanceof HTMLElement)) return true;
+            const tag = el.tagName;
+            return ['A', 'BUTTON', 'INPUT', 'SELECT', 'TEXTAREA', 'OPTION', 'LABEL'].includes(tag) ||
+                el.closest('a, button, .btn-action, form');
+        };
+
+        document.querySelectorAll('.clickable-row').forEach((row) => {
+            const href = row.dataset.href;
+            if (!href) return;
+
+            row.addEventListener('click', (event) => {
+                const target = event.target;
+                if (shouldSkip(target)) return;
+                window.location = href;
+            });
+
+            row.addEventListener('keydown', (event) => {
+                if (event.key === 'Enter' || event.key === ' ') {
+                    const target = event.target;
+                    if (shouldSkip(target)) return;
+                    event.preventDefault();
+                    window.location = href;
+                }
+            });
+        });
+    });
+</script>
 
 <!-- Create Admin Modal -->
 <div class="modal fade" id="createAdminModal" tabindex="-1" aria-hidden="true">
@@ -496,7 +555,7 @@
                         <input type="password" class="form-control" id="password" name="password" required minlength="6" placeholder="Enter password">
                     </div>
                     <div class="d-grid">
-                        <button type="submit" class="btn btn-primary" style="background: var(--apb-primary); border: none; padding: 10px; font-weight: 600;">
+                        <button type="submit" class="btn btn-primary w-100">
                             Create Admin Account
                         </button>
                     </div>

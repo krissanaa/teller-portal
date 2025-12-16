@@ -1,4 +1,4 @@
-@extends('layouts.guest')
+﻿@extends('layouts.guest')
 
 @section('title', 'Register - APB Bank Teller Portal')
 
@@ -44,8 +44,13 @@
     }
 
     @keyframes gridMove {
-        0% { transform: translate(0, 0); }
-        100% { transform: translate(50px, 50px); }
+        0% {
+            transform: translate(0, 0);
+        }
+
+        100% {
+            transform: translate(50px, 50px);
+        }
     }
 
     .floating-shapes {
@@ -87,8 +92,17 @@
     }
 
     @keyframes float {
-        0%, 100% { transform: translateY(0) rotate(0deg); opacity: 0.3; }
-        50% { transform: translateY(-30px) rotate(180deg); opacity: 0.6; }
+
+        0%,
+        100% {
+            transform: translateY(0) rotate(0deg);
+            opacity: 0.3;
+        }
+
+        50% {
+            transform: translateY(-30px) rotate(180deg);
+            opacity: 0.6;
+        }
     }
 
     .particles {
@@ -106,21 +120,69 @@
         animation: particleFloat 10s infinite ease-in-out;
     }
 
-    .particle:nth-child(1) { left: 10%; animation-delay: 0s; }
-    .particle:nth-child(2) { left: 20%; animation-delay: 1s; }
-    .particle:nth-child(3) { left: 30%; animation-delay: 2s; }
-    .particle:nth-child(4) { left: 40%; animation-delay: 3s; }
-    .particle:nth-child(5) { left: 50%; animation-delay: 4s; }
-    .particle:nth-child(6) { left: 60%; animation-delay: 5s; }
-    .particle:nth-child(7) { left: 70%; animation-delay: 6s; }
-    .particle:nth-child(8) { left: 80%; animation-delay: 7s; }
-    .particle:nth-child(9) { left: 90%; animation-delay: 8s; }
+    .particle:nth-child(1) {
+        left: 10%;
+        animation-delay: 0s;
+    }
+
+    .particle:nth-child(2) {
+        left: 20%;
+        animation-delay: 1s;
+    }
+
+    .particle:nth-child(3) {
+        left: 30%;
+        animation-delay: 2s;
+    }
+
+    .particle:nth-child(4) {
+        left: 40%;
+        animation-delay: 3s;
+    }
+
+    .particle:nth-child(5) {
+        left: 50%;
+        animation-delay: 4s;
+    }
+
+    .particle:nth-child(6) {
+        left: 60%;
+        animation-delay: 5s;
+    }
+
+    .particle:nth-child(7) {
+        left: 70%;
+        animation-delay: 6s;
+    }
+
+    .particle:nth-child(8) {
+        left: 80%;
+        animation-delay: 7s;
+    }
+
+    .particle:nth-child(9) {
+        left: 90%;
+        animation-delay: 8s;
+    }
 
     @keyframes particleFloat {
-        0% { transform: translateY(100vh); opacity: 0; }
-        10% { opacity: 1; }
-        90% { opacity: 1; }
-        100% { transform: translateY(-100px); opacity: 0; }
+        0% {
+            transform: translateY(100vh);
+            opacity: 0;
+        }
+
+        10% {
+            opacity: 1;
+        }
+
+        90% {
+            opacity: 1;
+        }
+
+        100% {
+            transform: translateY(-100px);
+            opacity: 0;
+        }
     }
 
     /* Register Card */
@@ -149,6 +211,7 @@
             opacity: 0;
             transform: translateY(50px);
         }
+
         to {
             opacity: 1;
             transform: translateY(0);
@@ -176,8 +239,9 @@
         overflow: hidden;
         position: relative;
     }
-        .logo-icon img {
-        width:150%;
+
+    .logo-icon img {
+        width: 150%;
         height: 150%;
         object-fit: contain;
         padding: 10px;
@@ -189,8 +253,15 @@
     }
 
     @keyframes logoFloat {
-        0%, 100% { transform: translateY(0); }
-        50% { transform: translateY(-10px); }
+
+        0%,
+        100% {
+            transform: translateY(0);
+        }
+
+        50% {
+            transform: translateY(-10px);
+        }
     }
 
     .login-title {
@@ -310,6 +381,7 @@
             opacity: 0;
             transform: translateY(-20px);
         }
+
         to {
             opacity: 1;
             transform: translateY(0);
@@ -427,39 +499,135 @@
 
         {{-- ✅ Show errors --}}
         @if($errors->any())
-            <div class="alert alert-danger">
-                <strong><i class="bi bi-exclamation-triangle me-2"></i>ເກີດຂໍ້ຜິດພາດ:</strong>
-                <ul class="mb-0 mt-2">
-                    @foreach($errors->all() as $err)
-                        <li>{{ $err }}</li>
-                    @endforeach
-                </ul>
-            </div>
+        <div class="alert alert-danger">
+            <strong><i class="bi bi-exclamation-triangle me-2"></i>ເກີດຂໍ້ຜິດພາດ:</strong>
+            <ul class="mb-0 mt-2">
+                @foreach($errors->all() as $err)
+                <li>{{ $err }}</li>
+                @endforeach
+            </ul>
+        </div>
         @endif
 
         {{-- ✅ Register Form --}}
-        <form method="POST" action="{{ route('register') }}">
+        <form method="POST" action="{{ route('register') }}" enctype="multipart/form-data">
             @csrf
 
             <div class="mb-3">
                 <label for="teller_id" class="form-label">
                     <i class="bi bi-person-badge"></i> ລະຫັດພະນັກງານ
                 </label>
-                <input type="number" name="teller_id" id="teller_id" class="form-control"
-                       value="{{ old('teller_id') }}"
-
+                <input type="number" name="teller_id" id="teller_id" class="form-control" value="{{ old('teller_id') }}" placeholder="">
             </div>
 
+            <div class="mb-3">
+                <label for="name" class="form-label">ຊື່ <span class="required">*</span></label>
+                <input type="text" name="name" id="name" class="form-control" required value="{{ old('name') }}" placeholder="">
+            </div>
+
+            <div class="mb-3">
+                <label for="phone" class="form-label">ເບີໂທ <span class="required">*</span></label>
+                <input type="text" name="phone" id="phone" class="form-control" required value="{{ old('phone') }}" placeholder="">
+            </div>
+
+            <div class="mb-3">
+                <label for="branch_id" class="form-label">ສາຂາ <span class="required">*</span></label>
+                <select name="branch_id" id="branch_id" class="form-control" required>
+                    <option value="">-- ເລືອກສາຂາ --</option>
+                    @foreach(($branches ?? []) as $branch)
+                    <option value="{{ $branch->id }}" {{ old('branch_id') == $branch->id ? 'selected' : '' }}>
+                        {{ $branch->name ?? $branch->branch_name ?? 'Branch #'.$branch->id }}
+                    </option>
+                    @endforeach
+                </select>
+            </div>
+
+            <div class="mb-3">
+                <label for="unit_id" class="form-label d-flex justify-content-between align-items-center">
+                    <span>ໜ່ວຍບໍລິການ</span>
+                    <small class="text-muted">(ປ້ອນເມື່ອສາຂາມີໜ່ວຍ)</small>
+                </label>
+                <select name="unit_id" id="unit_id" class="form-control">
+                    <option value="" data-placeholder="default">-- ເລືອກໜ່ວຍບໍລິການ --</option>
+                    @foreach(($units ?? []) as $unit)
+                    <option value="{{ $unit->id }}" data-branch-id="{{ $unit->branch_id }}" {{ old('unit_id') == $unit->id ? 'selected' : '' }}>
+                        {{ $unit->name ?? $unit->unit_name ?? 'Unit #'.$unit->id }}
+                    </option>
+                    @endforeach
+                </select>
+                <small id="unit-helper" class="text-muted"></small>
+            </div>
+
+            <script>
+                document.addEventListener('DOMContentLoaded', function() {
+                    const branchSelect = document.getElementById('branch_id');
+                    const unitSelect = document.getElementById('unit_id');
+                    const placeholderOption = unitSelect.querySelector('option[data-placeholder="default"]');
+                    const allUnitOptions = Array.from(unitSelect.querySelectorAll('option:not([data-placeholder])'));
+                    const helper = document.getElementById('unit-helper');
+
+                    function filterUnits() {
+                        const selectedBranchId = branchSelect.value;
+                        const currentValue = unitSelect.value;
+                        allUnitOptions.forEach(option => option.style.display = 'none');
+
+                        const matchingUnits = selectedBranchId
+                            ? allUnitOptions.filter(option => option.dataset.branchId === selectedBranchId)
+                            : [];
+
+                        if (matchingUnits.length > 0) {
+                            matchingUnits.forEach(option => option.style.display = '');
+                            placeholderOption.textContent = '-- ເລືອກໜ່ວຍບໍລິການ --';
+                            helper.textContent = '';
+                        } else {
+                            placeholderOption.textContent = 'ສາຂານີ້ບໍ່ມີໜ່ວຍບໍລິການ (ຂ້າມໄດ້)';
+                            helper.textContent = 'ຖ້າສາຂາບໍ່ມີໜ່ວຍ ສາມາດປະກອບຄ່າວ່າງໄດ້';
+                            unitSelect.value = "";
+                        }
+
+                        if (matchingUnits.some(option => option.value === currentValue)) {
+                            unitSelect.value = currentValue;
+                        } else if (matchingUnits.length > 0) {
+                            unitSelect.value = "";
+                        }
+                    }
+
+                    branchSelect.addEventListener('change', filterUnits);
+
+                    if (branchSelect.value) {
+                        const selectedBranchId = branchSelect.value;
+                        allUnitOptions.forEach(option => {
+                            option.style.display = option.dataset.branchId === selectedBranchId ? '' : 'none';
+                        });
+
+                        const selectedOption = unitSelect.options[unitSelect.selectedIndex];
+                        if (selectedOption && selectedOption.value !== "" && selectedOption.dataset.branchId !== selectedBranchId) {
+                            unitSelect.value = "";
+                        }
+                    } else {
+                        allUnitOptions.forEach(option => option.style.display = 'none');
+                    }
+
+                    // Initial helper state
+                    filterUnits();
+                });
+            </script>
+
+            <div class="mb-3">
+                <label for="attachments" class="form-label">ເອກະສານຄັດຕິດ (PDF/JPG/PNG)</label>
+                <input type="file" name="attachments[]" id="attachments" class="form-control" accept=".pdf,.jpg,.jpeg,.png" multiple>
+                <small class="text-muted">ອັບໂຫຼດເອກະສານສະແດງຫຼັກຖານໃຫ້ Admin ກວດກ່ອນອະນຸມັດ</small>
+            </div>
 
             <div class="mb-3">
                 <label for="password" class="form-label">ລະຫັດຜ່ານ</label>
                 <input type="password" name="password" id="password" class="form-control" required>
             </div>
+
             <div class="mb-4">
                 <label for="password_confirmation" class="form-label">ຢັ້ງຢືນລະຫັດຜ່ານ</label>
                 <input type="password" name="password_confirmation" id="password_confirmation" class="form-control" required>
             </div>
-
 
             <button type="submit" class="btn-register mb-3">
                 <i class="bi bi-check-circle me-2"></i>

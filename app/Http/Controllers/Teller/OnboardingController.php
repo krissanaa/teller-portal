@@ -6,10 +6,12 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\TellerPortal\OnboardingRequest;
 use App\Models\TellerPortal\BranchUnit;
+use App\Models\TellerPortal\Branch;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
+use Illuminate\Validation\Rule;
 
 class OnboardingController extends Controller
 {
@@ -17,7 +19,9 @@ class OnboardingController extends Controller
     public function create()
     {
         $tellerProfile = Auth::user()->loadMissing(['branch', 'unit']);
-        return view('teller.requests.create', compact('tellerProfile'));
+        $branches = Branch::orderBy('BRANCH_NAME')->get();
+        $units = BranchUnit::orderBy('unit_name')->get();
+        return view('teller.requests.create', compact('tellerProfile', 'branches', 'units'));
     }
 
     // Ã°Å¸â€™Â¾ Ã Â¸Å¡Ã Â¸Â±Ã Â¸â„¢Ã Â¸â€”Ã Â¸Â¶Ã Â¸ÂÃ Â¸â€žÃ Â¸Â³Ã Â¸â€šÃ Â¸Â­Ã Â¹Æ’Ã Â¸Â«Ã Â¸Â¡Ã Â¹Ë†
@@ -31,13 +35,14 @@ class OnboardingController extends Controller
             'bank_account'      => 'nullable|string|max:255',
             'installation_date' => 'required|date',
             'attachments.*'     => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:5120',
+            'total_device_pos'  => 'required|integer|min:1',
         ]);
 
         $data['pos_serial'] = trim($data['pos_serial'] ?? '') ?: null;
 
-        $tellerProfile = Auth::user()->loadMissing(['branch', 'unit']);
-        $data['branch_id'] = $tellerProfile->branch_id;
-        $data['unit_id'] = $tellerProfile->unit_id;
+        // Auto-assign Branch and Unit from Teller Profile
+        $data['branch_id'] = Auth::user()->branch_id;
+        $data['unit_id'] = Auth::user()->unit_id;
 
         $this->ensureUnitMatchesBranch($data['branch_id'], $data['unit_id']);
 
@@ -108,9 +113,11 @@ class OnboardingController extends Controller
             'pos_serial'         => 'nullable|string|max:255',
             'bank_account'       => 'nullable|string|max:50',
             'installation_date'  => 'required|date',
+
             'attachments.*'      => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:5120',
             'delete_attachments' => 'array',
             'delete_attachments.*' => 'integer',
+            'total_device_pos'   => 'required|integer|min:1',
         ]);
         $data['pos_serial'] = trim($data['pos_serial'] ?? '') ?: null;
 
@@ -137,11 +144,7 @@ class OnboardingController extends Controller
 
         $data['attachments'] = !empty($existing) ? json_encode($existing) : null;
 
-        $tellerProfile = Auth::user()->loadMissing(['branch', 'unit']);
-        $data['branch_id'] = $tellerProfile->branch_id;
-        $data['unit_id'] = $tellerProfile->unit_id;
 
-        $this->ensureUnitMatchesBranch($data['branch_id'], $data['unit_id']);
 
         // Ã¢Å“â€¦ Ã Â¸Â­Ã Â¸Â±Ã Â¸â€ºÃ Â¹â‚¬Ã Â¸â€Ã Â¸â€¢Ã Â¸â€šÃ Â¹â€°Ã Â¸Â­Ã Â¸Â¡Ã Â¸Â¹Ã Â¸Â¥
         $record->update($data);
@@ -163,7 +166,7 @@ class OnboardingController extends Controller
 
         return redirect()
             ->route('teller.requests.show', $record->id)
-            ->with('success', 'ບັນທຶກການແກ້ໄຂສຳເລັດ');
+            ->with('success', 'ແກ້ໄຂສຳເລັດ');
     }
 
     // Ã°Å¸â€˜ÂÃ¯Â¸Â Ã Â¹ÂÃ Â¸ÂªÃ Â¸â€Ã Â¸â€¡Ã Â¸Â£Ã Â¸Â²Ã Â¸Â¢Ã Â¸Â¥Ã Â¸Â°Ã Â¹â‚¬Ã Â¸Â­Ã Â¸ÂµÃ Â¸Â¢Ã Â¸â€Ã Â¸â€žÃ Â¸Â³Ã Â¸â€šÃ Â¸Â­

@@ -319,35 +319,107 @@
             background: white;
         }
 
+        /* 🔘 Standardized Buttons (Matches Admin Theme) */
         .btn-primary {
             background: linear-gradient(90deg, var(--apb-primary) 0%, var(--apb-secondary) 100%);
             border: none;
             color: white;
-            padding: 10px 22px;
+            padding: 8px 16px;
             border-radius: 8px;
             font-weight: 600;
             transition: all 0.3s ease;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
 
         .btn-primary:hover {
             transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(45, 95, 63, 0.3);
+            box-shadow: 0 4px 12px rgba(20, 184, 166, 0.3);
             background: linear-gradient(90deg, var(--apb-secondary) 0%, var(--apb-dark) 100%);
+            color: white;
         }
 
         .btn-secondary {
-            background: #6c757d;
+            background: #64748b;
             border: none;
             color: white;
-            padding: 10px 22px;
+            padding: 8px 16px;
             border-radius: 8px;
             font-weight: 600;
             transition: all 0.3s ease;
         }
 
         .btn-secondary:hover {
-            background: #5a6268;
+            background: #475569;
             transform: translateY(-2px);
+            color: white;
+        }
+
+        .btn-success {
+            background: linear-gradient(90deg, #10b981 0%, #059669 100%);
+            border: none;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-success:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+            background: linear-gradient(90deg, #059669 0%, #047857 100%);
+            color: white;
+        }
+
+        .btn-danger {
+            background: linear-gradient(90deg, #ef4444 0%, #b91c1c 100%);
+            border: none;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-danger:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+            background: linear-gradient(90deg, #b91c1c 0%, #991b1b 100%);
+            color: white;
+        }
+
+        .btn-warning {
+            background: linear-gradient(90deg, #f59e0b 0%, #d97706 100%);
+            border: none;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-warning:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+            background: linear-gradient(90deg, #d97706 0%, #b45309 100%);
+            color: white;
+        }
+
+        .btn-info {
+            background: linear-gradient(90deg, #0ea5e9 0%, #0284c7 100%);
+            border: none;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-info:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(14, 165, 233, 0.3);
+            background: linear-gradient(90deg, #0284c7 0%, #0369a1 100%);
+            color: white;
         }
 
         .logout-btn {
@@ -712,16 +784,109 @@
         </div>
     </div>
     <?php endif; ?>
-    <?php if(session('success')): ?>
-    <div class="toast align-items-center text-bg-success border-0 position-fixed bottom-0 end-0 m-3 show" role="alert">
-        <div class="d-flex">
-            <div class="toast-body">
-                <i class="bi bi-check-circle-fill me-2"></i><?php echo e(session('success')); ?>
 
+    <?php if(session('success')): ?>
+    <!-- Clean Auto-Closing Success Popup -->
+    <div class="success-overlay" id="successOverlay">
+        <div class="success-card">
+            <div class="success-icon-wrapper">
+                <div class="success-check-circle">
+                    <i class="bi bi-check-lg"></i>
+                </div>
             </div>
-            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+
+            <h4 class="success-title">ສຳເລັດ</h4>
         </div>
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(function() {
+                const overlay = document.getElementById('successOverlay');
+                if (overlay) {
+                    overlay.style.opacity = '0';
+                    overlay.style.transition = 'opacity 0.5s ease';
+                    setTimeout(() => overlay.remove(), 500);
+                }
+            }, 1500); // Auto close after 1.5 seconds
+        });
+    </script>
+
+    <style>
+        .success-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(4px);
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        .success-card {
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .success-icon-wrapper {
+            margin-bottom: 1.5rem;
+            display: flex;
+            justify-content: center;
+        }
+
+        .success-check-circle {
+            width: 90px;
+            height: 90px;
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 3.5rem;
+            box-shadow: 0 10px 25px -5px rgba(16, 185, 129, 0.4);
+            animation: scaleIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) 0.2s backwards;
+        }
+
+        .success-title {
+            color: #ffffffff;
+            font-weight: 800;
+            margin: 0;
+            font-size: 1.8rem;
+            letter-spacing: -0.5px;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px) scale(0.95);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        @keyframes scaleIn {
+            from {
+                opacity: 0;
+                transform: scale(0.5) rotate(-45deg);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1) rotate(0);
+            }
+        }
+    </style>
     <?php endif; ?>
 
     <?php if($errors->any()): ?>
@@ -773,18 +938,54 @@
                             <input type="password" name="new_password_confirmation" class="form-control" required placeholder="ຢືນຢັນລະຫັດຜ່ານໃໝ່">
                         </div>
                     </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                            ❌ ຍົກເລີກ
+                    <div class="modal-footer border-0 pb-4 px-4">
+                        <button type="button" class="btn btn-secondary-custom" data-bs-dismiss="modal">
+                            <i class="bi bi-x-circle me-1"></i> ຍົກເລີກ
                         </button>
-                        <button type="submit" class="btn btn-primary">
-                            ✅ ບັນທຶກ
+                        <button type="submit" class="btn btn-success-custom">
+                            <i class="bi bi-check-circle me-1"></i> ບັນທຶກ
                         </button>
                     </div>
                 </form>
             </div>
         </div>
     </div>
+
+    <style>
+        .btn-success-custom {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            border: none;
+            color: white;
+            padding: 10px 24px;
+            border-radius: 10px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25);
+        }
+
+        .btn-success-custom:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(16, 185, 129, 0.35);
+            color: white;
+            background: linear-gradient(135deg, #059669 0%, #047857 100%);
+        }
+
+        .btn-secondary-custom {
+            background: #64748b;
+            border: none;
+            color: white;
+            padding: 10px 24px;
+            border-radius: 10px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-secondary-custom:hover {
+            background: #475569;
+            transform: translateY(-2px);
+            color: white;
+        }
+    </style>
 
     <!-- Profile Setup Modal -->
     <div class="modal fade profile-id-modal" id="profileOverviewModal" tabindex="-1" aria-labelledby="profileOverviewLabel" aria-hidden="true">
@@ -1107,5 +1308,4 @@ unset($__errorArgs, $__bag); ?>"
 
 </body>
 
-</html>
-<?php /**PATH /var/www/html/resources/views/layouts/teller.blade.php ENDPATH**/ ?>
+</html><?php /**PATH /var/www/html/resources/views/layouts/teller.blade.php ENDPATH**/ ?>

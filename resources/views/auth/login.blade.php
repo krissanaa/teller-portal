@@ -36,7 +36,7 @@
         content: '';
         position: absolute;
         inset: 0;
-        background: radial-gradient(circle at 50% 40%, rgba(255,255,255,0.12), transparent 50%);
+        background: radial-gradient(circle at 50% 40%, rgba(255, 255, 255, 0.12), transparent 50%);
         mix-blend-mode: screen;
         pointer-events: none;
     }
@@ -44,10 +44,11 @@
     .background-vignette {
         position: fixed;
         inset: 0;
-        background: radial-gradient(circle at 50% 45%, rgba(0,0,0,0) 0%, rgba(0,0,0,0.07) 55%, rgba(0,0,0,0.18) 100%);
+        background: radial-gradient(circle at 50% 45%, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.07) 55%, rgba(0, 0, 0, 0.18) 100%);
         pointer-events: none;
         z-index: 1;
     }
+
     /* Animated Tech Background */
     .tech-background {
         position: fixed;
@@ -71,8 +72,13 @@
     }
 
     @keyframes gridMove {
-        0% { transform: translate(0, 0); }
-        100% { transform: translate(50px, 50px); }
+        0% {
+            transform: translate(0, 0);
+        }
+
+        100% {
+            transform: translate(50px, 50px);
+        }
     }
 
     .floating-shapes {
@@ -122,8 +128,17 @@
     }
 
     @keyframes float {
-        0%, 100% { transform: translateY(0) rotate(0deg); opacity: 0.3; }
-        50% { transform: translateY(-30px) rotate(180deg); opacity: 0.6; }
+
+        0%,
+        100% {
+            transform: translateY(0) rotate(0deg);
+            opacity: 0.3;
+        }
+
+        50% {
+            transform: translateY(-30px) rotate(180deg);
+            opacity: 0.6;
+        }
     }
 
     .particles {
@@ -141,21 +156,69 @@
         animation: particleFloat 10s infinite ease-in-out;
     }
 
-    .particle:nth-child(1) { left: 10%; animation-delay: 0s; }
-    .particle:nth-child(2) { left: 20%; animation-delay: 1s; }
-    .particle:nth-child(3) { left: 30%; animation-delay: 2s; }
-    .particle:nth-child(4) { left: 40%; animation-delay: 3s; }
-    .particle:nth-child(5) { left: 50%; animation-delay: 4s; }
-    .particle:nth-child(6) { left: 60%; animation-delay: 5s; }
-    .particle:nth-child(7) { left: 70%; animation-delay: 6s; }
-    .particle:nth-child(8) { left: 80%; animation-delay: 7s; }
-    .particle:nth-child(9) { left: 90%; animation-delay: 8s; }
+    .particle:nth-child(1) {
+        left: 10%;
+        animation-delay: 0s;
+    }
+
+    .particle:nth-child(2) {
+        left: 20%;
+        animation-delay: 1s;
+    }
+
+    .particle:nth-child(3) {
+        left: 30%;
+        animation-delay: 2s;
+    }
+
+    .particle:nth-child(4) {
+        left: 40%;
+        animation-delay: 3s;
+    }
+
+    .particle:nth-child(5) {
+        left: 50%;
+        animation-delay: 4s;
+    }
+
+    .particle:nth-child(6) {
+        left: 60%;
+        animation-delay: 5s;
+    }
+
+    .particle:nth-child(7) {
+        left: 70%;
+        animation-delay: 6s;
+    }
+
+    .particle:nth-child(8) {
+        left: 80%;
+        animation-delay: 7s;
+    }
+
+    .particle:nth-child(9) {
+        left: 90%;
+        animation-delay: 8s;
+    }
 
     @keyframes particleFloat {
-        0% { transform: translateY(100vh); opacity: 0; }
-        10% { opacity: 1; }
-        90% { opacity: 1; }
-        100% { transform: translateY(-100px); opacity: 0; }
+        0% {
+            transform: translateY(100vh);
+            opacity: 0;
+        }
+
+        10% {
+            opacity: 1;
+        }
+
+        90% {
+            opacity: 1;
+        }
+
+        100% {
+            transform: translateY(-100px);
+            opacity: 0;
+        }
     }
 
     /* Login Card */
@@ -163,47 +226,18 @@
         position: relative;
         z-index: 10;
         width: 100%;
-<<<<<<< ours
-<<<<<<< ours
-<<<<<<< ours
-        max-width: 520px;
-=======
         max-width: 480px;
->>>>>>> theirs
-=======
-        max-width: 450px;
->>>>>>> theirs
         padding: clamp(15px, 5vw, 20px);
         margin: clamp(20px, 5vh, 40px) auto;
     }
 
     .login-card {
-<<<<<<< ours
-        background: linear-gradient(180deg, rgba(255, 255, 255, 0.96) 0%, rgba(249, 252, 251, 0.92) 100%);
-        backdrop-filter: blur(18px);
-        border-radius: clamp(16px, 4vw, 22px);
-        padding: clamp(28px, 6vw, 44px);
-        box-shadow: 0 24px 70px rgba(0, 0, 0, 0.35), 0 1px 0 rgba(255, 255, 255, 0.6);
-        border: 1px solid rgba(255, 255, 255, 0.22);
-=======
-        max-width: 450px;
-        padding: clamp(15px, 5vw, 20px);
-        margin: clamp(20px, 5vh, 40px) auto;
-    }
-
-    .login-card {
-=======
->>>>>>> theirs
         background: rgba(255, 255, 255, 0.98);
         backdrop-filter: blur(20px);
         border-radius: clamp(12px, 4vw, 20px);
         padding: clamp(25px, 6vw, 40px);
         box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
         border: 1px solid rgba(255, 255, 255, 0.2);
-<<<<<<< ours
->>>>>>> theirs
-=======
->>>>>>> theirs
         animation: cardSlideUp 0.6s ease-out;
         width: 100%;
     }
@@ -213,6 +247,7 @@
             opacity: 0;
             transform: translateY(50px);
         }
+
         to {
             opacity: 1;
             transform: translateY(0);
@@ -242,7 +277,7 @@
     }
 
     .logo-icon img {
-        width:150%;
+        width: 150%;
         height: 150%;
         object-fit: contain;
         padding: 10px;
@@ -254,8 +289,15 @@
     }
 
     @keyframes logoFloat {
-        0%, 100% { transform: translateY(0); }
-        50% { transform: translateY(-10px); }
+
+        0%,
+        100% {
+            transform: translateY(0);
+        }
+
+        50% {
+            transform: translateY(-10px);
+        }
     }
 
     .login-title {
@@ -340,9 +382,8 @@
         width: min(260px, 65vw);
         aspect-ratio: 1 / 1;
         border-radius: 999px;
-        background-image:
-            linear-gradient(135deg, rgba(6, 18, 11, 0.82), rgba(9, 31, 19, 0.88)),
-            url('{{ asset('images/APB-logo.jpeg') }}');
+        background-image: linear-gradient(135deg, rgba(6, 18, 11, 0.82), rgba(9, 31, 19, 0.88)),
+        url('{{ asset(' images/APB-logo.jpeg') }}');
         background-size: cover;
         background-position: center;
         border: 1px solid rgba(255, 255, 255, 0.12);
@@ -501,6 +542,7 @@
             opacity: 0;
             transform: translateY(-20px);
         }
+
         to {
             opacity: 1;
             transform: translateY(0);
@@ -700,14 +742,14 @@
 
         {{-- ✅ Show errors --}}
         @if($errors->any())
-            <div class="alert alert-danger">
-                <strong><i class="bi bi-exclamation-triangle me-2"></i>ເກີດຂໍ້ຜິດພາດ:</strong>
-                <ul class="mb-0 mt-2">
-                    @foreach($errors->all() as $err)
-                        <li>{{ $err }}</li>
-                    @endforeach
-                </ul>
-            </div>
+        <div class="alert alert-danger">
+            <strong><i class="bi bi-exclamation-triangle me-2"></i>ເກີດຂໍ້ຜິດພາດ:</strong>
+            <ul class="mb-0 mt-2">
+                @foreach($errors->all() as $err)
+                <li>{{ $err }}</li>
+                @endforeach
+            </ul>
+        </div>
         @endif
 
         {{-- ✅ Login Form --}}
@@ -719,7 +761,7 @@
                     <i class="bi bi-envelope me-1"></i> ລະຫັດພະນັກງານ
                 </label>
                 <input type="teller_id" name="teller_id" id="teller_id" value="{{ old('teller_id') }}"
-                       class="form-control" required autofocus placeholder="">
+                    class="form-control" required autofocus placeholder="">
             </div>
 
             <div class="mb-4">
@@ -727,7 +769,7 @@
                     <i class="bi bi-lock me-1"></i> ລະຫັດຜ່ານ
                 </label>
                 <input type="password" name="password" id="password"
-                       class="form-control" required placeholder="">
+                    class="form-control" required placeholder="">
             </div>
 
             <button type="submit" class="btn btn-login w-100 mb-3">
@@ -752,53 +794,56 @@
 {{-- Success Modal --}}
 @if(session('success'))
 <script>
-document.addEventListener('DOMContentLoaded', () => {
-    const msg = "{{ session('success') }}";
-    const modalHTML = `
+    document.addEventListener('DOMContentLoaded', () => {
+        const msg = "{{ session('success') }}";
+        const modalHTML = `
     <div class="success-circle-overlay" id="registerSuccessModal">
         <div class="success-circle-card">
 
             <div class="success-circle-text">
-
-                <p class="success-circle-message"><strong>${msg}</strong></p>
-                <p class="success-circle-note">
+                <h3 class="success-circle-message mb-2" style="font-size: 1.5rem; font-weight: 700;">${msg}</h3>
+                <p class="success-circle-note" style="font-size: 0.9rem; opacity: 0.9;">
                     <i class="bi bi-info-circle me-1"></i>
                     ກະລຸນາລໍຖ້າການອະນຸມັດຈາກ Admin ກ່ອນເຂົ້າສູ່ລະບົບ
                 </p>
             </div>
         </div>
     </div>`;
-    document.body.insertAdjacentHTML('beforeend', modalHTML);
-    const overlay = document.getElementById('registerSuccessModal');
+        document.body.insertAdjacentHTML('beforeend', modalHTML);
+        const overlay = document.getElementById('registerSuccessModal');
 
-    const hideOverlay = () => overlay.classList.remove('show');
-    overlay.addEventListener('click', (event) => {
-        if (event.target === overlay) {
-            hideOverlay();
-        }
+        const hideOverlay = () => overlay.classList.remove('show');
+        overlay.addEventListener('click', (event) => {
+            if (event.target === overlay) {
+                hideOverlay();
+            }
+        });
+
+        requestAnimationFrame(() => {
+            overlay.classList.add('show');
+            // Auto close after 1 second
+            setTimeout(hideOverlay, 2000);
+        });
+
+        overlay.addEventListener('transitionend', (event) => {
+            if (event.propertyName === 'opacity' && !overlay.classList.contains('show')) {
+                overlay.remove();
+            }
+        });
     });
-
-    requestAnimationFrame(() => overlay.classList.add('show'));
-
-    overlay.addEventListener('transitionend', (event) => {
-        if (event.propertyName === 'opacity' && !overlay.classList.contains('show')) {
-            overlay.remove();
-        }
-    });
-});
 </script>
 @endif
 
 <script>
-// Defer heavy background image until after first paint to improve LCP
-window.addEventListener('load', function() {
-    const bg = document.querySelector('.background-hero');
-    if (bg) {
-        bg.style.backgroundImage = "linear-gradient(135deg, rgba(0,0,0,0.25), rgba(0,0,0,0.15)), url('{{ asset('images/apbBG.jpeg') }}')";
-        bg.style.backgroundSize = 'cover';
-        bg.style.backgroundRepeat = 'no-repeat';
-        bg.style.backgroundPosition = 'center center';
-    }
-});
+    // Defer heavy background image until after first paint to improve LCP
+    window.addEventListener('load', function() {
+        const bg = document.querySelector('.background-hero');
+        if (bg) {
+            bg.style.backgroundImage = "linear-gradient(135deg, rgba(0,0,0,0.25), rgba(0,0,0,0.15)), url('{{ asset('images/apbBG.jpeg') }}')";
+            bg.style.backgroundSize = 'cover';
+            bg.style.backgroundRepeat = 'no-repeat';
+            bg.style.backgroundPosition = 'center center';
+        }
+    });
 </script>
 @endsection

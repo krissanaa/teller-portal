@@ -372,12 +372,12 @@
                     </td>
                     <td>
                         <div class="action-buttons">
-                            <a href="{{ route('admin.branches.edit', $b->id) }}" class="btn-action edit text-decoration-none">
+                            <a href="{{ route('admin.branches.edit', $b->id) }}" class="btn btn-sm btn-warning text-decoration-none">
                                 <i class="bi bi-pencil"></i> Edit
                             </a>
                             <form method="POST" action="{{ route('admin.branches.destroy', $b->id) }}" class="d-inline">
                                 @csrf @method('DELETE')
-                                <button class="btn-action delete" onclick="return confirm('Delete this branch?')">
+                                <button class="btn btn-sm btn-danger" onclick="return confirm('Delete this branch?')">
                                     <i class="bi bi-trash"></i> Delete
                                 </button>
                             </form>
@@ -419,7 +419,7 @@
                                 <input type="text" name="unit_name" class="form-control form-control-sm" placeholder="" required>
                             </div>
                             <div class="col-md-3">
-                                <button type="submit" class="btn btn-sm btn-success w-100" style="background: var(--apb-primary); border: none;">
+                                <button type="submit" class="btn btn-sm btn-primary w-100">
                                     <i class="bi bi-plus-circle"></i> ເພີ່ມໜ່ວຍບໍລິການ
                                 </button>
                             </div>
@@ -443,7 +443,7 @@
     @if($branches->hasPages())
     <div class="position-relative mt-4 p-4 border-top">
         <div class="position-absolute top-50 start-50 translate-middle" style="z-index: 1;">
-            <a href="{{ route('admin.dashboard') }}" class="btn btn-outline-danger">
+            <a href="{{ route('admin.dashboard') }}" class="btn btn-secondary">
                 <i class="bi bi-house"></i> Back to Home
             </a>
         </div>
@@ -458,7 +458,7 @@
     </div>
     @else
     <div class="text-center mt-4 p-4 border-top">
-        <a href="{{ route('admin.dashboard') }}" class="btn btn-outline-danger">
+        <a href="{{ route('admin.dashboard') }}" class="btn btn-secondary">
             <i class="bi bi-house"></i> Back to Home
         </a>
     </div>

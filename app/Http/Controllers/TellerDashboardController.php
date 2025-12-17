@@ -15,17 +15,29 @@ class TellerDashboardController extends Controller
 {
     public function index(Request $request)
     {
-        $tellerId = Auth::user()->teller_id;
+        $user = Auth::user();
+        $tellerId = $user->teller_id;
         $search = trim((string) $request->query('search', ''));
 
-        $requestsQuery = OnboardingRequest::where('teller_id', $tellerId)
-            ->with('branch')
-            ->orderByRaw("CASE WHEN approval_status = 'rejected' THEN 0 ELSE 1 END")
+        // Admin: all pending/rejected across all branches. Branch Admin: branch-scoped. Others: own records.
+        if ($user->isAdmin()) {
+            $requestsQuery = OnboardingRequest::visibleTo($user)
+                ->with('branch')
+                ->whereIn('approval_status', ['pending', 'rejected']);
+        } elseif ($user->isBranchAdmin()) {
+            $requestsQuery = OnboardingRequest::visibleTo($user)->with('branch');
+        } else {
+            $requestsQuery = OnboardingRequest::ownedBy($user)->with('branch');
+        }
+
+        $requestsQuery->orderByRaw("CASE WHEN approval_status = 'rejected' THEN 0 ELSE 1 END")
             ->orderByDesc('updated_at');
 
-        // Default: show only pending + rejected; if searching, include all statuses and search across key fields.
+        // Default: tellers/unit heads see pending+rejected; branch admin sees all unless searching.
         if ($search === '') {
-            $requestsQuery->whereIn('approval_status', ['pending', 'rejected']);
+            if (!$user->isBranchAdmin()) {
+                $requestsQuery->whereIn('approval_status', ['pending', 'rejected']);
+            }
         } else {
             $requestsQuery->where(function ($q) use ($search) {
                 $like = '%' . $search . '%';

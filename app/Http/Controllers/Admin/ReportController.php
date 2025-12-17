@@ -17,18 +17,29 @@ class ReportController extends Controller
 {
     public function index(Request $request)
     {
+        $user = $request->user();
         // Get Data with Pagination (10 per page)
-        $query = $this->applyFilters(OnboardingRequest::with(['branch', 'unit', 'teller']), $request);
+        $query = $this->applyFilters(
+            OnboardingRequest::visibleTo($user)->with(['branch', 'unit', 'teller']),
+            $request
+        );
 
         $data = $query->orderByDesc('created_at')->paginate(10)->withQueryString();
 
         // Dropdown Data - Optimized
         // Select only necessary columns and alias for view compatibility
-        $branches = Branch::select('id', 'BRANCH_NAME as name')->orderBy('BRANCH_NAME')->get();
-        $units    = BranchUnit::select('id', 'unit_name as name')->orderBy('unit_name')->get();
+        $branches = Branch::select('id', 'BRANCH_NAME as name')
+            ->when($user && $user->isBranchAdmin(), fn($q) => $q->where('id', $user->branch_id))
+            ->orderBy('BRANCH_NAME')
+            ->get();
+        $units    = BranchUnit::select('id', 'unit_name as name')
+            ->when($user && $user->isBranchAdmin(), fn($q) => $q->where('branch_id', $user->branch_id))
+            ->orderBy('unit_name')
+            ->get();
 
         // Only load users with 'teller' role
-        $tellers  = User::where('role', 'teller')
+        $tellers  = User::where('role', User::ROLE_TELLER)
+            ->when($user && $user->isBranchAdmin(), fn($q) => $q->where('branch_id', $user->branch_id))
             ->select('id', 'name', 'teller_id')
             ->orderBy('name')
             ->get();
@@ -69,13 +80,24 @@ class ReportController extends Controller
     // Helper to get filtered data for exports (no pagination)
     private function getFilteredData(Request $request)
     {
-        return $this->applyFilters(OnboardingRequest::with(['branch', 'unit', 'teller']), $request)
+        return $this->applyFilters(
+            OnboardingRequest::visibleTo($request->user())->with(['branch', 'unit', 'teller']),
+            $request
+        )
             ->orderByDesc('created_at')
             ->get();
     }
 
     private function applyFilters($query, Request $request)
     {
+        $user = $request->user();
+
+        $branchFilter = $user && $user->isBranchAdmin()
+            ? $user->branch_id
+            : $request->input('branch_id');
+
+        $unitFilter = $request->input('unit_id');
+
         if ($search = $request->input('search')) {
             $like = "%{$search}%";
             $query->where(function ($q) use ($like) {
@@ -115,12 +137,12 @@ class ReportController extends Controller
             $query->where('approval_status', $status);
         }
 
-        if ($id = $request->input('branch_id')) {
-            $query->where('branch_id', $id);
+        if ($branchFilter) {
+            $query->where('branch_id', $branchFilter);
         }
 
-        if ($id = $request->input('unit_id')) {
-            $query->where('unit_id', $id);
+        if ($unitFilter) {
+            $query->where('unit_id', $unitFilter);
         }
 
         if ($id = $request->input('teller_id')) {

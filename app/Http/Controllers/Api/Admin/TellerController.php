@@ -17,9 +17,9 @@ class TellerController extends Controller
 {
     public function index(Request $request)
     {
-        $query = User::query()
+        $query = User::manageableBy($request->user())
             ->with(['branch', 'unit'])
-            ->where('role', 'teller')
+            ->where('role', User::ROLE_TELLER)
             ->orderByDesc('created_at');
 
         if ($search = $request->query('search')) {
@@ -45,6 +45,7 @@ class TellerController extends Controller
 
     public function store(Request $request)
     {
+        $actor = $request->user();
         $data = $request->validate([
             'teller_id' => ['required', 'string', 'max:10', 'unique:users,teller_id'],
             'name' => ['required', 'string', 'max:100'],
@@ -56,11 +57,15 @@ class TellerController extends Controller
             'unit_id' => ['nullable', 'integer', $this->unitExistsRule()],
         ]);
 
+        if ($actor->isBranchAdmin()) {
+            $data['branch_id'] = $actor->branch_id;
+        }
+
         $this->ensureUnitMatchesBranch($data['branch_id'] ?? null, $data['unit_id'] ?? null);
 
         $payload = $data;
-        $payload['role'] = 'teller';
-        $payload['status'] = $payload['status'] ?? 'pending';
+        $payload['role'] = User::ROLE_TELLER;
+        $payload['status'] = $payload['status'] ?? User::STATUS_PENDING;
         $payload['password'] = Hash::make($payload['password']);
 
         $teller = User::create($payload);
@@ -74,9 +79,10 @@ class TellerController extends Controller
             ->setStatusCode(201);
     }
 
-    public function show(User $teller)
+    public function show(Request $request, User $teller)
     {
         $this->ensureTeller($teller);
+        $this->guardManageable($request->user(), $teller);
 
         return new UserResource($teller->load(['branch', 'unit']));
     }
@@ -84,6 +90,7 @@ class TellerController extends Controller
     public function update(Request $request, User $teller)
     {
         $this->ensureTeller($teller);
+        $this->guardManageable($request->user(), $teller);
 
         $data = $request->validate([
             'teller_id' => ['required', 'string', 'max:10', Rule::unique('users', 'teller_id')->ignore($teller->id)],
@@ -95,6 +102,10 @@ class TellerController extends Controller
             'branch_id' => ['nullable', 'integer', $this->branchExistsRule()],
             'unit_id' => ['nullable', 'integer', $this->unitExistsRule()],
         ]);
+
+        if ($request->user()->isBranchAdmin()) {
+            $data['branch_id'] = $request->user()->branch_id;
+        }
 
         $this->ensureUnitMatchesBranch($data['branch_id'] ?? null, $data['unit_id'] ?? null);
 
@@ -118,6 +129,7 @@ class TellerController extends Controller
     public function destroy(Request $request, User $teller)
     {
         $this->ensureTeller($teller);
+        $this->guardManageable($request->user(), $teller);
 
         $name = $teller->name;
         $teller->delete();
@@ -132,6 +144,7 @@ class TellerController extends Controller
     public function updateStatus(Request $request, User $teller)
     {
         $this->ensureTeller($teller);
+        $this->guardManageable($request->user(), $teller);
 
         $data = $request->validate([
             'status' => ['required', Rule::in(['pending', 'approved', 'rejected'])],
@@ -149,6 +162,21 @@ class TellerController extends Controller
         if ($user->role !== 'teller') {
             abort(404);
         }
+    }
+
+    protected function guardManageable(User $actor, User $target): void
+    {
+        if ($actor->isAdmin()) {
+            return;
+        }
+
+        if ($actor->isBranchAdmin()
+            && $target->role === User::ROLE_TELLER
+            && (int) $target->branch_id === (int) $actor->branch_id) {
+            return;
+        }
+
+        abort(403);
     }
 
     protected function ensureUnitMatchesBranch(?int $branchId, ?int $unitId): void

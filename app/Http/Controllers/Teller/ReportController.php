@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\TellerPortal\OnboardingRequest;
 use App\Models\TellerPortal\Branch;
+use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 
@@ -14,15 +15,33 @@ class ReportController extends Controller
     public function index(Request $request)
     {
         $search = $request->input('search');
-        $status = $request->input('status');
+        $currentUser = Auth::user();
+
+        // Branch Admins see ALL statuses by default (Approved, Pending, Rejected)
+        // Others default to 'approved'
+        $defaultStatus = $currentUser->isBranchAdmin() ? null : 'approved';
+        $status = $request->input('status', $defaultStatus);
+
         $year = $request->input('year');
         $month = $request->input('month');
         $day = $request->input('day');
+        $endDay = $request->input('end_day');
         $branchId = $request->input('branch_id');
         $unitId = $request->input('unit_id');
+        $tellerId = $request->input('teller_id');
+        $order = $request->input('order', 'desc') === 'asc' ? 'asc' : 'desc';
 
-        // RBAC: Use accessibleBy scope
-        $query = OnboardingRequest::accessibleBy(Auth::user())
+        if ($currentUser->isBranchAdmin()) {
+            // Lock branch to the admin's branch
+            $branchId = $currentUser->branch_id;
+        } else {
+            $branchId = null;
+            $unitId = null;
+            $tellerId = null;
+        }
+
+        // RBAC: Use visibleTo scope
+        $query = OnboardingRequest::visibleTo(Auth::user())
             ->select([
                 'id',
                 'teller_id', // Needed for teller name
@@ -41,7 +60,7 @@ class ReportController extends Controller
                 'unit:id,branch_id,unit_name,unit_code',
                 'teller', // Load full teller model to ensure teller_id is available
             ])
-            ->orderByDesc('created_at');
+            ->orderBy('created_at', $order);
 
         if ($search) {
             $query->where(function ($q) use ($search) {
@@ -86,26 +105,43 @@ class ReportController extends Controller
             $query->whereDate('created_at', $day);
         }
 
-        if ($branchId) {
-            $query->where('branch_id', $branchId);
+        if ($endDay) {
+            $query->whereDate('created_at', '<=', $endDay);
         }
 
-        if ($unitId) {
-            $query->where('unit_id', $unitId);
+        if ($currentUser->isBranchAdmin()) {
+            $query->where('branch_id', $branchId);
+
+            if ($unitId === 'all') {
+                // Show ALL records (no unit filter applied)
+            } elseif ($unitId) {
+                $query->where('unit_id', $unitId);
+            } else {
+                // Default: Show Only Direct Branch (No Unit)
+                $query->whereNull('unit_id');
+            }
+
+            if ($tellerId && $tellerId !== 'all') {
+                $query->where('teller_id', $tellerId);
+            }
         }
 
         $data = $query->paginate(10)->withQueryString();
 
-        $statusCounts = OnboardingRequest::where('teller_id', Auth::user()->teller_id)
-            ->selectRaw('approval_status, COUNT(*) as total')
-            ->groupBy('approval_status')
-            ->pluck('total', 'approval_status');
+        $statusCounts = $this->statusCountsForUser(Auth::user(), $unitId, $tellerId);
 
         $cache = Cache::store('file');
 
-        $years = $cache->remember('teller_report_years_' . Auth::user()->teller_id, 60 * 60 * 24, function () {
-            return OnboardingRequest::where('teller_id', Auth::user()->teller_id)
-                ->selectRaw('YEAR(created_at) as year')
+        $yearsCacheKey = Auth::user()->isBranchAdmin()
+            ? 'teller_report_years_branch_' . Auth::user()->branch_id
+            : 'teller_report_years_' . Auth::user()->teller_id;
+
+        $years = $cache->remember($yearsCacheKey, 60 * 60 * 24, function () {
+            $query = Auth::user()->isBranchAdmin()
+                ? OnboardingRequest::where('branch_id', Auth::user()->branch_id)
+                : OnboardingRequest::where('teller_id', Auth::user()->teller_id);
+
+            return $query->selectRaw('YEAR(created_at) as year')
                 ->distinct()
                 ->orderByDesc('year')
                 ->pluck('year')
@@ -119,6 +155,23 @@ class ReportController extends Controller
                 ->get();
         });
 
+        // Filter Tellers based on selected Unit Scope
+        $tellersQuery = User::whereIn('role', [User::ROLE_TELLER, User::ROLE_TELLER_UNIT])
+            ->where('branch_id', Auth::user()->branch_id);
+
+        if ($unitId === 'all') {
+            // Show all tellers in branch
+        } elseif ($unitId) {
+            $tellersQuery->where('unit_id', $unitId);
+        } else {
+            // Default: Only direct branch tellers
+            $tellersQuery->whereNull('unit_id');
+        }
+
+        $tellers = Auth::user()->isBranchAdmin()
+            ? $tellersQuery->orderBy('name')->get(['id', 'name', 'teller_id'])
+            : collect([Auth::user()]);
+
         return view('teller.report.index', [
             'data' => $data,
             'search' => $search,
@@ -126,11 +179,46 @@ class ReportController extends Controller
             'year' => $year,
             'month' => $month,
             'day' => $day,
+            'endDay' => $endDay,
             'years' => $years,
             'branchId' => $branchId,
             'unitId' => $unitId,
+            'tellerId' => $tellerId,
+            'order' => $order,
             'branches' => $branches,
+            'tellers' => $tellers,
             'statusCounts' => $statusCounts,
         ]);
+    }
+
+    protected function statusCountsForUser($user, $unitId = null, $tellerId = null)
+    {
+        if ($user->isBranchAdmin()) {
+            $query = OnboardingRequest::where('branch_id', $user->branch_id);
+
+            // Apply Unit Filter
+            if ($unitId === 'all') {
+                // No filter (Show All)
+            } elseif ($unitId) {
+                $query->where('unit_id', $unitId);
+            } else {
+                // Default: Direct Branch
+                $query->whereNull('unit_id');
+            }
+
+            // Apply Teller Filter
+            if ($tellerId && $tellerId !== 'all') {
+                $query->where('teller_id', $tellerId);
+            }
+
+            return $query->selectRaw('approval_status, COUNT(*) as total')
+                ->groupBy('approval_status')
+                ->pluck('total', 'approval_status');
+        }
+
+        return OnboardingRequest::where('teller_id', $user->teller_id)
+            ->selectRaw('approval_status, COUNT(*) as total')
+            ->groupBy('approval_status')
+            ->pluck('total', 'approval_status');
     }
 }

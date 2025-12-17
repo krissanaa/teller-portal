@@ -91,7 +91,7 @@ class OnboardingController extends Controller
     // Ã°Å¸Â§Â° Ã Â¸Å¸Ã Â¸Â­Ã Â¸Â£Ã Â¹Å’Ã Â¸Â¡Ã Â¹ÂÃ Â¸ÂÃ Â¹â€°Ã Â¹â€žÃ Â¸â€š
     public function edit($id)
     {
-        $request = OnboardingRequest::accessibleBy(Auth::user())
+        $request = OnboardingRequest::ownedBy(Auth::user())
             ->where('id', $id)
             ->firstOrFail();
 
@@ -103,7 +103,7 @@ class OnboardingController extends Controller
     // Ã°Å¸â€â€ž Ã Â¸Â­Ã Â¸Â±Ã Â¸â€ºÃ Â¹â‚¬Ã Â¸â€Ã Â¸â€¢Ã Â¸â€šÃ Â¹â€°Ã Â¸Â­Ã Â¸Â¡Ã Â¸Â¹Ã Â¸Â¥
     public function update(Request $request, $id)
     {
-        $record = OnboardingRequest::accessibleBy(Auth::user())->findOrFail($id);
+        $record = OnboardingRequest::ownedBy(Auth::user())->findOrFail($id);
         $wasRejected = $record->approval_status === 'rejected';
 
         $data = $request->validate([
@@ -172,7 +172,7 @@ class OnboardingController extends Controller
     // Ã°Å¸â€˜ÂÃ¯Â¸Â Ã Â¹ÂÃ Â¸ÂªÃ Â¸â€Ã Â¸â€¡Ã Â¸Â£Ã Â¸Â²Ã Â¸Â¢Ã Â¸Â¥Ã Â¸Â°Ã Â¹â‚¬Ã Â¸Â­Ã Â¸ÂµÃ Â¸Â¢Ã Â¸â€Ã Â¸â€žÃ Â¸Â³Ã Â¸â€šÃ Â¸Â­
     public function show($id)
     {
-        $request = OnboardingRequest::accessibleBy(Auth::user())
+        $request = OnboardingRequest::visibleTo(Auth::user())
             ->where('id', $id)
             ->with(['branch', 'unit'])
             ->firstOrFail();

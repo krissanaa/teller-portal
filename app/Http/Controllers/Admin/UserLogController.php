@@ -13,6 +13,7 @@ class UserLogController extends Controller
     // 🧾 แสดงประวัติการทำงานทั้งหมดของผู้ดูแลระบบ
     public function index(Request $request)
     {
+        $actor = $request->user();
         $search = $request->input('search');
         $adminId = $request->input('admin_id');
         $action = $request->input('action');
@@ -51,6 +52,15 @@ class UserLogController extends Controller
             ->when($endDate, function ($q) use ($endDate) {
                 $q->whereDate('created_at', '<=', $endDate);
             })
+            ->when($actor && $actor->isBranchAdmin(), function ($q) use ($actor) {
+                $q->where(function ($sub) use ($actor) {
+                    $sub->whereHas('targetUser', function ($target) use ($actor) {
+                        $target->where('branch_id', $actor->branch_id);
+                    })->orWhereHas('admin', function ($admin) use ($actor) {
+                        $admin->where('branch_id', $actor->branch_id);
+                    });
+                });
+            })
             ->orderBy('created_at', 'desc');
 
         if ($request->query('export') === 'csv') {
@@ -85,7 +95,9 @@ class UserLogController extends Controller
         $logs = $query->paginate($perPage)->withQueryString();
 
         // Data for filters
-        $admins = User::orderBy('name')->get();
+        $admins = User::orderBy('name')
+            ->when($actor && $actor->isBranchAdmin(), fn($q) => $q->where('branch_id', $actor->branch_id))
+            ->get();
         $actions = UserLog::select('action')->distinct()->orderBy('action')->pluck('action');
 
         return view('admin.logs.index', compact(

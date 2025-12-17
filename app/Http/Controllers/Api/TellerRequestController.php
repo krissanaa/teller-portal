@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\OnboardingRequestResource;
 use App\Models\TellerPortal\BranchUnit;
 use App\Models\TellerPortal\OnboardingRequest;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
@@ -18,12 +19,12 @@ class TellerRequestController extends Controller
     public function index(Request $request)
     {
         $user = $request->user();
-        $this->assertApprovedTeller($user);
+        $this->assertApprovedTellerOrUnit($user);
 
         $status = $request->query('status');
 
-        $query = OnboardingRequest::with(['branch', 'unit'])
-            ->where('teller_id', $user->teller_id)
+        $query = OnboardingRequest::visibleTo($user)
+            ->with(['branch', 'unit', 'teller'])
             ->orderByDesc('updated_at');
 
         if ($status) {
@@ -41,12 +42,15 @@ class TellerRequestController extends Controller
     public function store(Request $request)
     {
         $user = $request->user();
-        $this->assertApprovedTeller($user);
+        $this->assertApprovedTellerOrUnit($user);
 
         $data = $this->validatePayload($request);
         $data['teller_id'] = $user->teller_id;
-        $data['approval_status'] = 'pending';
+        $data['branch_id'] = $user->branch_id;
+        $data['unit_id'] = $user->unit_id;
+        $data['approval_status'] = OnboardingRequest::STATUS_PENDING;
         $data['attachments'] = $this->collectAttachments($request);
+        $this->ensureUnitMatchesBranch($data['branch_id'] ?? null, $data['unit_id'] ?? null);
 
         $connectionName = (new OnboardingRequest())->getConnectionName();
         $connection = DB::connection($connectionName);
@@ -86,9 +90,11 @@ class TellerRequestController extends Controller
 
     public function show(Request $request, int $id)
     {
-        $record = $this->findOwnedRequest($request, $id);
+        $record = OnboardingRequest::visibleTo($request->user())
+            ->with(['branch', 'unit', 'teller'])
+            ->findOrFail($id);
 
-        return new OnboardingRequestResource($record->load(['branch', 'unit']));
+        return new OnboardingRequestResource($record);
     }
 
     public function update(Request $request, int $id)
@@ -116,7 +122,7 @@ class TellerRequestController extends Controller
 
         if ($wasRejected) {
             $record->update([
-                'approval_status' => 'pending',
+                'approval_status' => OnboardingRequest::STATUS_PENDING,
                 'admin_remark' => null,
             ]);
         }
@@ -135,7 +141,7 @@ class TellerRequestController extends Controller
         }
 
         $record->update([
-            'approval_status' => 'pending',
+            'approval_status' => OnboardingRequest::STATUS_PENDING,
             'admin_remark' => null,
         ]);
 
@@ -190,9 +196,9 @@ class TellerRequestController extends Controller
     protected function findOwnedRequest(Request $request, int $id): OnboardingRequest
     {
         $user = $request->user();
-        $this->assertApprovedTeller($user);
+        $this->assertApprovedTellerOrUnit($user);
 
-        return OnboardingRequest::where('teller_id', $user->teller_id)->findOrFail($id);
+        return OnboardingRequest::ownedBy($user)->findOrFail($id);
     }
 
     protected function ensureUnitMatchesBranch(?int $branchId, ?int $unitId): void
@@ -222,14 +228,14 @@ class TellerRequestController extends Controller
         }
     }
 
-    protected function assertApprovedTeller($user): void
+    protected function assertApprovedTellerOrUnit($user): void
     {
-        if ($user->role !== 'teller' && $user->role !== 'admin') {
-            abort(403, __('Only tellers can access onboarding requests.'));
+        if (!in_array($user->role, [User::ROLE_TELLER, User::ROLE_TELLER_UNIT], true)) {
+            abort(403, __('Only teller roles can access onboarding requests.'));
         }
 
-        if ($user->role === 'teller' && $user->status !== 'approved') {
-            abort(403, __('Your teller profile has not been approved yet.'));
+        if ($user->status !== User::STATUS_APPROVED) {
+            abort(403, __('Your profile has not been approved yet.'));
         }
     }
 }

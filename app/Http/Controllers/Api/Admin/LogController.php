@@ -11,7 +11,17 @@ class LogController extends Controller
 {
     public function index(Request $request)
     {
+        $actor = $request->user();
         $query = UserLog::with(['admin', 'targetUser'])
+            ->when($actor && $actor->isBranchAdmin(), function ($q) use ($actor) {
+                $q->where(function ($sub) use ($actor) {
+                    $sub->whereHas('targetUser', function ($target) use ($actor) {
+                        $target->where('branch_id', $actor->branch_id);
+                    })->orWhereHas('admin', function ($admin) use ($actor) {
+                        $admin->where('branch_id', $actor->branch_id);
+                    });
+                });
+            })
             ->orderByDesc('created_at');
 
         if ($search = $request->query('search')) {

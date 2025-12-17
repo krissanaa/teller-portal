@@ -31,6 +31,7 @@ $tellerProfile = $tellerProfile ?? auth()->user()->loadMissing(['branch', 'unit'
                     <p><strong>ທີ່ຢູ່ຮ້ານຄ້າ:</strong> <?php echo e($request->store_address); ?></p>
                     <p><strong>ລະຫັດອ້າງອີງ:</strong> <?php echo e($request->refer_code); ?></p>
                     <p><strong>ລະຫັດເຄື່ອງ POS:</strong> <?php echo e($request->pos_serial ?? '-'); ?></p>
+                    <p><strong>ວັນທີສ້າງ:</strong> <?php echo e($request->created_at->format('d/m/Y H:i')); ?></p>
                 </div>
             </div>
 

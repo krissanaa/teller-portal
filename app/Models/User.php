@@ -13,6 +13,15 @@ class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
 
+    public const ROLE_ADMIN = 'admin';
+    public const ROLE_BRANCH_ADMIN = 'branch_admin';
+    public const ROLE_TELLER = 'teller';
+    public const ROLE_TELLER_UNIT = 'teller_unit';
+
+    public const STATUS_PENDING = 'pending';
+    public const STATUS_APPROVED = 'approved';
+    public const STATUS_REJECTED = 'rejected';
+
     protected $fillable = [
         'teller_id',
         'name',
@@ -41,27 +50,63 @@ class User extends Authenticatable
     // 🔹 Helper functions
     public function isAdmin(): bool
     {
-        return $this->role === 'admin';
+        return $this->role === self::ROLE_ADMIN;
     }
 
     public function isTeller(): bool
     {
-        return $this->role === 'teller';
+        return $this->role === self::ROLE_TELLER;
+    }
+
+    public function isBranchAdmin(): bool
+    {
+        return $this->role === self::ROLE_BRANCH_ADMIN;
+    }
+
+    public function isTellerUnit(): bool
+    {
+        return $this->role === self::ROLE_TELLER_UNIT;
     }
 
     public function isBranchManager(): bool
     {
-        return $this->role === 'branch_manager';
+        return $this->isBranchAdmin();
     }
 
     public function isUnitHead(): bool
     {
-        return $this->role === 'unit_head';
+        return $this->isTellerUnit();
     }
 
     public function canLogin(): bool
     {
-        return $this->isAdmin() || ($this->isTeller() && $this->status === 'approved');
+        if ($this->isAdmin()) {
+            return true;
+        }
+
+        if (in_array($this->role, [self::ROLE_BRANCH_ADMIN, self::ROLE_TELLER, self::ROLE_TELLER_UNIT], true)) {
+            return $this->status === self::STATUS_APPROVED;
+        }
+
+        return false;
+    }
+
+    /**
+     * Scope: users that the actor is allowed to manage.
+     * Admin: all users. Branch Admin: tellers in their branch. Others: none.
+     */
+    public function scopeManageableBy($query, User $actor)
+    {
+        if ($actor->isAdmin()) {
+            return $query;
+        }
+
+        if ($actor->isBranchAdmin()) {
+            return $query->where('branch_id', $actor->branch_id)
+                ->where('role', self::ROLE_TELLER);
+        }
+
+        return $query->whereRaw('0=1');
     }
 
     // 🔹 Relationships

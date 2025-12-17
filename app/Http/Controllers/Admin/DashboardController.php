@@ -4,15 +4,22 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\TellerPortal\OnboardingRequest;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 
 class DashboardController extends Controller
 {
     public function index()
     {
+        $user = Auth::user();
+        $cacheKey = $user && !$user->isAdmin()
+            ? 'admin.dashboard.counts.branch.' . ($user->branch_id ?? 'none')
+            : 'admin.dashboard.counts.all';
+
         // Cache counts briefly to reduce database round-trips.
-        $counts = Cache::remember('admin.dashboard.counts', 60, function () {
-            return OnboardingRequest::selectRaw("
+        $counts = Cache::remember($cacheKey, 60, function () use ($user) {
+            return OnboardingRequest::visibleTo($user)
+                ->selectRaw("
                 COUNT(*) as total_pos,
                 SUM(CASE WHEN approval_status = 'approved' THEN 1 ELSE 0 END) as approved,
                 SUM(CASE WHEN approval_status = 'pending' THEN 1 ELSE 0 END) as pending,

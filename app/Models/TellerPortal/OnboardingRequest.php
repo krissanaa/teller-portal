@@ -3,6 +3,7 @@
 namespace App\Models\TellerPortal;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Models\User;
 
 class OnboardingRequest extends Model
 {
@@ -10,6 +11,10 @@ class OnboardingRequest extends Model
     protected $table = 'onboarding_requests';
     protected $primaryKey = 'id';
     public $timestamps = true;
+
+    public const STATUS_PENDING = 'pending';
+    public const STATUS_APPROVED = 'approved';
+    public const STATUS_REJECTED = 'rejected';
 
     protected $fillable = [
         'refer_code',
@@ -58,6 +63,51 @@ class OnboardingRequest extends Model
     }
 
     /**
+     * Scope a query to only include records owned by the given user.
+     */
+    public function scopeOwnedBy($query, User $user)
+    {
+        return $query->where('teller_id', $user->teller_id);
+    }
+
+    /**
+     * Scope a query to include records visible to the given user based on RBAC rules.
+     */
+    public function scopeVisibleTo($query, User $user)
+    {
+        if ($user->isAdmin()) {
+            return $query;
+        }
+
+        if ($user->isBranchAdmin()) {
+            return $query->where('branch_id', $user->branch_id);
+        }
+
+        if ($user->isTellerUnit()) {
+            return $query->where('branch_id', $user->branch_id)
+                ->where(function ($q) use ($user) {
+                    $q->where('teller_id', $user->teller_id)
+                        ->orWhere('unit_id', $user->unit_id);
+                });
+        }
+
+        if ($user->isTeller()) {
+            return $query->where(function ($q) use ($user) {
+                $q->where('teller_id', $user->teller_id);
+            })->orWhere(function ($q) use ($user) {
+                $q->where('branch_id', $user->branch_id)
+                    ->where('approval_status', self::STATUS_APPROVED)
+                    ->where('teller_id', '!=', $user->teller_id)
+                    ->whereHas('teller', function ($teller) {
+                        $teller->where('role', User::ROLE_TELLER);
+                    });
+            });
+        }
+
+        return $query->whereRaw('0=1');
+    }
+
+    /**
      * Scope a query to only include records accessible by the given user.
      *
      * @param  \Illuminate\Database\Eloquent\Builder  $query
@@ -66,24 +116,6 @@ class OnboardingRequest extends Model
      */
     public function scopeAccessibleBy($query, \App\Models\User $user)
     {
-        if ($user->isAdmin()) {
-            return $query; // Admins see all
-        }
-
-        if ($user->isBranchManager()) {
-            // Branch Manager: See ALL records in their branch
-            return $query->where('branch_id', $user->branch_id);
-        }
-
-        if ($user->isUnitHead()) {
-            // Unit Head: See ALL records in their unit, but ONLY approved
-            return $query->where('unit_id', $user->unit_id)
-                ->where('approval_status', 'approved');
-        }
-
-        // Default Teller: See ALL records in their branch, but ONLY approved (for reports)
-        // Policy Update: Tellers can see team performance within the same branch.
-        return $query->where('branch_id', $user->branch_id)
-            ->where('approval_status', 'approved');
+        return $this->scopeVisibleTo($query, $user);
     }
 }

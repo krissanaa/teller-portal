@@ -12,7 +12,8 @@ class OnboardingController extends Controller
 {
     public function index(Request $request)
     {
-        $query = OnboardingRequest::with(['branch', 'unit', 'teller'])
+        $query = OnboardingRequest::visibleTo($request->user())
+            ->with(['branch', 'unit', 'teller'])
             ->orderByDesc('created_at');
 
         if ($status = $request->query('status')) {
@@ -37,14 +38,16 @@ class OnboardingController extends Controller
 
     public function show(int $id)
     {
-        $record = OnboardingRequest::with(['branch', 'unit', 'teller'])->findOrFail($id);
+        $record = OnboardingRequest::visibleTo(request()->user())
+            ->with(['branch', 'unit', 'teller'])
+            ->findOrFail($id);
 
         return new OnboardingRequestResource($record);
     }
 
     public function approve(Request $request, int $id)
     {
-        $record = OnboardingRequest::findOrFail($id);
+        $record = OnboardingRequest::visibleTo($request->user())->findOrFail($id);
 
         if ($record->approval_status === 'approved') {
             return new OnboardingRequestResource($record->load(['branch', 'unit', 'teller']));
@@ -62,7 +65,7 @@ class OnboardingController extends Controller
 
     public function reject(Request $request, int $id)
     {
-        $record = OnboardingRequest::findOrFail($id);
+        $record = OnboardingRequest::visibleTo($request->user())->findOrFail($id);
 
         $data = $request->validate([
             'admin_remark' => ['required', 'string', 'max:500'],

@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProfileController;
+use App\Models\User;
 
 // 🧭 Admin Controllers
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
@@ -30,16 +31,18 @@ Route::get('/dashboard', function () {
     if (!$user) return redirect()->route('login');
 
     return match ($user->role) {
-        'admin'  => redirect()->route('admin.dashboard'),
-        'teller' => redirect()->route('teller.dashboard'),
-        default  => tap(auth()->logout(), fn() => redirect()->route('login')),
+        User::ROLE_ADMIN => redirect()->route('admin.dashboard'),
+        User::ROLE_BRANCH_ADMIN => redirect()->route('teller.dashboard'),
+        User::ROLE_TELLER,
+        User::ROLE_TELLER_UNIT => redirect()->route('teller.dashboard'),
+        default => tap(auth()->logout(), fn() => redirect()->route('login')),
     };
 })->middleware('auth')->name('dashboard');
 
 // ============================================================
 // 👨‍💼 Teller Routes
 // ============================================================
-Route::middleware(['auth', 'role:teller', 'approved'])
+Route::middleware(['auth', 'role:teller,teller_unit,branch_admin,admin', 'approved'])
     ->prefix('teller')
     ->name('teller.')
     ->group(function () {
@@ -84,7 +87,7 @@ Route::middleware(['auth', 'role:teller', 'approved'])
 // ============================================================
 // 👑 Admin Routes
 // ============================================================
-Route::middleware(['auth', 'role:admin'])
+Route::middleware(['auth', 'role:admin,branch_admin'])
     ->prefix('admin')
     ->name('admin.')
     ->group(function () {

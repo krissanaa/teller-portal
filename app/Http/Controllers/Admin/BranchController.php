@@ -11,17 +11,20 @@ class BranchController extends Controller
 {
     public function index()
     {
+        $this->ensureAdmin();
         $branches = Branch::with('units')->orderBy('BRANCH_CODE')->paginate(5);
         return view('admin.branches.index', compact('branches'));
     }
 
     public function create()
     {
+        $this->ensureAdmin();
         return view('admin.branches.create');
     }
 
     public function store(Request $request)
     {
+        $this->ensureAdmin();
         $data = $request->validate([
             'branch_code' => 'required|string|max:50|unique:branch,BRANCH_CODE',
             'branch_name' => 'required|string|max:255',
@@ -37,12 +40,14 @@ class BranchController extends Controller
 
     public function edit($id)
     {
+        $this->ensureAdmin();
         $branch = Branch::with('units')->findOrFail($id);
         return view('admin.branches.edit', compact('branch'));
     }
 
     public function update(Request $request, $id)
     {
+        $this->ensureAdmin();
         $branch = Branch::findOrFail($id);
 
         $data = $request->validate([
@@ -60,6 +65,7 @@ class BranchController extends Controller
 
     public function destroy($id)
     {
+        $this->ensureAdmin();
         $branch = Branch::findOrFail($id);
         $branch->delete();
 
@@ -68,6 +74,7 @@ class BranchController extends Controller
 
     public function storeUnit(Request $request, $branchId)
     {
+        $this->ensureAdmin();
         $branch = Branch::findOrFail($branchId);
 
         $data = $request->validate([
@@ -86,6 +93,7 @@ class BranchController extends Controller
 
     public function updateUnit(Request $request, $branchId, $unitId)
     {
+        $this->ensureAdmin();
         $branch = Branch::findOrFail($branchId);
         $unit = $branch->units()->findOrFail($unitId);
 
@@ -101,10 +109,16 @@ class BranchController extends Controller
 
     public function destroyUnit($branchId, $unitId)
     {
+        $this->ensureAdmin();
         $branch = Branch::findOrFail($branchId);
         $unit = $branch->units()->findOrFail($unitId);
         $unit->delete();
 
         return back()->with('success', 'Unit removed from branch.');
+    }
+
+    protected function ensureAdmin(): void
+    {
+        abort_unless(auth()->user()?->isAdmin(), 403);
     }
 }

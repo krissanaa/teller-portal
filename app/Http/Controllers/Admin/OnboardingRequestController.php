@@ -14,7 +14,8 @@ class OnboardingRequestController extends Controller
     {
         $status = $request->query('status', 'pending');
 
-        $requests = OnboardingRequest::with(['teller.branch', 'teller.unit', 'branch', 'unit'])
+        $requests = OnboardingRequest::visibleTo($request->user())
+            ->with(['teller.branch', 'teller.unit', 'branch', 'unit'])
             ->where('approval_status', $status)
             ->orderBy('created_at', 'desc')
             ->paginate(5)
@@ -25,7 +26,9 @@ class OnboardingRequestController extends Controller
 
     public function show($id)
     {
-        $req = OnboardingRequest::with(['teller.branch', 'teller.unit', 'branch', 'unit'])->findOrFail($id);
+        $req = OnboardingRequest::visibleTo(request()->user())
+            ->with(['teller.branch', 'teller.unit', 'branch', 'unit'])
+            ->findOrFail($id);
         return view('admin.onboarding.show', compact('req'));
     }
 
@@ -36,7 +39,7 @@ class OnboardingRequestController extends Controller
             'pos_serial.*' => 'required|string|max:255',
         ]);
 
-        $req = OnboardingRequest::findOrFail($id);
+        $req = OnboardingRequest::visibleTo($request->user())->findOrFail($id);
         $req->approval_status = 'approved';
         $req->admin_remark = null;
         // Join the array into a comma-separated string
@@ -63,7 +66,7 @@ class OnboardingRequestController extends Controller
             'admin_remark' => 'required|string|max:500',
         ]);
 
-        $req = OnboardingRequest::findOrFail($id);
+        $req = OnboardingRequest::visibleTo($request->user())->findOrFail($id);
         $req->approval_status = 'rejected';
         $req->admin_remark = $data['admin_remark'];
         $req->save();

@@ -55,7 +55,7 @@ class AuthController extends Controller
         $token = $user->createToken('api-token', [$user->role])->plainTextToken;
 
         if (! $request->expectsJson()) {
-            return redirect()->intended(route('teller.dashboard'))
+            return redirect()->intended(route('dashboard'))
                 ->cookie('api_token', $token, 60 * 24);
         }
 

@@ -23,7 +23,7 @@ Route::prefix('auth')->group(function () {
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('meta/branches', [MetaController::class, 'branches'])->name('api.meta.branches');
 
-    Route::prefix('teller')->middleware('role:teller')->name('api.teller.')->group(function () {
+    Route::prefix('teller')->middleware('role:teller,teller_unit')->name('api.teller.')->group(function () {
         Route::get('requests', [TellerRequestController::class, 'index'])->name('requests.index');
         Route::post('requests', [TellerRequestController::class, 'store'])->name('requests.store');
         Route::get('requests/{id}', [TellerRequestController::class, 'show'])->name('requests.show');
@@ -31,7 +31,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('requests/{id}/resubmit', [TellerRequestController::class, 'resubmit'])->name('requests.resubmit');
     });
 
-    Route::prefix('admin')->middleware('role:admin')->name('api.admin.')->group(function () {
+    Route::prefix('admin')->middleware('role:admin,branch_admin')->name('api.admin.')->group(function () {
         Route::get('logs', [AdminLogController::class, 'index'])->name('logs.index');
 
         Route::get('requests', [AdminOnboardingController::class, 'index'])->name('requests.index');

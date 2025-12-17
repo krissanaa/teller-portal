@@ -176,6 +176,19 @@
         color: var(--apb-accent);
     }
 
+    .role-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background: #e0f2fe;
+        color: #075985;
+        border: 1px solid #bae6fd;
+        border-radius: 999px;
+        padding: 6px 12px;
+        font-weight: 700;
+        font-size: 0.82rem;
+    }
+
     .search-input,
     .filter-select {
         border: 1px solid #ced4da;
@@ -492,9 +505,9 @@
 <div class="report-shell container-fluid py-3">
     <!-- Page Header -->
     <div class="page-header">
-        <h4>
-            <i class="bi bi-graph-up-arrow"></i>
-            ລາຍງານຮ້ານຄ້າຂອງຂ້ອຍ
+        <i class="bi bi-graph-up-arrow"></i>
+        <?php echo e(Auth::user()->isBranchAdmin() ? 'ລາຍງານສາຂາ (Branch Report)' : 'ລາຍງານຮ້ານຄ້າຂອງຂ້ອຍ'); ?>
+
         </h4>
         <div class="header-actions">
             <a href="<?php echo e(route('teller.dashboard')); ?>" class="btn btn-secondary">
@@ -550,103 +563,114 @@
     </div>
 
     <!-- Search & Filter -->
+
     <div class="filter-card">
         <div class="filter-title">
             <i class="bi bi-funnel-fill"></i>
-            ກັ່ນຕອງ ແລະ ຄົ້ນຫາ
+            ຕົວfilter
         </div>
         <form method="GET" class="row g-2 align-items-end">
-            <div class="col-md-4">
+            <div class="col-md-3">
                 <label class="form-label fw-semibold text-muted small mb-1">
                     <i class="bi bi-search"></i> ຄົ້ນຫາ
                 </label>
                 <input type="text" name="search" value="<?php echo e($search); ?>"
                     class="form-control form-control-sm search-input filter-size-unify fw-semibold"
-                    placeholder="ຊື່ຮ້ານ / ລະຫັດອ້າງອີງ / ປະເພດທຸລະກິດ"
+                    placeholder="ຊື່ຮ້ານ, ລະຫັດອ້າງອີງ, POS, ເລກບັນຊີ..."
                     onkeydown="if(event.key==='Enter'){this.form.submit();}">
             </div>
-            <div class="col-md-3">
+            <div class="col-md-2">
+                <label class="form-label fw-semibold text-muted small mb-1">
+                    <i class="bi bi-calendar2-range"></i> ວັນທີເລີ່ມຕົ້ນ
+                </label>
+                <input type="date" name="day" value="<?php echo e($day); ?>"
+                    class="form-control form-control-sm filter-select filter-size-unify"
+                    onchange="this.form.submit()">
+            </div>
+            <div class="col-md-2">
+                <label class="form-label fw-semibold text-muted small mb-1">
+                    <i class="bi bi-calendar2-range"></i> ວັນທີສິ້ນສຸດ
+                </label>
+                <input type="date" name="end_day" value="<?php echo e($endDay ?? ''); ?>"
+                    class="form-control form-control-sm filter-select filter-size-unify"
+                    onchange="this.form.submit()">
+            </div>
+            <div class="col-md-2">
                 <label class="form-label fw-semibold text-muted small mb-1">
                     <i class="bi bi-filter"></i> ສະຖານະ
                 </label>
                 <select name="status" class="form-select form-select-sm filter-select text-muted fw-semibold filter-size-unify"
                     onchange="this.form.submit()">
-                    <option value="">-- ສະຖານະທັງໝົດ --</option>
-                    <option value="pending" <?php echo e($status=='pending' ? 'selected' : ''); ?>>⏳ ລໍຖ້າອະນຸມັດ</option>
-                    <option value="approved" <?php echo e($status=='approved' ? 'selected' : ''); ?>>✅ ອະນຸມັດ</option>
-                    <option value="rejected" <?php echo e($status=='rejected' ? 'selected' : ''); ?>>❌ ປະຕິເສດ</option>
+                    <option value="">ທຸກສະຖານະ</option>
+                    <option value="pending" <?php echo e($status=='pending' ? 'selected' : ''); ?>>ລໍຖ້າອະນຸມັດ</option>
+                    <option value="approved" <?php echo e($status=='approved' ? 'selected' : ''); ?>>ອະນຸມັດ</option>
+                    <option value="rejected" <?php echo e($status=='rejected' ? 'selected' : ''); ?>>ປະຕິເສດ</option>
+                </select>
+            </div>
+            <?php if(Auth::user()->isBranchAdmin()): ?>
+            <div class="col-md-3">
+                <label class="form-label fw-semibold text-muted small mb-1">
+                    <i class="bi bi-diagram-3"></i> ສາຂາ (Branch)
+                </label>
+                <?php $selectedBranchId = Auth::user()->branch_id; ?>
+                <input type="hidden" name="branch_id" value="<?php echo e($selectedBranchId); ?>">
+                <select class="form-select form-select-sm filter-select text-muted fw-semibold filter-size-unify bg-light" disabled>
+                    <option selected>
+                        <?php echo e($branches->firstWhere('id', $selectedBranchId)->BRANCH_NAME ?? $branches->firstWhere('id', $selectedBranchId)->name ?? 'Branch '.$selectedBranchId); ?>
+
+                    </option>
                 </select>
             </div>
             <div class="col-md-3">
                 <label class="form-label fw-semibold text-muted small mb-1">
-                    <i class="bi bi-calendar2-range"></i> ຕັ້ງຄ່າວັນທີ
+                    <i class="bi bi-diagram-2"></i> ໜ່ວຍ (Unit)
                 </label>
+                <?php
+                $unitsByBranch = collect($branches)->keyBy('id')->map->units;
+                $currentUnits = $unitsByBranch[$selectedBranchId] ?? collect();
+                ?>
+                <select name="unit_id" class="form-select form-select-sm filter-select text-muted fw-semibold filter-size-unify"
+                    onchange="this.form.submit()">
+                    <option value="">
+                        <?php echo e($branches->firstWhere('id', $selectedBranchId)->BRANCH_NAME ?? $branches->firstWhere('id', $selectedBranchId)->name ?? 'Branch '.$selectedBranchId); ?>
 
-                <div class="dropdown w-100">
-                    <button class="btn btn-sm date-filter-btn w-100 d-flex justify-content-between align-items-center
-               text-muted fw-semibold filter-size-unify"
-                        type="button" id="dateFilterDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                        <span><i class="bi bi-sliders"></i> ເລືອກວັນທີ</span>
-                        <i class="bi bi-chevron-down small"></i>
-                    </button>
+                    </option>
+                    <option value="all" <?php echo e($unitId == 'all' ? 'selected' : ''); ?>>ເບິ່ງທັງໝົດ (View All)</option>
+                    <?php $__currentLoopData = $currentUnits; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $unit): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                    <option value="<?php echo e($unit->id); ?>" <?php echo e($unitId == $unit->id ? 'selected' : ''); ?>>
+                        <?php echo e($unit->unit_name ?? $unit->name ?? ('Unit '.$unit->id)); ?>
 
-                    <div class="dropdown-menu p-3 w-100 date-dropdown" aria-labelledby="dateFilterDropdown"
-                        style="min-width:260px;">
-
-                        <!-- YEAR -->
-                        <div class="mb-3">
-                            <label class="form-label fw-semibold small mb-1">
-                                <i class="bi bi-calendar2-week"></i> Year
-                            </label>
-                            <select name="year" class="form-select form-select-sm filter-select" onchange="this.form.submit()">
-                                <option value="">All Years</option>
-                                <?php $__currentLoopData = $years; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $y): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                <option value="<?php echo e($y); ?>" <?php echo e($year == $y ? 'selected' : ''); ?>><?php echo e($y); ?></option>
-                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                            </select>
-                        </div>
-
-                        <!-- MONTH -->
-                        <div class="mb-3">
-                            <label class="form-label fw-semibold small mb-1">
-                                <i class="bi bi-calendar3"></i> Month
-                            </label>
-                            <select name="month" class="form-select form-select-sm filter-select" onchange="this.form.submit()">
-                                <option value="">All Months</option>
-                                <?php $__currentLoopData = range(1, 12); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $m): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                <option value="<?php echo e($m); ?>" <?php echo e($month == $m ? 'selected' : ''); ?>>
-                                    <?php echo e(\Carbon\Carbon::create()->month($m)->format('F')); ?>
-
-                                </option>
-                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                            </select>
-                        </div>
-
-                        <!-- DAY -->
-                        <div>
-                            <label class="form-label fw-semibold small mb-1">
-                                <i class="bi bi-calendar-day"></i> Day
-                            </label>
-                            <input type="date" name="day" value="<?php echo e($day); ?>"
-                                class="form-control form-control-sm filter-select"
-                                onchange="this.form.submit()">
-                        </div>
-
-                    </div>
-                </div>
+                    </option>
+                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                </select>
             </div>
-            <div class="col-md-2 d-flex gap-2">
+            <div class="col-md-3">
+                <label class="form-label fw-semibold text-muted small mb-1">
+                    <i class="bi bi-person-badge"></i> ພະນັກງານ (Teller)
+                </label>
+                <select name="teller_id" class="form-select form-select-sm filter-select text-muted fw-semibold filter-size-unify"
+                    onchange="this.form.submit()">
+                    <option value="">---</option>
+
+                    <?php $__currentLoopData = $tellers; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $teller): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                    <option value="<?php echo e($teller->teller_id); ?>" <?php echo e(($tellerId ?? '') == $teller->teller_id ? 'selected' : ''); ?>>
+                        <?php echo e($teller->name ?? $teller->teller_id); ?> (<?php echo e($teller->teller_id ?? $teller->id); ?>)
+                    </option>
+                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                </select>
+            </div>
+            <?php endif; ?>
+
+            <div class="col-md-3 d-flex gap-2">
                 <button type="submit" class="btn btn-primary btn-sm w-100">
-                    <i class="bi bi-search"></i> ຄົ້ນຫາ
+                    <i class="bi bi-search"></i> Search
                 </button>
                 <a href="<?php echo e(route('teller.report')); ?>" class="btn btn-secondary btn-sm w-100">
-                    <i class="bi bi-arrow-clockwise"></i> ລ້າງ
+                    <i class="bi bi-arrow-clockwise"></i> Reset
                 </a>
             </div>
         </form>
-    </div>
-
-    <!-- Data Table -->
+    </div><!-- Data Table -->
     <div class="table-card">
         <div class="table-header">
             <span class="table-header-title">
@@ -659,12 +683,15 @@
                 <thead>
                     <tr>
                         <th width="60">ລຳດັບ</th>
-                        <th>ລະຫັດອ້າງອີງ</th>
-                        <th>ລະຫັດເຄື່ອງ pos</th>
                         <th>ຊື່ຮ້ານຄ້າ</th>
                         <th>ປະເພດທຸລະກິດ</th>
-                        <th>ວັນທີໄປຕິດຕັ້ງ</th>
-                        <th>ຜູ້ສ້າງ</th> <!-- Added Teller Header -->
+                        <?php if(Auth::user()->isBranchAdmin()): ?>
+                        <th>ສາຂາ / ໜ່ວຍ (Branch / Unit)</th>
+                        <?php endif; ?>
+                        <th>ລະຫັດອ້າງອີງ</th>
+                        <th>ລະຫັດເຄື່ອງ pos</th>
+                        <th style="width: 110px;">ວັນທີໄປຕິດຕັ້ງ</th>
+                        <th style="width: 110px;">ຜູ້ສ້າງ</th> <!-- Added Teller Header -->
                         <th width="120" class="text-center">ສະຖານະ</th>
                     </tr>
                 </thead>
@@ -676,19 +703,6 @@
 
                         </td>
                         <td>
-                            <span class="reference-code">
-                                <i class="bi bi-hash"></i><?php echo e($r->refer_code); ?>
-
-                            </span>
-                        </td>
-                        <td>
-                            <span class="store-name">
-                                <i class="bi bi-computer text-muted"></i>
-                                <?php echo e($r->pos_serial ?: '-'); ?>
-
-                            </span>
-                        </td>
-                        <td>
                             <span class="store-name">
                                 <i class="bi bi-shop"></i>
                                 <?php echo e($r->store_name); ?>
@@ -698,6 +712,35 @@
                         <td>
                             <span class="store-name">
                                 <?php echo e($r->business_type); ?>
+
+                            </span>
+                        </td>
+                        <?php if(Auth::user()->isBranchAdmin()): ?>
+                        <td>
+                            <div class="d-flex flex-column small">
+                                <span class="fw-semibold text-primary">
+                                    <?php echo e($r->branch->BRANCH_NAME ?? $r->branch_id); ?>
+
+                                </span>
+                                <?php if($r->unit): ?>
+                                <span class="text-muted text-xs">
+                                    <i class="bi bi-diagram-2"></i> <?php echo e($r->unit->unit_name ?? $r->unit_id); ?>
+
+                                </span>
+                                <?php endif; ?>
+                            </div>
+                        </td>
+                        <?php endif; ?>
+                        <td>
+                            <span class="reference-code">
+                                <i class="bi bi-hash"></i><?php echo e($r->refer_code); ?>
+
+                            </span>
+                        </td>
+                        <td>
+                            <span class="store-name">
+                                <i class="bi bi-computer text-muted"></i>
+                                <?php echo e($r->pos_serial ?: '-'); ?>
 
                             </span>
                         </td>
@@ -735,10 +778,10 @@
                         </td>
                     </tr>
                     <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
-                    <tr>
-                        <td colspan="7" class="empty-state">
-                            <i class="bi bi-inbox"></i>
-                            <p>ບໍ່ມີຂໍ້ມູນສຳລັບລາຍງານ</p>
+                    <tr class="text-center">
+                        <td colspan="<?php echo e(Auth::user()->isBranchAdmin() ? '9' : '8'); ?>" class="text-muted py-4">
+                            <i class="bi bi-inbox fs-1 d-block mb-2"></i>
+                            ບໍ່ພົບຂໍ້ມູນ (No Data Found)
                         </td>
                     </tr>
                     <?php endif; ?>

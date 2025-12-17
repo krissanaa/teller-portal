@@ -10,6 +10,7 @@ use Illuminate\Support\ServiceProvider;
 use App\Models\TellerPortal\OnboardingRequest;
 use App\Models\TellerPortal\Branch;
 use App\Models\TellerPortal\BranchUnit;
+use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 
 class AppServiceProvider extends ServiceProvider
@@ -49,7 +50,7 @@ class AppServiceProvider extends ServiceProvider
             $profileBranches = collect();
             $profileBranchUnitsPayload = [];
 
-            if (Auth::check() && Auth::user()->role === 'teller') {
+            if (Auth::check() && in_array(Auth::user()->role, [User::ROLE_TELLER, User::ROLE_TELLER_UNIT, User::ROLE_BRANCH_ADMIN], true)) {
                 $notifications = OnboardingRequest::where('teller_id', Auth::user()->teller_id)
                     ->whereIn('approval_status', ['approved', 'rejected'])
                     ->whereDate('updated_at', '>=', now()->subDays(7))

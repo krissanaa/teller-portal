@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\User;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -12,12 +13,11 @@ class EnsureApproved
     {
         $user = Auth::user();
 
-        // ถ้ายังไม่ approved → ออกจากระบบ + แจ้งเตือน
-        if ($user && $user->status !== 'approved') {
+        if ($user && !$user->isAdmin() && $user->status !== User::STATUS_APPROVED) {
             Auth::logout();
 
             return redirect()->route('login')->withErrors([
-                'teller_id' => 'ບັນຊີຂອງທ່ານຍັງບໍ່ຖືກອະນຸມັດ ກະລຸນາລໍຖ້າ Admin ກ່ອນ.'
+                'teller_id' => '…§s…§ñ…§T…§S…§æ…§,…§-…§Ø…§-…¯^…§ý…§T…§?…§ñ…§Ø…§s…¯?…¯^…§-…§ú…§?…§-…§ø…§T…§,…§­…§ñ…§" …§?…§ø…§…§,…§T…§ý…§…¯?…§-…¯%…§ý Admin …§?…¯^…§-…§T.'
             ]);
         }
 

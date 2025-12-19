@@ -76,9 +76,10 @@ $statusClassMap = [
     }
 
     .request-card:hover {
+        background-color: #e6fffa;
         transform: translateY(-1px);
         box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-        border-color: #cbd5e1;
+        border-color: var(--apb-primary);
     }
 
     /* Header Section */

@@ -1,8 +1,6 @@
-@extends('layouts.admin')
+<?php $__env->startSection('title', 'Branch Management'); ?>
 
-@section('title', 'Branch Management')
-
-@section('content')
+<?php $__env->startSection('content'); ?>
 <style>
     :root {
         --apb-primary: #14b8a6;
@@ -355,7 +353,7 @@
 <div class="table-card">
     <div class="table-card-header">
         <h5>All Branches</h5>
-        <span class="meta">{{ $branches->total() }} total</span>
+        <span class="meta"><?php echo e($branches->total()); ?> total</span>
     </div>
     <div class="table-responsive flex-grow-1">
         <table class="table table-modern align-middle">
@@ -368,23 +366,24 @@
                 </tr>
             </thead>
             <tbody>
-                @forelse($branches as $b)
+                <?php $__empty_1 = true; $__currentLoopData = $branches; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $b): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
                 <tr class="branch-topic">
-                    <td>{{ $b->id }}</td>
-                    <td class="text-primary">{{ $b->code }}</td>
+                    <td><?php echo e($b->id); ?></td>
+                    <td class="text-primary"><?php echo e($b->code); ?></td>
                     <td>
                         <div class="d-flex align-items-center gap-2">
                             <i class="bi bi-bank2"></i>
-                            {{ $b->name }}
+                            <?php echo e($b->name); ?>
+
                         </div>
                     </td>
                     <td>
                         <div class="action-buttons">
-                            <a href="{{ route('admin.branches.edit', $b->id) }}" class="btn btn-sm btn-warning text-decoration-none">
+                            <a href="<?php echo e(route('admin.branches.edit', $b->id)); ?>" class="btn btn-sm btn-warning text-decoration-none">
                                 <i class="bi bi-pencil"></i> Edit
                             </a>
-                            <form method="POST" action="{{ route('admin.branches.destroy', $b->id) }}" class="d-inline">
-                                @csrf @method('DELETE')
+                            <form method="POST" action="<?php echo e(route('admin.branches.destroy', $b->id)); ?>" class="d-inline">
+                                <?php echo csrf_field(); ?> <?php echo method_field('DELETE'); ?>
                                 <button class="btn btn-sm btn-danger" onclick="return confirm('Delete this branch?')">
                                     <i class="bi bi-trash"></i> Delete
                                 </button>
@@ -394,30 +393,32 @@
                 </tr>
                 <tr class="unit-row">
                     <td colspan="4">
-                        @if($b->units->isNotEmpty())
+                        <?php if($b->units->isNotEmpty()): ?>
                         <div class="row g-2 mb-3">
-                            @foreach($b->units as $unit)
+                            <?php $__currentLoopData = $b->units; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $unit): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                             <div class="col-md-4 col-lg-3">
                                 <div class="unit-card">
                                     <div class="unit-code">
                                         <i class="bi bi-diagram-3"></i>
-                                        {{ $unit->unit_code }}
+                                        <?php echo e($unit->unit_code); ?>
+
                                     </div>
                                     <div class="unit-name">
-                                        {{ $unit->unit_name }}
+                                        <?php echo e($unit->unit_name); ?>
+
                                     </div>
                                 </div>
                             </div>
-                            @endforeach
+                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                         </div>
-                        @else
+                        <?php else: ?>
                         <div class="mb-3">
                             <span class="unit-empty">ບໍ່ມີໜ່ວຍບໍລິການ</span>
                         </div>
-                        @endif
+                        <?php endif; ?>
 
-                        <form method="POST" action="{{ route('admin.branches.units.store', $b->id) }}" class="row g-2 align-items-end">
-                            @csrf
+                        <form method="POST" action="<?php echo e(route('admin.branches.units.store', $b->id)); ?>" class="row g-2 align-items-end">
+                            <?php echo csrf_field(); ?>
                             <div class="col-md-3">
                                 <label class="form-label small text-muted mb-1">ລະຫັດໜ່ວຍບໍລິການ</label>
                                 <input type="text" name="unit_code" class="form-control form-control-sm" placeholder="" required>
@@ -434,7 +435,7 @@
                         </form>
                     </td>
                 </tr>
-                @empty
+                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
                 <tr>
                     <td colspan="4" class="text-center text-muted py-5">
                         <div class="d-flex flex-column align-items-center">
@@ -443,33 +444,35 @@
                         </div>
                     </td>
                 </tr>
-                @endforelse
+                <?php endif; ?>
             </tbody>
         </table>
     </div>
 
-    @if($branches->hasPages())
+    <?php if($branches->hasPages()): ?>
     <div class="position-relative mt-4 p-4 border-top">
         <div class="position-absolute top-50 start-50 translate-middle" style="z-index: 1;">
-            <a href="{{ route('admin.dashboard') }}" class="btn btn-secondary">
+            <a href="<?php echo e(route('admin.dashboard')); ?>" class="btn btn-secondary">
                 <i class="bi bi-house"></i> Back to Home
             </a>
         </div>
         <div class="d-flex flex-column align-items-end">
             <div class="text-muted small mb-2">
-                Showing {{ $branches->firstItem() }} to {{ $branches->lastItem() }} of {{ $branches->total() }} results
+                Showing <?php echo e($branches->firstItem()); ?> to <?php echo e($branches->lastItem()); ?> of <?php echo e($branches->total()); ?> results
             </div>
             <div>
-                {{ $branches->links('vendor.pagination.custom') }}
+                <?php echo e($branches->links('vendor.pagination.custom')); ?>
+
             </div>
         </div>
     </div>
-    @else
+    <?php else: ?>
     <div class="text-center mt-4 p-4 border-top">
-        <a href="{{ route('admin.dashboard') }}" class="btn btn-secondary">
+        <a href="<?php echo e(route('admin.dashboard')); ?>" class="btn btn-secondary">
             <i class="bi bi-house"></i> Back to Home
         </a>
     </div>
-    @endif
+    <?php endif; ?>
 </div>
-@endsection
+<?php $__env->stopSection(); ?>
+<?php echo $__env->make('layouts.admin', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH /var/www/html/resources/views/admin/branches/index.blade.php ENDPATH**/ ?>

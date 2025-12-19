@@ -18,7 +18,7 @@ class OnboardingRequestController extends Controller
             ->with(['teller.branch', 'teller.unit', 'branch', 'unit'])
             ->where('approval_status', $status)
             ->orderBy('created_at', 'desc')
-            ->paginate(5)
+            ->paginate($request->input('per_page', 10))
             ->appends(['status' => $status]);
 
         return view('admin.onboarding.index', compact('requests', 'status'));

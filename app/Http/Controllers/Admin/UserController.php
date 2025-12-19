@@ -26,7 +26,7 @@ class UserController extends Controller
                     ->orWhere('phone', 'like', "%{$search}%");
             }))
             ->orderByDesc('created_at')
-            ->paginate($request->input('per_page', 5));
+            ->paginate($request->input('per_page', 10));
 
         return view('admin.users.index', compact('users', 'search'));
     }

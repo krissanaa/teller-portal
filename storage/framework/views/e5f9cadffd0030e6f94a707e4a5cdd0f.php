@@ -1,8 +1,6 @@
-@extends('layouts.admin')
+<?php $__env->startSection('title', 'Admin Management'); ?>
 
-@section('title', 'Admin Management')
-
-@section('content')
+<?php $__env->startSection('content'); ?>
 <style>
     :root {
         --apb-primary: #14b8a6;
@@ -355,7 +353,7 @@
                 type="text"
                 id="search"
                 name="search"
-                value="{{ $search }}"
+                value="<?php echo e($search); ?>"
                 class="form-control"
                 placeholder="Enter keyword...">
         </div>
@@ -364,13 +362,13 @@
                 <i class="bi bi-search"></i> Search
             </button>
         </div>
-        @if(!empty($search))
+        <?php if(!empty($search)): ?>
         <div class="col-md-2">
-            <a href="{{ route('admin.users.index') }}" class="btn btn-secondary w-100">
+            <a href="<?php echo e(route('admin.users.index')); ?>" class="btn btn-secondary w-100">
                 Clear
             </a>
         </div>
-        @endif
+        <?php endif; ?>
         <div class="col-md-3 ms-auto">
             <button type="button" class="btn btn-primary w-100 justify-content-center" data-bs-toggle="modal" data-bs-target="#createAdminModal">
                 <i class="bi bi-person-plus-fill"></i> Create Admin
@@ -384,7 +382,7 @@
         <h5>All Users Accounts</h5>
         <div class="d-flex align-items-center gap-2">
 
-            <span class="meta">{{ $users->total() }} total</span>
+            <span class="meta"><?php echo e($users->total()); ?> total</span>
         </div>
     </div>
     <div class="table-responsive flex-grow-1">
@@ -403,59 +401,61 @@
                 </tr>
             </thead>
             <tbody>
-                @forelse($users as $u)
-                <tr class="clickable-row" data-href="{{ route('admin.users.show', $u->id) }}" tabindex="0" role="link">
-                    @php
+                <?php $__empty_1 = true; $__currentLoopData = $users; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $u): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
+                <tr class="clickable-row" data-href="<?php echo e(route('admin.users.show', $u->id)); ?>" tabindex="0" role="link">
+                    <?php
                     $rowNumber = $users->firstItem() ? $users->firstItem() + $loop->index : $loop->index + 1;
-                    @endphp
-                    <td>{{ $rowNumber }}</td>
-                    <td>{{ $u->teller_id ?? '-' }}</td>
+                    ?>
+                    <td><?php echo e($rowNumber); ?></td>
+                    <td><?php echo e($u->teller_id ?? '-'); ?></td>
                     <td>
-                        <a href="{{ route('admin.users.show', $u->id) }}" class="text-decoration-none fw-bold text-dark">
-                            {{ $u->name }}
+                        <a href="<?php echo e(route('admin.users.show', $u->id)); ?>" class="text-decoration-none fw-bold text-dark">
+                            <?php echo e($u->name); ?>
+
                         </a>
                     </td>
-                    <td>{{ $u->branch->name ?? '-' }}</td>
-                    <td>{{ $u->unit->unit_name ?? '-' }}</td>
-                    <td>{{ $u->phone }}</td>
+                    <td><?php echo e($u->branch->name ?? '-'); ?></td>
+                    <td><?php echo e($u->unit->unit_name ?? '-'); ?></td>
+                    <td><?php echo e($u->phone); ?></td>
                     <td>
-                        <span class="status-pill {{ $u->status }}">
-                            @if($u->status === 'approved')
+                        <span class="status-pill <?php echo e($u->status); ?>">
+                            <?php if($u->status === 'approved'): ?>
                             <i class="bi bi-check-circle"></i>
-                            @elseif($u->status === 'pending')
+                            <?php elseif($u->status === 'pending'): ?>
                             <i class="bi bi-clock-history"></i>
-                            @else
+                            <?php else: ?>
                             <i class="bi bi-x-circle"></i>
-                            @endif
-                            {{ ucfirst($u->status) }}
+                            <?php endif; ?>
+                            <?php echo e(ucfirst($u->status)); ?>
+
                         </span>
                     </td>
-                    <td>{{ $u->created_at->format('Y-m-d') }}</td>
+                    <td><?php echo e($u->created_at->format('Y-m-d')); ?></td>
                     <td>
                         <div class="action-buttons justify-content-center">
-                            @if($u->status !== 'approved')
-                            <form action="{{ route('admin.users.updateStatus', $u->id) }}" method="POST">
-                                @csrf
+                            <?php if($u->status !== 'approved'): ?>
+                            <form action="<?php echo e(route('admin.users.updateStatus', $u->id)); ?>" method="POST">
+                                <?php echo csrf_field(); ?>
                                 <input type="hidden" name="status" value="approved">
                                 <button type="submit" class="btn btn-sm btn-success">
                                     <i class="bi bi-check-lg"></i> Approve
                                 </button>
                             </form>
-                            @endif
+                            <?php endif; ?>
 
-                            @if($u->status !== 'rejected')
-                            <form action="{{ route('admin.users.updateStatus', $u->id) }}" method="POST">
-                                @csrf
+                            <?php if($u->status !== 'rejected'): ?>
+                            <form action="<?php echo e(route('admin.users.updateStatus', $u->id)); ?>" method="POST">
+                                <?php echo csrf_field(); ?>
                                 <input type="hidden" name="status" value="rejected">
                                 <button type="submit" class="btn btn-sm btn-danger">
                                     <i class="bi bi-x-lg"></i> Reject
                                 </button>
                             </form>
-                            @endif
+                            <?php endif; ?>
                         </div>
                     </td>
                 </tr>
-                @empty
+                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
                 <tr>
                     <td colspan="7" class="text-center text-muted py-5">
                         <div class="d-flex flex-column align-items-center">
@@ -464,34 +464,35 @@
                         </div>
                     </td>
                 </tr>
-                @endforelse
+                <?php endif; ?>
             </tbody>
         </table>
     </div>
 
-    @if($users->hasPages())
+    <?php if($users->hasPages()): ?>
     <div class="position-relative mt-4 p-4 border-top">
         <div class="position-absolute top-50 start-50 translate-middle" style="z-index: 1;">
-            <a href="{{ route('admin.dashboard') }}" class="btn btn-secondary">
+            <a href="<?php echo e(route('admin.dashboard')); ?>" class="btn btn-secondary">
                 <i class="bi bi-house"></i> Back to Home
             </a>
         </div>
         <div class="d-flex flex-column align-items-end">
             <div class="text-muted small mb-2">
-                Showing {{ $users->firstItem() }} to {{ $users->lastItem() }} of {{ $users->total() }} results
+                Showing <?php echo e($users->firstItem()); ?> to <?php echo e($users->lastItem()); ?> of <?php echo e($users->total()); ?> results
             </div>
             <div>
-                {{ $users->links('vendor.pagination.custom') }}
+                <?php echo e($users->links('vendor.pagination.custom')); ?>
+
             </div>
         </div>
     </div>
-    @else
+    <?php else: ?>
     <div class="text-center mt-4 p-4 border-top">
-        <a href="{{ route('admin.dashboard') }}" class="btn btn-secondary">
+        <a href="<?php echo e(route('admin.dashboard')); ?>" class="btn btn-secondary">
             <i class="bi bi-house"></i> Back to Home
         </a>
     </div>
-    @endif
+    <?php endif; ?>
 </div>
 
 <script>
@@ -534,8 +535,8 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body p-4">
-                <form action="{{ route('admin.users.storeAdmin') }}" method="POST">
-                    @csrf
+                <form action="<?php echo e(route('admin.users.storeAdmin')); ?>" method="POST">
+                    <?php echo csrf_field(); ?>
                     <div class="mb-3">
                         <label for="teller_id" class="form-label">Teller ID</label>
                         <input type="text" class="form-control" id="teller_id" name="teller_id" required placeholder="e.g. 9999">
@@ -554,4 +555,5 @@
         </div>
     </div>
 </div>
-@endsection
+<?php $__env->stopSection(); ?>
+<?php echo $__env->make('layouts.admin', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH /var/www/html/resources/views/admin/users/index.blade.php ENDPATH**/ ?>

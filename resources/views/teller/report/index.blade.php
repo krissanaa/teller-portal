@@ -285,8 +285,16 @@
     }
 
     .modern-table tbody tr:hover {
-        background: #f8f9fa;
-        transform: scale(1.01);
+        background-color: #e6fffa !important;
+        box-shadow: inset 0 1px 0 #e2e8f0, inset 0 -1px 0 #e2e8f0 !important;
+    }
+
+    .modern-table tbody tr:hover td {
+        background-color: transparent !important;
+    }
+
+    .modern-table tbody tr:hover td:first-child {
+        border-left: 3px solid var(--apb-primary);
     }
 
     .modern-table tbody td {

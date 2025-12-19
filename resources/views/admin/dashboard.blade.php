@@ -170,7 +170,7 @@
 
     .action-card:hover {
         border-color: #14b8a6;
-        background: #ecfdf5;
+        background: #e6fffa;
         transform: translateY(-2px);
         box-shadow: 0 4px 12px rgba(20, 184, 166, 0.2);
     }

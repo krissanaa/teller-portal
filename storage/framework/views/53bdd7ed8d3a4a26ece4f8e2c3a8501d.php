@@ -139,12 +139,20 @@ $teller_id = $teller_id ?? '';
         vertical-align: middle;
     }
 
-    .report-table tr:last-child td {
-        border-bottom: none;
+    .report-table tr {
+        transition: all 0.2s ease;
     }
 
     .report-table tr:hover {
-        background: #f8fafc;
+        background-color: #e6fffa !important;
+    }
+
+    .report-table tr:hover td {
+        background-color: transparent !important;
+    }
+
+    .report-table tr:hover td:first-child {
+        border-left: 3px solid var(--apb-primary);
     }
 
     /* Status Badges */
@@ -498,22 +506,22 @@ $teller_id = $teller_id ?? '';
             <div class="d-flex flex-column align-items-end">
                 <div class="text-muted small mb-2">
                     <?php
-                        $start = $data->firstItem() ?? 0;
-                        $end = $data->lastItem() ?? 0;
-                        $total = $data->total() ?? 0;
+                    $start = $data->firstItem() ?? 0;
+                    $end = $data->lastItem() ?? 0;
+                    $total = $data->total() ?? 0;
                     ?>
                     Showing <?php echo e($start); ?> to <?php echo e($end); ?> of <?php echo e($total); ?> results
                 </div>
                 <div>
                     <?php if($data->hasPages()): ?>
-                        <?php echo e($data->links('vendor.pagination.custom')); ?>
+                    <?php echo e($data->links('vendor.pagination.custom')); ?>
 
                     <?php else: ?>
-                        <ul class="apb-pagination">
-                            <li class="page-item disabled"><span class="page-link" aria-hidden="true"><i class="bi bi-chevron-left"></i></span></li>
-                            <li class="page-item active" aria-current="page"><span class="page-link">1</span></li>
-                            <li class="page-item disabled"><span class="page-link" aria-hidden="true"><i class="bi bi-chevron-right"></i></span></li>
-                        </ul>
+                    <ul class="apb-pagination">
+                        <li class="page-item disabled"><span class="page-link" aria-hidden="true"><i class="bi bi-chevron-left"></i></span></li>
+                        <li class="page-item active" aria-current="page"><span class="page-link">1</span></li>
+                        <li class="page-item disabled"><span class="page-link" aria-hidden="true"><i class="bi bi-chevron-right"></i></span></li>
+                    </ul>
                     <?php endif; ?>
                 </div>
             </div>
@@ -521,5 +529,4 @@ $teller_id = $teller_id ?? '';
     </div>
 </div>
 <?php $__env->stopSection(); ?>
-
 <?php echo $__env->make('layouts.admin', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH /var/www/html/resources/views/admin/reports/index.blade.php ENDPATH**/ ?>

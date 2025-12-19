@@ -1,11 +1,11 @@
-﻿@extends('layouts.teller')
+﻿
 
-@section('title', 'ແກ້ໄຂຄຳຂໍເປີດບັນຊີ')
+<?php $__env->startSection('title', 'ແກ້ໄຂຄຳຂໍເປີດບັນຊີ'); ?>
 
-@section('content')
-@php
+<?php $__env->startSection('content'); ?>
+<?php
 $tellerProfile = $tellerProfile ?? auth()->user()->loadMissing(['branch', 'unit']);
-@endphp
+?>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
@@ -412,103 +412,103 @@ $tellerProfile = $tellerProfile ?? auth()->user()->loadMissing(['branch', 'unit'
             <span>ແກ້ໄຂຄຳຂໍເປີດບັນຊີ</span>
         </div>
 
-        @if ($errors->any())
+        <?php if($errors->any()): ?>
         <div class="alert alert-danger mb-4" style="border-radius: 8px;">
             <ul class="mb-0 ps-3">
-                @foreach ($errors->all() as $error)
-                <li>{{ $error }}</li>
-                @endforeach
+                <?php $__currentLoopData = $errors->all(); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $error): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                <li><?php echo e($error); ?></li>
+                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
             </ul>
         </div>
-        @endif
+        <?php endif; ?>
 
-        <form action="{{ route('teller.requests.update', $request->id) }}" method="POST" enctype="multipart/form-data" id="editForm">
-            @csrf
-            @method('PUT')
+        <form action="<?php echo e(route('teller.requests.update', $request->id)); ?>" method="POST" enctype="multipart/form-data" id="editForm">
+            <?php echo csrf_field(); ?>
+            <?php echo method_field('PUT'); ?>
 
             <div class="form-grid">
                                 <!-- Row 1 -->
                 <div class="form-group">
                     <label>ຊື່ຮ້ານ <span class="required">*</span></label>
-                    <input type="text" name="store_name" class="form-control" value="{{ old('store_name', $request->store_name) }}" required placeholder="ຊື່ຮ້ານຄ້າ">
+                    <input type="text" name="store_name" class="form-control" value="<?php echo e(old('store_name', $request->store_name)); ?>" required placeholder="ຊື່ຮ້ານຄ້າ">
                 </div>
 
                 <div class="form-group">
                     <label>ປະເພດທຸລະກິດ <span class="required">*</span></label>
-                    <input type="text" name="business_type" class="form-control" value="{{ old('business_type', $request->business_type) }}" required placeholder="ຕົວຢ່າງ: ຮ້ານອາຫານ">
+                    <input type="text" name="business_type" class="form-control" value="<?php echo e(old('business_type', $request->business_type)); ?>" required placeholder="ຕົວຢ່າງ: ຮ້ານອາຫານ">
                 </div>
 
                 <div class="form-group col-span-2">
                     <label>ທີ່ຢູ່ຮ້ານຄ້າ <span class="required">*</span></label>
-                    <textarea name="store_address" class="form-control" rows="2" required placeholder="ບ້ານ, ເມືອງ, ແຂວງ">{{ old('store_address', $request->store_address) }}</textarea>
+                    <textarea name="store_address" class="form-control" rows="2" required placeholder="ບ້ານ, ເມືອງ, ແຂວງ"><?php echo e(old('store_address', $request->store_address)); ?></textarea>
                 </div>
 
                 <!-- Row 2 -->
                 <div class="form-group">
                     <label>ເລກບັນຊີທະນາຄານ</label>
-                    <input type="text" name="bank_account" class="form-control" value="{{ old('bank_account', $request->bank_account) }}" placeholder="ເລກບັນຊີ (ຖ້າມີ)">
+                    <input type="text" name="bank_account" class="form-control" value="<?php echo e(old('bank_account', $request->bank_account)); ?>" placeholder="ເລກບັນຊີ (ຖ້າມີ)">
                 </div>
 
                 <div class="form-group">
                     <label style="margin-top:0;">CIF</label>
-                    <input type="text" name="cif" class="form-control" placeholder="CIF" value="{{ old('cif', $request->cif) }}">
+                    <input type="text" name="cif" class="form-control" placeholder="CIF" value="<?php echo e(old('cif', $request->cif)); ?>">
                 </div>
 
                 <div class="form-group">
                     <label>ວັນທີເອົາໄປຕິດຕັ້ງ <span class="required">*</span></label>
-                    <input type="text" name="installation_date" class="form-control" value="{{ old('installation_date', $request->installation_date) }}" required placeholder="dd/mm/yyyy">
+                    <input type="text" name="installation_date" class="form-control" value="<?php echo e(old('installation_date', $request->installation_date)); ?>" required placeholder="dd/mm/yyyy">
                 </div>
 
                 <div class="form-group">
                     <label>ຈຳນວນເຄື່ອງ POS <span class="required">*</span></label>
-                    <input type="number" name="total_device_pos" class="form-control" required value="{{ old('total_device_pos', $request->total_device_pos) }}" placeholder="ຈຳນວນເຄື່ອງ" min="1">
+                    <input type="number" name="total_device_pos" class="form-control" required value="<?php echo e(old('total_device_pos', $request->total_device_pos)); ?>" placeholder="ຈຳນວນເຄື່ອງ" min="1">
                 </div>
 
 
                 <!-- Row 3: Existing Attachments -->
-                @if(!empty($request->attachments))
+                <?php if(!empty($request->attachments)): ?>
                 <div class="form-group col-span-4">
                     <label>ເອກະສານແນບທີ່ມີຢູ່</label>
                     <div class="file-preview-grid" style="margin-top: 8px;">
-                        @php $attachments = json_decode($request->attachments ?? '[]', true); @endphp
-                        @foreach($attachments as $index => $path)
-                        @php
+                        <?php $attachments = json_decode($request->attachments ?? '[]', true); ?>
+                        <?php $__currentLoopData = $attachments; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $index => $path): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                        <?php
                         $encodedPath = str_replace('%2F', '/', rawurlencode($path));
                         // Use relative URL
                         $fileUrl = '/storage-file/' . $encodedPath;
                         $fileName = basename($path);
                         $extension = strtolower(pathinfo($path, PATHINFO_EXTENSION));
-                        @endphp
-                        <div class="file-item" id="existing-file-{{ $index }}"
-                            data-preview-url="{{ route('storage.file', ['path' => $path]) }}"
-                            data-fallback-url="{{ asset('storage/' . $path) }}"
-                            data-filename="{{ $fileName }}"
-                            data-ext="{{ $extension }}">
-                            @if(in_array($extension, ['jpg','jpeg','png']))
-                        <img src="{{ route('storage.file', ['path' => $path]) }}"
+                        ?>
+                        <div class="file-item" id="existing-file-<?php echo e($index); ?>"
+                            data-preview-url="<?php echo e(route('storage.file', ['path' => $path])); ?>"
+                            data-fallback-url="<?php echo e(asset('storage/' . $path)); ?>"
+                            data-filename="<?php echo e($fileName); ?>"
+                            data-ext="<?php echo e($extension); ?>">
+                            <?php if(in_array($extension, ['jpg','jpeg','png'])): ?>
+                        <img src="<?php echo e(route('storage.file', ['path' => $path])); ?>"
                                 class="file-preview-img"
-                                data-fallback-url="{{ asset('storage/' . $path) }}"
+                                data-fallback-url="<?php echo e(asset('storage/' . $path)); ?>"
                                 onerror="this.src=this.dataset.fallbackUrl; this.onerror=null;">
-                        @elseif($extension === 'pdf')
-                        <canvas data-pdf-thumb data-url="{{ route('storage.file', ['path' => $path]) }}" data-fallback-url="{{ asset('storage/' . $path) }}" class="file-preview-img" style="background:#f1f5f9;"></canvas>
-                        @else
+                        <?php elseif($extension === 'pdf'): ?>
+                        <canvas data-pdf-thumb data-url="<?php echo e(route('storage.file', ['path' => $path])); ?>" data-fallback-url="<?php echo e(asset('storage/' . $path)); ?>" class="file-preview-img" style="background:#f1f5f9;"></canvas>
+                        <?php else: ?>
                             <div class="file-preview-img d-flex align-items-center justify-content-center bg-light">
                                 <i class="bi bi-file-earmark-text" style="font-size: 1.5rem; color: #64748b;"></i>
                             </div>
-                            @endif
+                            <?php endif; ?>
                             <div class="file-details">
-                                <div class="file-name" title="{{ $fileName }}">{{ $fileName }}</div>
-                                <div class="file-size">{{ strtoupper($extension) }}</div>
+                                <div class="file-name" title="<?php echo e($fileName); ?>"><?php echo e($fileName); ?></div>
+                                <div class="file-size"><?php echo e(strtoupper($extension)); ?></div>
                             </div>
-                            <div class="remove-file" onclick="event.stopPropagation(); markFileForDeletion({{ $index }}, this)">
+                            <div class="remove-file" onclick="event.stopPropagation(); markFileForDeletion(<?php echo e($index); ?>, this)">
                                 <i class="bi bi-trash"></i>
                             </div>
                         </div>
-                        @endforeach
+                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                     </div>
                     <div id="deletedFilesContainer"></div>
                 </div>
-                @endif
+                <?php endif; ?>
 
                 <!-- Row 4: New Uploads -->
                 <div class="form-group col-span-4">
@@ -551,7 +551,7 @@ $tellerProfile = $tellerProfile ?? auth()->user()->loadMissing(['branch', 'unit'
             </div>
 
             <div class="form-actions">
-                <a href="{{ route('teller.requests.show', $request->id) }}" class="btn btn-secondary">
+                <a href="<?php echo e(route('teller.requests.show', $request->id)); ?>" class="btn btn-secondary">
                     <i class="bi bi-x-lg"></i> ຍົກເລີກ
                 </a>
                 <button type="submit" class="btn btn-primary">
@@ -588,7 +588,7 @@ $tellerProfile = $tellerProfile ?? auth()->user()->loadMissing(['branch', 'unit'
             dateFormat: "Y-m-d",
             altInput: true,
             altFormat: "d/m/Y",
-            defaultDate: "{{ $request->installation_date }}",
+            defaultDate: "<?php echo e($request->installation_date); ?>",
             allowInput: true
         });
 
@@ -969,7 +969,9 @@ $tellerProfile = $tellerProfile ?? auth()->user()->loadMissing(['branch', 'unit'
         }
     });
 </script>
-@endsection
+<?php $__env->stopSection(); ?>
 
 
 
+
+<?php echo $__env->make('layouts.teller', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH /var/www/html/resources/views/teller/requests/edit.blade.php ENDPATH**/ ?>

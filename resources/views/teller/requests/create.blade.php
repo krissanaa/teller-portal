@@ -151,7 +151,7 @@ $tellerProfile = $tellerProfile ?? auth()->user()->loadMissing(['branch', 'unit'
 
     .file-preview-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
         gap: 12px;
         margin-top: 16px;
     }
@@ -159,28 +159,32 @@ $tellerProfile = $tellerProfile ?? auth()->user()->loadMissing(['branch', 'unit'
     .file-item {
         background: white;
         border: 1px solid #e2e8f0;
-        padding: 10px;
+        padding: 12px;
         border-radius: 8px;
         display: flex;
         align-items: center;
-        gap: 10px;
+        gap: 12px;
         position: relative;
+        cursor: pointer;
+        transition: box-shadow 0.15s ease, transform 0.15s ease;
     }
 
-    .file-item i {
-        font-size: 1.2rem;
-        color: #64748b;
+    .file-item:hover {
+        box-shadow: 0 6px 14px rgba(0, 0, 0, 0.06);
+        transform: translateY(-1px);
     }
 
     .file-preview-img {
-        width: 40px;
-        height: 40px;
+        width: 48px;
+        height: 48px;
         object-fit: cover;
         border-radius: 6px;
+        flex-shrink: 0;
     }
 
     .file-details {
         flex: 1;
+        min-width: 0;
         overflow: hidden;
     }
 
@@ -188,9 +192,10 @@ $tellerProfile = $tellerProfile ?? auth()->user()->loadMissing(['branch', 'unit'
         font-size: 0.85rem;
         font-weight: 600;
         color: #334155;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
+        word-break: break-word;
+        overflow-wrap: break-word;
+        line-height: 1.3;
+        margin-bottom: 2px;
     }
 
     .file-size {
@@ -201,14 +206,11 @@ $tellerProfile = $tellerProfile ?? auth()->user()->loadMissing(['branch', 'unit'
     .remove-file {
         color: #ef4444;
         cursor: pointer;
-        padding: 4px;
+        padding: 6px;
         border-radius: 4px;
         transition: all 0.2s;
         font-size: 1.1rem;
-    }
-
-    .remove-file i {
-        color: #ef4444;
+        flex-shrink: 0;
     }
 
     .remove-file:hover {
@@ -216,80 +218,63 @@ $tellerProfile = $tellerProfile ?? auth()->user()->loadMissing(['branch', 'unit'
         background: #fee2e2;
     }
 
-    .remove-file:hover i {
-        color: #dc2626;
-    }
-
-    /* Actions */
-    .form-actions {
-        margin-top: 30px;
-        padding-top: 20px;
-        border-top: 1px solid var(--apb-border);
-        display: flex;
-        justify-content: flex-end;
-        gap: 12px;
-    }
-
-    .btn {
-        padding: 10px 24px;
-        border-radius: 8px;
-        font-weight: 600;
+    /* Dark Preview Modal styles (match admin) */
+    .modal-preview-dark .modal-content {
+        background-color: transparent;
+        box-shadow: none;
         border: none;
-        cursor: pointer;
-        display: inline-flex;
+        height: 100vh;
+        pointer-events: none;
+    }
+
+    .modal-preview-dark .modal-body {
+        background-color: transparent;
+        padding: 0;
+        display: flex;
         align-items: center;
-        gap: 8px;
-        font-size: 0.95rem;
-        transition: all 0.2s;
+        justify-content: center;
+        position: relative;
+        height: 100%;
+        pointer-events: auto;
+        cursor: pointer;
     }
 
-    .btn-cancel {
-        background: white;
-        border: 1px solid #cbd5e1;
-        color: #64748b;
+    .modal-preview-dark .preview-container {
+        cursor: default;
+        background: #1e293b;
+        border-radius: 12px;
+        padding: 2px;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        display: inline-block;
+        position: relative;
+        max-width: 100%;
+        max-height: 90vh;
     }
 
-    .btn-cancel:hover {
-        background: #f1f5f9;
-        color: #334155;
+    .modal-preview-dark .modal-header {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        left: auto;
+        width: auto;
+        border: none;
+        background: transparent;
+        padding: 0;
+        z-index: 1056;
     }
 
-    .btn-submit {
-        background: var(--apb-primary);
-        color: white;
-        box-shadow: 0 4px 12px rgba(20, 184, 166, 0.2);
+    .modal-preview-dark .btn-close {
+        filter: invert(1) grayscale(100%) brightness(200%);
+        opacity: 0.8;
+        background-color: rgba(0, 0, 0, 0.5);
+        border-radius: 50%;
+        padding: 10px;
+        background-size: 10px;
     }
 
-    .btn-submit:hover {
-        transform: translateY(-1px);
-        box-shadow: 0 6px 16px rgba(20, 184, 166, 0.3);
-    }
-
-    @media (max-width: 992px) {
-        .form-grid {
-            grid-template-columns: repeat(2, 1fr);
-        }
-
-        .col-span-2,
-        .col-span-4 {
-            grid-column: span 2;
-        }
-    }
-
-    @media (max-width: 576px) {
-        .form-grid {
-            grid-template-columns: 1fr;
-        }
-
-        .col-span-2,
-        .col-span-4 {
-            grid-column: span 1;
-        }
-
-        .upload-section {
-            flex-direction: column;
-            text-align: center;
-        }
+    .modal-preview-dark .btn-close:hover {
+        opacity: 1;
+        background-color: rgba(0, 0, 0, 0.8);
     }
 </style>
 
@@ -309,33 +294,39 @@ $tellerProfile = $tellerProfile ?? auth()->user()->loadMissing(['branch', 'unit'
 
             <!-- Row 1 -->
             <div class="form-group">
-                <label>ຊື່ຮ້ານຄ້າ <span class="required">*</span></label>
-                <input type="text" name="store_name" class="form-control" required placeholder="ປ້ອນຊື່ຮ້ານຄ້າ" value="{{ old('store_name') }}">
+                <label>ຊື່ຮ້ານ <span class="required">*</span></label>
+                <input type="text" name="store_name" class="form-control" required placeholder="ຊື່ຮ້ານຄ້າ" value="{{ old('store_name') }}">
             </div>
 
             <div class="form-group">
                 <label>ປະເພດທຸລະກິດ <span class="required">*</span></label>
-                <input type="text" name="business_type" class="form-control" required placeholder="ເຊັ່ນ: ຮ້ານອາຫານ" value="{{ old('business_type') }}">
+                <input type="text" name="business_type" class="form-control" required placeholder="ຕົວຢ່າງ: ຮ້ານອາຫານ" value="{{ old('business_type') }}">
+            </div>
+
+            <div class="form-group col-span-2">
+                <label>ທີ່ຢູ່ຮ້ານຄ້າ <span class="required">*</span></label>
+                <textarea name="store_address" class="form-control" rows="2" required placeholder="ບ້ານ, ເມືອງ, ແຂວງ">{{ old('store_address') }}</textarea>
+            </div>
+
+            <!-- Row 2 -->
+            <div class="form-group">
+                <label>ເລກບັນຊີທະນາຄານ</label>
+                <input type="text" name="bank_account" class="form-control" placeholder="ເລກບັນຊີ (ຖ້າມີ)" value="{{ old('bank_account') }}">
             </div>
 
             <div class="form-group">
-                <label>ເລກບັນຊີທະນາຄານ</label>
-                <input type="text" name="bank_account" class="form-control" placeholder="ປ້ອນເລກບັນຊີ (ຖ້າມີ)" value="{{ old('bank_account') }}">
-                <label style="margin-top:8px;">CIF</label>
+                <label style="margin-top:0;">CIF</label>
                 <input type="text" name="cif" class="form-control" placeholder="CIF" value="{{ old('cif') }}">
             </div>
 
             <div class="form-group">
-                <label>ວັນທີໄປຕິດຕັ້ງ <span class="required">*</span></label>
+                <label>ວັນທີເອົາໄປຕິດຕັ້ງ <span class="required">*</span></label>
                 <input type="text" name="installation_date" class="form-control" required value="{{ old('installation_date', date('Y-m-d')) }}" placeholder="dd/mm/yyyy">
-                <label style="margin-top:8px;">ຈຳນວນເຄື່ອງ POS <span class="required">*</span></label>
-                <input type="number" name="total_device_pos" class="form-control" required value="{{ old('total_device_pos') }}" placeholder="ລະບຸຈຳນວນເຄື່ອງ" min="1">
             </div>
 
-            <!-- Row 2 -->
-            <div class="form-group col-span-4">
-                <label>ທີ່ຢູ່ຮ້ານຄ້າ <span class="required">*</span></label>
-                <textarea name="store_address" class="form-control" rows="2" required placeholder="ປ້ອນທີ່ຢູ່ຮ້ານຄ້າແບບລະອຽດ">{{ old('store_address') }}</textarea>
+            <div class="form-group">
+                <label>ຈຳນວນເຄື່ອງ POS <span class="required">*</span></label>
+                <input type="number" name="total_device_pos" class="form-control" required value="{{ old('total_device_pos') }}" placeholder="ຈຳນວນເຄື່ອງ" min="1">
             </div>
 
             <!-- Row 3: Compact Upload -->
@@ -416,16 +407,20 @@ $tellerProfile = $tellerProfile ?? auth()->user()->loadMissing(['branch', 'unit'
                 div.className = 'file-item';
 
                 // Unique ID for the preview container
-                const previewId = `preview-${index}`;
+                const previewId = `preview-${index}-${Date.now()}`;
+                const ext = (file.name.split('.').pop() || '').toLowerCase();
+                const safeName = escapeHtml(file.name);
 
                 let iconHtml;
                 if (file.type.startsWith('image/')) {
-                    const url = URL.createObjectURL(file);
-                    iconHtml = `<img src="${url}" class="file-preview-img" onload="URL.revokeObjectURL(this.src)">`;
-                } else if (file.type === 'application/pdf') {
+                    const imgId = `img-preview-${index}-${Date.now()}`;
+                    iconHtml = `<img id="${imgId}" src="" class="file-preview-img" style="background:#f1f5f9;" data-name="${safeName}" data-ext="${ext || 'image'}">`;
+                    // The actual data-preview-url and src will be set by loadImagePreview
+                } else if (file.type === 'application/pdf' || ext === 'pdf') {
+                    const previewUrl = URL.createObjectURL(file);
                     // Placeholder canvas for PDF
-                    iconHtml = `<canvas id="${previewId}" class="file-preview-img" style="background:#f1f5f9;"></canvas>`;
-                    // Trigger async render
+                    iconHtml = `<canvas id="${previewId}" class="file-preview-img" style="background:#f1f5f9;" data-preview-url="${previewUrl}" data-ext="pdf" data-name="${safeName}"></canvas>`;
+                    // Trigger async render (pass file so we can also set data URL for preview)
                     renderPdfPreview(file, previewId);
                 } else {
                     iconHtml = `<i class="bi bi-${getFileIcon(file.type)}"></i>`;
@@ -434,19 +429,63 @@ $tellerProfile = $tellerProfile ?? auth()->user()->loadMissing(['branch', 'unit'
                 div.innerHTML = `
                 ${iconHtml}
                 <div class="file-details">
-                    <div class="file-name" title="${file.name}">${file.name}</div>
+                    <div class="file-name" title="${safeName}">${safeName}</div>
                     <div class="file-size">${formatFileSize(file.size)}</div>
                 </div>
-                <div class="remove-file" onclick="removeFile(${index})"><i class="bi bi-trash"></i></div>
+                <div class="remove-file"><i class="bi bi-trash"></i></div>
             `;
                 fileList.appendChild(div);
+
+                // Re-enable robust image loading via FileReader for the thumbnail
+                if (file.type.startsWith('image/')) {
+                    const imgEl = div.querySelector('img');
+                    loadImagePreview(file, imgEl);
+                }
+
+                const removeBtn = div.querySelector('.remove-file');
+                removeBtn.addEventListener('click', function(evt) {
+                    evt.stopPropagation();
+                    removeFile(index);
+                });
+
+                // Attach click listener to the card for previewable files
+                if (file.type.startsWith('image/') || file.type === 'application/pdf' || ext === 'pdf') {
+                    div.addEventListener('click', () => {
+                        const previewTarget = div.querySelector('[data-preview-url]');
+                        if (previewTarget) {
+                            const currentUrl = previewTarget.getAttribute('data-preview-url');
+                            const currentName = decodeHtml(previewTarget.getAttribute('data-name') || file.name);
+                            const currentExt = previewTarget.getAttribute('data-ext') || ext;
+                            openPreview(currentUrl, currentName, currentExt);
+                        }
+                    });
+                }
             });
+
         }
 
-        async function renderPdfPreview(file, canvasId) {
+        async function renderPdfPreview(source, canvasId) {
             try {
-                const arrayBuffer = await file.arrayBuffer();
-                const pdf = await pdfjsLib.getDocument(arrayBuffer).promise;
+                let loadingTask;
+                let dataUrlForPreview = null;
+
+                if (typeof source === 'string') {
+                    loadingTask = pdfjsLib.getDocument({
+                        url: source
+                    });
+                } else {
+                    const arrayBuffer = await source.arrayBuffer();
+                    loadingTask = pdfjsLib.getDocument({
+                        data: arrayBuffer
+                    });
+                    // Also produce a data URL for safer preview usage (avoids blob restrictions)
+                    dataUrlForPreview = await new Promise((resolve) => {
+                        const r = new FileReader();
+                        r.onload = (e) => resolve(e.target?.result || '');
+                        r.readAsDataURL(source);
+                    });
+                }
+                const pdf = await loadingTask.promise;
                 const page = await pdf.getPage(1);
 
                 const canvas = document.getElementById(canvasId);
@@ -473,6 +512,10 @@ $tellerProfile = $tellerProfile ?? auth()->user()->loadMissing(['branch', 'unit'
                 };
 
                 await page.render(renderContext).promise;
+
+                if (dataUrlForPreview && canvas) {
+                    canvas.setAttribute('data-preview-url', dataUrlForPreview);
+                }
             } catch (error) {
                 console.error('Error rendering PDF preview:', error);
                 const canvas = document.getElementById(canvasId);
@@ -494,6 +537,18 @@ $tellerProfile = $tellerProfile ?? auth()->user()->loadMissing(['branch', 'unit'
             updateFileInput();
         };
 
+        function loadImagePreview(file, target) {
+            const imgEl = (typeof target === 'string') ? document.getElementById(target) : target;
+            if (!imgEl) return;
+            const reader = new FileReader();
+            reader.onload = e => {
+                const dataUrl = e.target?.result || '';
+                imgEl.src = dataUrl;
+                imgEl.setAttribute('data-preview-url', dataUrl);
+            };
+            reader.readAsDataURL(file);
+        }
+
         function getFileIcon(type) {
             if (type === 'application/pdf') return 'file-pdf-fill';
             if (type.startsWith('image/')) return 'file-image-fill';
@@ -505,6 +560,149 @@ $tellerProfile = $tellerProfile ?? auth()->user()->loadMissing(['branch', 'unit'
             const k = 1024;
             const i = Math.floor(Math.log(bytes) / Math.log(k));
             return Math.round(bytes / Math.pow(k, i) * 10) / 10 + ' ' + ['B', 'KB', 'MB'][i];
+        }
+
+        function escapeHtml(str) {
+            return str
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
+        }
+
+        function decodeHtml(str) {
+            const textarea = document.createElement('textarea');
+            textarea.innerHTML = str;
+            return textarea.value;
+        }
+
+        let currentPdfRenderId = 0;
+        window.openPreview = function(url, name = 'Attachment Preview', ext = '') {
+            if (!url) return;
+            const modalEl = document.getElementById('previewModal');
+            const img = document.getElementById('previewImage');
+            const frame = document.getElementById('previewFrame');
+
+            const pdfWrap = document.getElementById('previewPdfCanvasWrap');
+            const pdfPages = document.getElementById('previewPdfPages');
+            const pdfStatus = document.getElementById('previewPdfStatus');
+
+            // Reset state
+            img.classList.add('d-none');
+            frame.classList.add('d-none');
+            if (pdfWrap) pdfWrap.classList.add('d-none');
+            img.src = '';
+            frame.src = '';
+            if (pdfPages) pdfPages.innerHTML = '';
+
+            const isPdf = (ext || '').toLowerCase().includes('pdf');
+            if (isPdf) {
+                renderPdfInModal(url, pdfWrap, pdfPages, pdfStatus, frame);
+            } else {
+                img.src = url;
+                img.classList.remove('d-none');
+            }
+
+            const modal = bootstrap.Modal.getOrCreateInstance(modalEl);
+            modal.show();
+        }
+
+        async function renderPdfInModal(url, wrap, pagesContainer, status, iframeFallback) {
+            const renderId = ++currentPdfRenderId;
+            if (!wrap || !pagesContainer) {
+                if (iframeFallback) {
+                    iframeFallback.src = url;
+                    iframeFallback.classList.remove('d-none');
+                }
+                return;
+            }
+
+            wrap.classList.remove('d-none');
+            pagesContainer.innerHTML = ''; // Clear previous pages
+
+            if (status) {
+                status.textContent = 'Loading PDF...';
+                status.classList.remove('d-none');
+            }
+
+            try {
+                const loadingTask = pdfjsLib.getDocument({
+                    url,
+                    withCredentials: false
+                });
+                const pdf = await loadingTask.promise;
+                if (renderId !== currentPdfRenderId) return;
+
+                if (status) status.textContent = `Rendering ${pdf.numPages} page(s)...`;
+
+                for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
+                    if (renderId !== currentPdfRenderId) return;
+                    const page = await pdf.getPage(pageNum);
+                    const viewport = page.getViewport({
+                        scale: 1.5
+                    }); // Good quality scale
+
+                    const canvas = document.createElement('canvas');
+                    canvas.className = 'shadow-sm bg-white rounded mb-3';
+                    canvas.style.maxWidth = '100%';
+
+                    const context = canvas.getContext('2d');
+                    canvas.height = viewport.height;
+                    canvas.width = viewport.width;
+
+                    pagesContainer.appendChild(canvas);
+
+                    await page.render({
+                        canvasContext: context,
+                        viewport: viewport
+                    }).promise;
+                }
+                if (status && renderId === currentPdfRenderId) status.classList.add('d-none');
+
+            } catch (err) {
+                if (renderId !== currentPdfRenderId) return;
+                console.error('PDF preview failed, falling back to iframe:', err);
+                wrap.classList.add('d-none');
+                if (iframeFallback) {
+                    iframeFallback.src = url;
+                    iframeFallback.classList.remove('d-none');
+                }
+            } finally {
+                if (status && renderId === currentPdfRenderId) status.classList.add('d-none');
+            }
+        }
+    });
+</script>
+
+<!-- Dark Preview Modal -->
+<div class="modal fade modal-preview-dark" id="previewModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered">
+
+        <div class="modal-content">
+            <div class="modal-body text-center">
+                <div class="preview-container" style="min-width: 300px; min-height: 200px;">
+                    <img id="previewImage" src="" alt="Preview" class="img-fluid d-none rounded" style="max-height: 80vh; max-width: 100%; object-fit: contain;">
+                    <div id="previewPdfCanvasWrap" class="d-none rounded bg-white" style="width: 100%; height: 80vh; overflow: auto;">
+                        <div id="previewPdfStatus" class="sticky-top bg-warning text-dark small py-1 shadow-sm">Loading PDF...</div>
+                        <div id="previewPdfPages" class="d-flex flex-column align-items-center gap-3 p-3 bg-dark"></div>
+                    </div>
+                    <iframe id="previewFrame" src="" class="w-100 d-none rounded bg-white" style="height: 80vh; border: 0;"></iframe>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const previewModal = document.getElementById('previewModal');
+        if (previewModal) {
+            previewModal.addEventListener('click', function(e) {
+                if (e.target.classList.contains('modal-body') || e.target.classList.contains('modal-content')) {
+                    const instance = bootstrap.Modal.getInstance(previewModal);
+                    if (instance) instance.hide();
+                }
+            });
         }
     });
 </script>

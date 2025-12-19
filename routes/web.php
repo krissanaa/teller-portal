@@ -24,6 +24,33 @@ use App\Http\Controllers\Teller\ReportController as TellerReportController;
 Route::get('/', fn() => redirect()->route('login'));
 
 // ============================================================
+// 📂 Storage Helper for Docker/Symlink Issues
+// ============================================================
+Route::get('/storage-file/{path}', function ($path) {
+    $path = urldecode($path);
+    // Prevent directory traversal
+    if (strpos($path, '..') !== false) {
+        abort(403);
+    }
+
+    $fullPath = storage_path('app/public/' . $path);
+
+    if (!file_exists($fullPath)) {
+        // Try decoded again or plain storage disk as last resort
+        $diskPath = storage_path('app/public/' . ltrim(urldecode($path), '/'));
+        if (!file_exists($diskPath)) {
+            abort(404);
+        }
+        $fullPath = $diskPath;
+    }
+
+    $mime = mime_content_type($fullPath);
+    return response()->file($fullPath, [
+        'Content-Type' => $mime
+    ]);
+})->where('path', '.*')->name('storage.file');
+
+// ============================================================
 // 🔐 หลัง Login — ส่งผู้ใช้ไปยัง Dashboard ตาม Role
 // ============================================================
 Route::get('/dashboard', function () {

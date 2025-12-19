@@ -1,3 +1,5 @@
+
+
 <?php $__env->startSection('title', 'Onboarding Requests'); ?>
 
 <?php $__env->startSection('content'); ?>
@@ -321,58 +323,49 @@ $statusClassMap = [
         box-shadow: 0 0 0 3px rgba(20, 184, 166, 0.1);
     }
 
-    /* Lightbox */
-    .attachment-lightbox {
-        position: fixed;
-        inset: 0;
-        background: rgba(15, 23, 42, 0.9);
-        backdrop-filter: blur(4px);
+    /* Dark Preview Modal styles */
+    .modal-preview-dark .modal-content {
+        background-color: transparent;
+        box-shadow: none;
+        border: none;
+        height: 100vh;
+        pointer-events: none;
+    }
+
+    .modal-preview-dark .modal-body {
+        background-color: transparent;
+        padding: 0;
         display: flex;
         align-items: center;
         justify-content: center;
-        padding: 2rem;
-        z-index: 1050;
-        opacity: 0;
-        pointer-events: none;
-        transition: opacity 0.2s ease;
-    }
-
-    .attachment-lightbox.show {
-        opacity: 1;
-        pointer-events: all;
-    }
-
-    .lightbox-content {
         position: relative;
-        width: auto;
-        max-width: 90vw;
-        max-height: 90vh;
-        background: transparent;
-        display: flex;
-        flex-direction: column;
-    }
-
-    .lightbox-body img {
-        max-width: 100%;
-        max-height: 85vh;
-        border-radius: 4px;
-        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-    }
-
-    .lightbox-close {
-        position: absolute;
-        top: -3rem;
-        right: 0;
-        color: white;
-        background: transparent;
-        border: none;
-        font-size: 2rem;
+        height: 100%;
+        pointer-events: auto;
         cursor: pointer;
-        opacity: 0.8;
     }
 
-    .lightbox-close:hover {
-        opacity: 1;
+    .modal-preview-dark .preview-container {
+        cursor: default;
+        background: #1e293b;
+        border-radius: 12px;
+        padding: 2px;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        display: inline-block;
+        position: relative;
+        max-width: 100%;
+        max-height: 90vh;
+    }
+
+    .modal-preview-dark .modal-header {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        left: auto;
+        width: auto;
+        border: none;
+        background: transparent;
+        padding: 0;
+        z-index: 1056;
     }
 
     @media (max-width: 640px) {
@@ -540,23 +533,30 @@ $statusClassMap = [
             <?php $__currentLoopData = $attachments; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $path): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
             <?php
             $fileName = basename($path);
-            $url = asset('storage/' . ltrim($path, '/'));
+
+            // Use relative storage-file route for consistent access
+            $encodedPath = str_replace('%2F', '/', rawurlencode($path));
+            $url = '/storage-file/' . $encodedPath;
+            $publicUrl = asset('storage/' . ltrim($path, '/'));
+
             $extension = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
             ?>
             <button type="button"
                 class="attachment-pill"
-                onclick="openAdminPreview('<?php echo e($url); ?>', '<?php echo e(addslashes($fileName)); ?>', '<?php echo e($extension); ?>')">
-                <?php if(in_array($extension, ['jpg','jpeg','png','gif'])): ?>
-                <span style="width:42px;height:42px;border-radius:12px;overflow:hidden;display:inline-flex;">
-                    <img src="<?php echo e($url); ?>" alt="<?php echo e($fileName); ?>" style="width:100%;height:100%;object-fit:cover;">
+                onclick="openAdminPreview('<?php echo e($url); ?>', '<?php echo e(addslashes($fileName)); ?>', '<?php echo e($extension); ?>', '<?php echo e($publicUrl); ?>')">
+                <span class="me-2 d-inline-flex align-items-center justify-content-center rounded"
+                    style="width:42px;height:42px;background:#f8fafc;border:1px solid #e2e8f0;">
+                    <?php if(in_array($extension, ['jpg','jpeg','png','gif','webp'])): ?>
+                    <img src="<?php echo e($url); ?>" data-fallback="<?php echo e($publicUrl); ?>" alt="<?php echo e($fileName); ?>"
+                        onerror="this.onerror=null; if(this.dataset.fallback) this.src=this.dataset.fallback;"
+                        style="width:100%;height:100%;object-fit:cover;border-radius:10px;">
+                    <?php elseif($extension === 'pdf'): ?>
+                    <canvas data-pdf-mini-thumb data-url="<?php echo e($url); ?>"
+                        style="width:38px;height:38px;border-radius:10px;display:inline-block;background:#f1f5f9;"></canvas>
+                    <?php else: ?>
+                    <i class="bi bi-paperclip text-secondary"></i>
+                    <?php endif; ?>
                 </span>
-                <?php elseif($extension === 'pdf'): ?>
-                <span style="width:42px;height:42px;border-radius:12px;display:inline-flex;align-items:center;justify-content:center;background:#fef2f2;color:#b91c1c;font-weight:700;">
-                    PDF
-                </span>
-                <?php else: ?>
-                <i class="bi bi-paperclip"></i>
-                <?php endif; ?>
                 <?php echo e(Str::limit($fileName, 24)); ?>
 
             </button>
@@ -604,34 +604,50 @@ $statusClassMap = [
     <div class="d-flex flex-column align-items-end">
         <div class="text-muted small mb-2">
             <?php
-                $start = $requests->firstItem() ?? 0;
-                $end = $requests->lastItem() ?? 0;
-                $total = $requests->total() ?? 0;
+            $start = $requests->firstItem() ?? 0;
+            $end = $requests->lastItem() ?? 0;
+            $total = $requests->total() ?? 0;
             ?>
             Showing <?php echo e($start); ?> to <?php echo e($end); ?> of <?php echo e($total); ?> results
         </div>
         <div>
             <?php if($requests->hasPages()): ?>
-                <?php echo e($requests->links('vendor.pagination.custom')); ?>
+            <?php echo e($requests->links('vendor.pagination.custom')); ?>
 
             <?php else: ?>
-                <ul class="apb-pagination">
-                    <li class="page-item disabled"><span class="page-link" aria-hidden="true"><i class="bi bi-chevron-left"></i></span></li>
-                    <li class="page-item active" aria-current="page"><span class="page-link">1</span></li>
-                    <li class="page-item disabled"><span class="page-link" aria-hidden="true"><i class="bi bi-chevron-right"></i></span></li>
-                </ul>
+            <ul class="apb-pagination">
+                <li class="page-item disabled"><span class="page-link" aria-hidden="true"><i class="bi bi-chevron-left"></i></span></li>
+                <li class="page-item active" aria-current="page"><span class="page-link">1</span></li>
+                <li class="page-item disabled"><span class="page-link" aria-hidden="true"><i class="bi bi-chevron-right"></i></span></li>
+            </ul>
             <?php endif; ?>
         </div>
     </div>
 </div>
 </div>
 
-<div id="attachmentLightbox" class="attachment-lightbox d-none">
-    <div class="lightbox-content">
-        <button class="lightbox-close" onclick="closeAdminPreview()">&times;</button>
-        <div class="lightbox-body" id="lightboxBody"></div>
+<!-- Dark Preview Modal -->
+<div class="modal fade modal-preview-dark" id="previewModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered">
+
+        <div class="modal-content">
+            <div class="modal-body text-center">
+                <div class="preview-container" style="min-width: 300px; min-height: 200px;">
+                    <img id="previewImage" src="" alt="Preview" class="img-fluid d-none rounded" style="max-height: 80vh; max-width: 100%; object-fit: contain;">
+                    <div id="previewPdfCanvasWrap" class="d-none rounded bg-white" style="width: 100%; height: 80vh; overflow: auto;">
+                        <div id="previewPdfStatus" class="sticky-top bg-warning text-dark small py-1 shadow-sm">Loading PDF...</div>
+                        <div id="previewPdfPages" class="d-flex flex-column align-items-center gap-3 p-3 bg-dark"></div>
+                    </div>
+                    <iframe id="previewFrame" src="" class="w-100 d-none rounded bg-white" style="height: 80vh; border: 0;"></iframe>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script>
+    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+</script>
 
 <!-- Approve Modal -->
 <div class="modal fade" id="approveModal" tabindex="-1" aria-labelledby="approveModalLabel" aria-hidden="true">
@@ -704,45 +720,157 @@ $statusClassMap = [
 </div>
 
 <script>
-    function openAdminPreview(fileUrl, fileName, extension) {
-        const overlay = document.getElementById('attachmentLightbox');
-        const body = document.getElementById('lightboxBody');
+    function openAdminPreview(fileUrl, fileName, extension, fallbackUrl = '') {
+        const modalEl = document.getElementById('previewModal');
+        const img = document.getElementById('previewImage');
+        const frame = document.getElementById('previewFrame');
+        const pdfWrap = document.getElementById('previewPdfCanvasWrap');
+        const pdfPages = document.getElementById('previewPdfPages');
+        const pdfStatus = document.getElementById('previewPdfStatus');
 
-        extension = (extension || '').toLowerCase();
-        body.innerHTML = '';
-        body.classList.remove('scrollable');
+        // Reset state
+        img.classList.add('d-none');
+        frame.classList.add('d-none');
+        if (pdfWrap) pdfWrap.classList.add('d-none');
+        img.src = '';
+        frame.src = '';
 
-        if (['jpg', 'jpeg', 'png', 'gif'].includes(extension)) {
-            body.innerHTML = `<img src="${fileUrl}" alt="${fileName ?? ''}">`;
-        } else if (extension === 'pdf') {
-            body.classList.add('scrollable');
-            body.innerHTML = `<iframe src="${fileUrl}" width="100%" style="border:0;"></iframe>`;
+        const ext = (extension || '').toLowerCase();
+        if (ext === 'pdf') {
+            renderPdfInModal(fileUrl, pdfWrap, pdfPages, pdfStatus, frame);
+        } else if (['jpg', 'jpeg', 'png', 'gif', 'webp'].includes(ext)) {
+            // Prefer direct storage asset to avoid auth-blocked routes; fall back to storage-file
+            const primary = fallbackUrl || fileUrl;
+            img.onerror = () => {
+                if (img.src !== fileUrl) {
+                    img.onerror = null;
+                    img.src = fileUrl; // try storage-file second
+                }
+            };
+            img.src = primary;
+            img.classList.remove('d-none');
         } else {
-            body.innerHTML = `<div class="text-center text-light">
-                <p class="mb-3">Preview not supported. Download to view this file.</p>
-                <a href="${fileUrl}" class="btn btn-primary" target="_blank" rel="noopener">
-                    <i class="bi bi-download"></i> Download ${fileName ?? ''}
-                </a>
-            </div>`;
+            frame.src = fileUrl;
+            img.classList.add('d-none');
+            frame.classList.remove('d-none');
         }
 
-        overlay.classList.remove('d-none');
-        setTimeout(() => overlay.classList.add('show'), 10);
-        document.body.classList.add('modal-open');
+        const modal = new bootstrap.Modal(modalEl);
+        modal.show();
     }
 
-    function closeAdminPreview() {
-        const overlay = document.getElementById('attachmentLightbox');
-        overlay.classList.remove('show');
-        document.body.classList.remove('modal-open');
-        setTimeout(() => overlay.classList.add('d-none'), 200);
-    }
-
-    document.addEventListener('click', (event) => {
-        const overlay = document.getElementById('attachmentLightbox');
-        if (overlay && overlay.classList.contains('show') && event.target === overlay) {
-            closeAdminPreview();
+    async function renderPdfInModal(url, wrap, pagesContainer, status, iframeFallback) {
+        if (!wrap || !pagesContainer) {
+            if (iframeFallback) {
+                iframeFallback.src = url;
+                iframeFallback.classList.remove('d-none');
+            }
+            return;
         }
+
+        wrap.classList.remove('d-none');
+        pagesContainer.innerHTML = ''; // Clear previous pages
+
+        if (status) {
+            status.textContent = 'Loading PDF...';
+            status.classList.remove('d-none');
+        }
+
+        try {
+            const loadingTask = pdfjsLib.getDocument({
+                url,
+                withCredentials: false
+            });
+            const pdf = await loadingTask.promise;
+
+            status.textContent = `Rendering ${pdf.numPages} page(s)...`;
+
+            for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
+                const page = await pdf.getPage(pageNum);
+                const viewport = page.getViewport({
+                    scale: 1.5
+                });
+
+                const canvas = document.createElement('canvas');
+                canvas.className = 'shadow-sm bg-white rounded';
+                canvas.style.maxWidth = '100%';
+
+                const context = canvas.getContext('2d');
+                canvas.height = viewport.height;
+                canvas.width = viewport.width;
+
+                pagesContainer.appendChild(canvas);
+
+                await page.render({
+                    canvasContext: context,
+                    viewport: viewport
+                }).promise;
+            }
+
+            if (status) status.classList.add('d-none');
+
+        } catch (err) {
+            console.error('PDF preview failed, falling back to iframe:', err);
+            wrap.classList.add('d-none');
+            if (iframeFallback) {
+                iframeFallback.src = url;
+                iframeFallback.classList.remove('d-none');
+            }
+        } finally {
+            if (status) status.classList.add('d-none');
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        // Modal Backdrop Click
+        const previewModal = document.getElementById('previewModal');
+        if (previewModal) {
+            previewModal.addEventListener('click', function(e) {
+                if (e.target.classList.contains('modal-body') || e.target.classList.contains('modal-content')) {
+                    const instance = bootstrap.Modal.getInstance(previewModal);
+                    if (instance) instance.hide();
+                }
+            });
+        }
+
+        // Render PDF Mini Thumbs
+        const pdfThumbs = document.querySelectorAll('[data-pdf-mini-thumb]');
+        pdfThumbs.forEach(async (canvas) => {
+            const url = canvas.dataset.url;
+            if (!url) return;
+            try {
+                const loadingTask = pdfjsLib.getDocument({
+                    url,
+                    withCredentials: false
+                });
+                const pdf = await loadingTask.promise;
+                const page = await pdf.getPage(1);
+
+                const viewport = page.getViewport({
+                    scale: 1
+                });
+                const desiredWidth = 42 * window.devicePixelRatio; // Match CSS width * pixel ratio
+                const scale = desiredWidth / viewport.width;
+                const scaledViewport = page.getViewport({
+                    scale
+                });
+
+                const ctx = canvas.getContext('2d');
+                canvas.width = scaledViewport.width;
+                canvas.height = scaledViewport.height;
+
+                await page.render({
+                    canvasContext: ctx,
+                    viewport: scaledViewport
+                }).promise;
+            } catch (e) {
+                console.error('PDF Thumb error:', e);
+                // Fallback to simple icon
+                canvas.replaceWith(document.createRange().createContextualFragment(
+                    '<span style="width:42px;height:42px;border-radius:12px;display:inline-flex;align-items:center;justify-content:center;background:#fef2f2;color:#b91c1c;font-weight:700;font-size:10px;">PDF</span>'
+                ));
+            }
+        });
     });
 
     const approveModal = document.getElementById('approveModal');
@@ -797,5 +925,4 @@ $statusClassMap = [
     }
 </script>
 <?php $__env->stopSection(); ?>
-
 <?php echo $__env->make('layouts.admin', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH /var/www/html/resources/views/admin/onboarding/index.blade.php ENDPATH**/ ?>

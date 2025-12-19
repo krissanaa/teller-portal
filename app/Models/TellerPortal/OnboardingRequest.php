@@ -59,7 +59,7 @@ class OnboardingRequest extends Model
 
     public function teller()
     {
-        return $this->belongsTo(\App\Models\User::class, 'teller_id');
+        return $this->belongsTo(\App\Models\User::class, 'teller_id', 'teller_id');
     }
 
     /**

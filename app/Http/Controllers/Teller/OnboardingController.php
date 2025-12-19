@@ -174,7 +174,7 @@ class OnboardingController extends Controller
     {
         $request = OnboardingRequest::visibleTo(Auth::user())
             ->where('id', $id)
-            ->with(['branch', 'unit'])
+            ->with(['branch', 'unit', 'teller'])
             ->firstOrFail();
 
         return view('teller.requests.show', compact('request'));

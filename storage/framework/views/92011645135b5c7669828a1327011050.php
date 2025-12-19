@@ -329,32 +329,38 @@
             <table class="table modern-table">
                 <thead>
                     <tr>
-
-                        <th>ລະຫັດອ້າງອີງ</th>
-                        <th>ລະຫັດເຄື່ອງ POS</th>
+                        <th width="50">ລຳດັບ</th>
+                        <?php if(Auth::user()->isBranchAdmin()): ?>
+                        <th>ວັນທີສ້າງ</th>
                         <th>ຊື່ຮ້ານຄ້າ</th>
                         <th>ປະເພດທຸລະກິດ</th>
-
+                        <th>ສາຂາ / ໜ່ວຍ</th>
+                        <th>ລະຫັດອ້າງອີງ</th>
                         <th>ວັນທີຕິດຕັ້ງ</th>
-
                         <th>ໝາຍເຫດ</th>
                         <th width="120" class="text-center">ສະຖານະ</th>
+                        <?php else: ?>
+                        <th>ຊື່ຮ້ານຄ້າ</th>
+                        <th>ປະເພດທຸລະກິດ</th>
+                        <th>ລະຫັດອ້າງອີງ</th>
+                        <th>ວັນທີຕິດຕັ້ງ</th>
+                        <th>ໝາຍເຫດ</th>
+                        <th width="120" class="text-center">ສະຖານະ</th>
+                        <?php endif; ?>
                     </tr>
                 </thead>
                 <tbody>
                     <?php $__empty_1 = true; $__currentLoopData = $requests; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $r): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
                     <tr class="table-row-clickable" data-href="<?php echo e(route('teller.requests.show', $r->id)); ?>">
+                        <td class="text-center fw-bold text-muted">
+                            <?php echo e(($requests->firstItem() ?? 0) + $loop->index); ?>
 
-                        <td>
-                            <span class="reference-code">
-                                <i class="bi bi-hash"></i><?php echo e($r->refer_code); ?>
-
-                            </span>
                         </td>
+
+                        <?php if(Auth::user()->isBranchAdmin()): ?>
                         <td>
-                            <span class="store-name">
-                                <i class="bi bi-computer text-muted"></i>
-                                <?php echo e($r->pos_serial ?: '-'); ?>
+                            <span class="store-name text-muted">
+                                <?php echo e($r->created_at->format('d/m/Y')); ?>
 
                             </span>
                         </td>
@@ -367,11 +373,31 @@
                         </td>
                         <td>
                             <span class="store-name">
+                                <i class="bi bi-shop text-muted me-1"></i>
                                 <?php echo e($r->business_type); ?>
 
                             </span>
                         </td>
+                        <td>
+                            <div class="d-flex flex-column small">
+                                <span class="fw-semibold text-primary">
+                                    <?php echo e($r->branch->BRANCH_NAME ?? $r->branch_id); ?>
 
+                                </span>
+                                <?php if($r->unit): ?>
+                                <span class="text-muted text-xs">
+                                    <i class="bi bi-diagram-2"></i> <?php echo e($r->unit->unit_name ?? $r->unit_id); ?>
+
+                                </span>
+                                <?php endif; ?>
+                            </div>
+                        </td>
+                        <td>
+                            <span class="reference-code">
+                                <i class="bi bi-hash"></i><?php echo e($r->refer_code); ?>
+
+                            </span>
+                        </td>
                         <td>
                             <span class="store-name">
                                 <i class="bi bi-calendar3 text-muted"></i>
@@ -379,8 +405,6 @@
 
                             </span>
                         </td>
-
-
                         <td>
                             <span class="store-name text-danger fw-semibold">
                                 <?php echo e($r->admin_remark); ?>
@@ -408,16 +432,72 @@
                                 <?php endif; ?>
                             </div>
                         </td>
+                        <?php else: ?>
+                        
+                        <td>
+                            <span class="store-name">
+                                <i class="bi bi-shop text-muted me-1"></i>
+                                <?php echo e($r->store_name); ?>
+
+                            </span>
+                        </td>
+                        <td>
+                            <span class="store-name">
+                                <i class="bi bi-shop text-muted me-1"></i>
+                                <?php echo e($r->business_type); ?>
+
+                            </span>
+                        </td>
+                        <td>
+                            <span class="reference-code">
+                                <i class="bi bi-hash"></i><?php echo e($r->refer_code); ?>
+
+                            </span>
+                        </td>
+                        <td>
+                            <span class="store-name">
+                                <i class="bi bi-calendar3 text-muted"></i>
+                                <?php echo e($r->installation_date); ?>
+
+                            </span>
+                        </td>
+                        <td>
+                            <span class="store-name text-danger fw-semibold">
+                                <?php echo e($r->admin_remark); ?>
+
+                            </span>
+                        </td>
+                        <td class="text-center">
+                            <div class="d-flex flex-column align-items-center gap-2">
+                                <span class="status-badge <?php echo e($r->approval_status === 'rejected' ? 'rejected' : ''); ?>">
+                                    <?php
+                                    $statusLabel = match ($r->approval_status) {
+                                    'pending' => 'ລໍຖ້າອະນຸມັດ',
+                                    'approved' => 'ອະນຸມັດ',
+                                    'rejected' => 'ປະຕິເສດ',
+                                    default => ucfirst($r->approval_status),
+                                    };
+                                    ?>
+                                    <?php echo e($statusLabel); ?>
+
+                                </span>
+                                <?php if($r->approval_status === 'rejected'): ?>
+                                <a href="<?php echo e(route('teller.requests.edit', $r->id)); ?>" class="btn btn-sm btn-primary py-0 px-2" style="font-size: 0.75rem; width: 100%;">
+                                    <i class="bi bi-arrow-repeat"></i> Resubmit
+                                </a>
+                                <?php endif; ?>
+                            </div>
+                        </td>
+                        <?php endif; ?>
                     </tr>
                     <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
                     <tr>
-                        <td colspan="7" class="empty-state">
+                        <td colspan="<?php if(Auth::user()->isBranchAdmin()): ?> 8 <?php else: ?> 6 <?php endif; ?>" class="empty-state">
                             <i class="bi bi-inbox"></i>
-                            <p>ບໍ່ມີຂໍ້ມູນ
+                            <p>ບໍ່ມີຂໍ້ມູນ</p>
                         </td>
                     </tr>
                     <?php endif; ?>
-
                 </tbody>
             </table>
         </div>

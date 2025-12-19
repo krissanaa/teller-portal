@@ -112,8 +112,7 @@
 <div class="modal fade" id="previewModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-xl modal-dialog-centered">
         <div class="modal-content border-0 shadow-lg" style="height: 85vh; border-radius: 16px; overflow: hidden;">
-            <div class="modal-header border-bottom-0 py-3 px-4" style="background: white; position: absolute; top: 0; left: 0; right: 0; z-index: 10;">
-                <h5 class="modal-title text-dark fw-bold" id="previewTitle" style="font-size: 1.1rem;"></h5>
+            <div class="modal-header border-bottom-0 py-3 px-4" style="background: white; position: absolute; top: 0; left: 0; right: 0; z-index: 10; display: flex; justify-content: flex-end;">
                 <button type="button" class="btn-close" data-bs-dismiss="modal" style="background-color: #f1f5f9; padding: 10px; border-radius: 50%; opacity: 1;"></button>
             </div>
             <div class="modal-body p-0 bg-light d-flex align-items-center justify-content-center" id="previewContainer" style="padding-top: 60px !important;"></div>
@@ -126,7 +125,6 @@
 <script>
     function openPreview(fileUrl, fileName, extension) {
         const modal = new bootstrap.Modal(document.getElementById('previewModal'));
-        document.getElementById('previewTitle').textContent = fileName;
         const container = document.getElementById('previewContainer');
         container.innerHTML = '';
 

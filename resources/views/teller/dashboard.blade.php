@@ -331,31 +331,37 @@
             <table class="table modern-table">
                 <thead>
                     <tr>
-
-                        <th>ລະຫັດອ້າງອີງ</th>
-                        <th>ລະຫັດເຄື່ອງ POS</th>
+                        <th width="50">ລຳດັບ</th>
+                        @if(Auth::user()->isBranchAdmin())
+                        <th>ວັນທີສ້າງ</th>
                         <th>ຊື່ຮ້ານຄ້າ</th>
                         <th>ປະເພດທຸລະກິດ</th>
-
+                        <th>ສາຂາ / ໜ່ວຍ</th>
+                        <th>ລະຫັດອ້າງອີງ</th>
                         <th>ວັນທີຕິດຕັ້ງ</th>
-
                         <th>ໝາຍເຫດ</th>
                         <th width="120" class="text-center">ສະຖານະ</th>
+                        @else
+                        <th>ຊື່ຮ້ານຄ້າ</th>
+                        <th>ປະເພດທຸລະກິດ</th>
+                        <th>ລະຫັດອ້າງອີງ</th>
+                        <th>ວັນທີຕິດຕັ້ງ</th>
+                        <th>ໝາຍເຫດ</th>
+                        <th width="120" class="text-center">ສະຖານະ</th>
+                        @endif
                     </tr>
                 </thead>
                 <tbody>
                     @forelse($requests as $r)
                     <tr class="table-row-clickable" data-href="{{ route('teller.requests.show', $r->id) }}">
-
-                        <td>
-                            <span class="reference-code">
-                                <i class="bi bi-hash"></i>{{ $r->refer_code }}
-                            </span>
+                        <td class="text-center fw-bold text-muted">
+                            {{ ($requests->firstItem() ?? 0) + $loop->index }}
                         </td>
+
+                        @if(Auth::user()->isBranchAdmin())
                         <td>
-                            <span class="store-name">
-                                <i class="bi bi-computer text-muted"></i>
-                                {{ $r->pos_serial ?: '-' }}
+                            <span class="store-name text-muted">
+                                {{ $r->created_at->format('d/m/Y') }}
                             </span>
                         </td>
                         <td>
@@ -366,18 +372,33 @@
                         </td>
                         <td>
                             <span class="store-name">
+                                <i class="bi bi-shop text-muted me-1"></i>
                                 {{ $r->business_type }}
                             </span>
                         </td>
-
+                        <td>
+                            <div class="d-flex flex-column small">
+                                <span class="fw-semibold text-primary">
+                                    {{ $r->branch->BRANCH_NAME ?? $r->branch_id }}
+                                </span>
+                                @if($r->unit)
+                                <span class="text-muted text-xs">
+                                    <i class="bi bi-diagram-2"></i> {{ $r->unit->unit_name ?? $r->unit_id }}
+                                </span>
+                                @endif
+                            </div>
+                        </td>
+                        <td>
+                            <span class="reference-code">
+                                <i class="bi bi-hash"></i>{{ $r->refer_code }}
+                            </span>
+                        </td>
                         <td>
                             <span class="store-name">
                                 <i class="bi bi-calendar3 text-muted"></i>
                                 {{ $r->installation_date }}
                             </span>
                         </td>
-
-
                         <td>
                             <span class="store-name text-danger fw-semibold">
                                 {{ $r->admin_remark }}
@@ -403,16 +424,66 @@
                                 @endif
                             </div>
                         </td>
+                        @else
+                        {{-- Teller Layout --}}
+                        <td>
+                            <span class="store-name">
+                                <i class="bi bi-shop text-muted me-1"></i>
+                                {{ $r->store_name }}
+                            </span>
+                        </td>
+                        <td>
+                            <span class="store-name">
+                                <i class="bi bi-shop text-muted me-1"></i>
+                                {{ $r->business_type }}
+                            </span>
+                        </td>
+                        <td>
+                            <span class="reference-code">
+                                <i class="bi bi-hash"></i>{{ $r->refer_code }}
+                            </span>
+                        </td>
+                        <td>
+                            <span class="store-name">
+                                <i class="bi bi-calendar3 text-muted"></i>
+                                {{ $r->installation_date }}
+                            </span>
+                        </td>
+                        <td>
+                            <span class="store-name text-danger fw-semibold">
+                                {{ $r->admin_remark }}
+                            </span>
+                        </td>
+                        <td class="text-center">
+                            <div class="d-flex flex-column align-items-center gap-2">
+                                <span class="status-badge {{ $r->approval_status === 'rejected' ? 'rejected' : '' }}">
+                                    @php
+                                    $statusLabel = match ($r->approval_status) {
+                                    'pending' => 'ລໍຖ້າອະນຸມັດ',
+                                    'approved' => 'ອະນຸມັດ',
+                                    'rejected' => 'ປະຕິເສດ',
+                                    default => ucfirst($r->approval_status),
+                                    };
+                                    @endphp
+                                    {{ $statusLabel }}
+                                </span>
+                                @if($r->approval_status === 'rejected')
+                                <a href="{{ route('teller.requests.edit', $r->id) }}" class="btn btn-sm btn-primary py-0 px-2" style="font-size: 0.75rem; width: 100%;">
+                                    <i class="bi bi-arrow-repeat"></i> Resubmit
+                                </a>
+                                @endif
+                            </div>
+                        </td>
+                        @endif
                     </tr>
                     @empty
                     <tr>
-                        <td colspan="7" class="empty-state">
+                        <td colspan="@if(Auth::user()->isBranchAdmin()) 8 @else 6 @endif" class="empty-state">
                             <i class="bi bi-inbox"></i>
-                            <p>ບໍ່ມີຂໍ້ມູນ
+                            <p>ບໍ່ມີຂໍ້ມູນ</p>
                         </td>
                     </tr>
                     @endforelse
-
                 </tbody>
             </table>
         </div>

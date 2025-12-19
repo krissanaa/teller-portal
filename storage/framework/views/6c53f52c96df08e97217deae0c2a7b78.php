@@ -691,7 +691,7 @@
                         <th>ລະຫັດອ້າງອີງ</th>
                         <th>ລະຫັດເຄື່ອງ pos</th>
                         <th style="width: 110px;">ວັນທີໄປຕິດຕັ້ງ</th>
-                        <th style="width: 110px;">ຜູ້ສ້າງ</th> <!-- Added Teller Header -->
+                        <th style="width: 110px;">ຜູ້ສ້າງ</th>
                         <th width="120" class="text-center">ສະຖານະ</th>
                     </tr>
                 </thead>
@@ -709,12 +709,7 @@
 
                             </span>
                         </td>
-                        <td>
-                            <span class="store-name">
-                                <?php echo e($r->business_type); ?>
-
-                            </span>
-                        </td>
+                        <td><?php echo e($r->business_type); ?></td>
                         <?php if(Auth::user()->isBranchAdmin()): ?>
                         <td>
                             <div class="d-flex flex-column small">
@@ -744,19 +739,12 @@
 
                             </span>
                         </td>
+                        <td><?php echo e(\Carbon\Carbon::parse($r->installation_date)->format('d/m/Y')); ?></td>
                         <td>
-                            <SPAN class="store-name">
-                                <i class="bi bi-calendar3 text-muted"></i>
-                                <?php echo e($r->installation_date); ?>
-
-                            </SPAN>
-                        </td>
-                        <td> 
-                            <span class="store-name">
-                                <i class="bi bi-person-circle text-muted"></i>
-                                <?php echo e($r->teller->teller_id ?? $r->teller_id ?? '-'); ?>
-
-                            </span>
+                            <div class="d-flex flex-column small">
+                                <span class="fw-semibold"><?php echo e($r->teller->name ?? '-'); ?></span>
+                                <span class="text-muted text-xs"><?php echo e($r->teller->teller_id ?? $r->teller_id); ?></span>
+                            </div>
                         </td>
                         <td class="text-center">
                             <?php if($r->approval_status == 'approved'): ?>

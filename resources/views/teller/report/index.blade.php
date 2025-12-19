@@ -686,7 +686,7 @@
                         <th>ລະຫັດອ້າງອີງ</th>
                         <th>ລະຫັດເຄື່ອງ pos</th>
                         <th style="width: 110px;">ວັນທີໄປຕິດຕັ້ງ</th>
-                        <th style="width: 110px;">ຜູ້ສ້າງ</th> <!-- Added Teller Header -->
+                        <th style="width: 110px;">ຜູ້ສ້າງ</th>
                         <th width="120" class="text-center">ສະຖານະ</th>
                     </tr>
                 </thead>
@@ -702,11 +702,7 @@
                                 {{ $r->store_name }}
                             </span>
                         </td>
-                        <td>
-                            <span class="store-name">
-                                {{ $r->business_type }}
-                            </span>
-                        </td>
+                        <td>{{ $r->business_type }}</td>
                         @if(Auth::user()->isBranchAdmin())
                         <td>
                             <div class="d-flex flex-column small">
@@ -732,17 +728,12 @@
                                 {{ $r->pos_serial ?: '-' }}
                             </span>
                         </td>
+                        <td>{{ \Carbon\Carbon::parse($r->installation_date)->format('d/m/Y') }}</td>
                         <td>
-                            <SPAN class="store-name">
-                                <i class="bi bi-calendar3 text-muted"></i>
-                                {{ $r->installation_date }}
-                            </SPAN>
-                        </td>
-                        <td> {{-- Added Teller column data --}}
-                            <span class="store-name">
-                                <i class="bi bi-person-circle text-muted"></i>
-                                {{ $r->teller->teller_id ?? $r->teller_id ?? '-' }}
-                            </span>
+                            <div class="d-flex flex-column small">
+                                <span class="fw-semibold">{{ $r->teller->name ?? '-' }}</span>
+                                <span class="text-muted text-xs">{{ $r->teller->teller_id ?? $r->teller_id }}</span>
+                            </div>
                         </td>
                         <td class="text-center">
                             @if($r->approval_status == 'approved')

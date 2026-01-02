@@ -362,13 +362,13 @@
                 <i class="bi bi-search"></i> Search
             </button>
         </div>
-        <?php if(!empty($search)): ?>
+        <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php if(!empty($search)): ?>
         <div class="col-md-2">
             <a href="<?php echo e(route('admin.users.index')); ?>" class="btn btn-secondary w-100">
                 Clear
             </a>
         </div>
-        <?php endif; ?>
+        <?php endif; ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php endif; ?>
         <div class="col-md-3 ms-auto">
             <button type="button" class="btn btn-primary w-100 justify-content-center" data-bs-toggle="modal" data-bs-target="#createAdminModal">
                 <i class="bi bi-person-plus-fill"></i> Create Admin
@@ -401,7 +401,7 @@
                 </tr>
             </thead>
             <tbody>
-                <?php $__empty_1 = true; $__currentLoopData = $users; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $u): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
+                <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php $__empty_1 = true; $__currentLoopData = $users; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $u): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
                 <tr class="clickable-row" data-href="<?php echo e(route('admin.users.show', $u->id)); ?>" tabindex="0" role="link">
                     <?php
                     $rowNumber = $users->firstItem() ? $users->firstItem() + $loop->index : $loop->index + 1;
@@ -419,13 +419,13 @@
                     <td><?php echo e($u->phone); ?></td>
                     <td>
                         <span class="status-pill <?php echo e($u->status); ?>">
-                            <?php if($u->status === 'approved'): ?>
+                            <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php if($u->status === 'approved'): ?>
                             <i class="bi bi-check-circle"></i>
                             <?php elseif($u->status === 'pending'): ?>
                             <i class="bi bi-clock-history"></i>
                             <?php else: ?>
                             <i class="bi bi-x-circle"></i>
-                            <?php endif; ?>
+                            <?php endif; ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php endif; ?>
                             <?php echo e(ucfirst($u->status)); ?>
 
                         </span>
@@ -433,7 +433,7 @@
                     <td><?php echo e($u->created_at->format('Y-m-d')); ?></td>
                     <td>
                         <div class="action-buttons justify-content-center">
-                            <?php if($u->status !== 'approved'): ?>
+                            <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php if($u->status !== 'approved'): ?>
                             <form action="<?php echo e(route('admin.users.updateStatus', $u->id)); ?>" method="POST">
                                 <?php echo csrf_field(); ?>
                                 <input type="hidden" name="status" value="approved">
@@ -441,9 +441,9 @@
                                     <i class="bi bi-check-lg"></i> Approve
                                 </button>
                             </form>
-                            <?php endif; ?>
+                            <?php endif; ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php endif; ?>
 
-                            <?php if($u->status !== 'rejected'): ?>
+                            <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php if($u->status !== 'rejected'): ?>
                             <form action="<?php echo e(route('admin.users.updateStatus', $u->id)); ?>" method="POST">
                                 <?php echo csrf_field(); ?>
                                 <input type="hidden" name="status" value="rejected">
@@ -451,7 +451,7 @@
                                     <i class="bi bi-x-lg"></i> Reject
                                 </button>
                             </form>
-                            <?php endif; ?>
+                            <?php endif; ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php endif; ?>
                         </div>
                     </td>
                 </tr>
@@ -464,12 +464,12 @@
                         </div>
                     </td>
                 </tr>
-                <?php endif; ?>
+                <?php endif; ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php endif; ?>
             </tbody>
         </table>
     </div>
 
-    <?php if($users->hasPages()): ?>
+    <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php if($users->hasPages()): ?>
     <div class="position-relative mt-4 p-4 border-top">
         <div class="position-absolute top-50 start-50 translate-middle" style="z-index: 1;">
             <a href="<?php echo e(route('admin.dashboard')); ?>" class="btn btn-secondary">
@@ -492,7 +492,7 @@
             <i class="bi bi-house"></i> Back to Home
         </a>
     </div>
-    <?php endif; ?>
+    <?php endif; ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php endif; ?>
 </div>
 
 <script>

@@ -1,11 +1,10 @@
 <?php
-$pending_count = \Cache::remember('pending_onboarding_count', 30, function () {
 try {
-return \App\Models\TellerPortal\OnboardingRequest::where('approval_status', 'pending')->count();
+// Always show the current pending count (no caching to avoid stale badges).
+$pending_count = \App\Models\TellerPortal\OnboardingRequest::where('approval_status', 'pending')->count();
 } catch (\Exception $e) {
-return 0;
+$pending_count = 0;
 }
-});
 
 $authUser = auth()->user();
 ?>
@@ -20,6 +19,7 @@ $authUser = auth()->user();
     <link rel="preload" as="style" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+    <?php echo app('Illuminate\Foundation\Vite')(['resources/css/app.css', 'resources/js/app.js']); ?>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -28,6 +28,8 @@ $authUser = auth()->user();
     <noscript>
         <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+Lao:wght@300;400;500;600;700;800&family=Noto+Sans:wght@300;400;500;600;700;800&display=swap">
     </noscript>
+    <?php echo \Livewire\Mechanisms\FrontendAssets\FrontendAssets::styles(); ?>
+
 
     <style>
         :root {
@@ -162,6 +164,21 @@ $authUser = auth()->user();
             50% {
                 transform: scale(1.1);
             }
+        }
+
+        /* Menu Badge (for sidebar/dashboard items) */
+        .menu-badge {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            background: #DC3545;
+            color: white;
+            border-radius: 12px;
+            padding: 2px 8px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            animation: pulse 2s infinite;
+            box-shadow: 0 2px 8px rgba(220, 53, 69, 0.4);
         }
 
         .profile-section {
@@ -639,14 +656,6 @@ $authUser = auth()->user();
             </div>
 
             <ul class="navbar-nav ms-auto d-flex flex-row align-items-center gap-3">
-                <li class="nav-item">
-                    <a href="<?php echo e(route('admin.onboarding.index')); ?>" class="notification-btn" title="Pending onboarding requests">
-                        <i class="bi bi-bell-fill"></i>
-                        <?php if($pending_count > 0): ?>
-                        <span class="notification-badge"><?php echo e($pending_count); ?></span>
-                        <?php endif; ?>
-                    </a>
-                </li>
                 <li class="nav-item dropdown">
                     <a class="profile-section d-flex align-items-center gap-2" href="#" id="adminUserDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                         <div class="profile-icon">
@@ -693,17 +702,17 @@ $authUser = auth()->user();
                 <div class="page-heading">
                     <?php if (! empty(trim($__env->yieldContent('page-eyebrow')))): ?>
                     <p class="page-eyebrow"><?php echo $__env->yieldContent('page-eyebrow'); ?></p>
-                    <?php endif; ?>
+                    <?php endif; ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php endif; ?>
                     <h3 class="page-title"><?php echo $__env->yieldContent('title', 'Admin Dashboard'); ?></h3>
                     <?php if (! empty(trim($__env->yieldContent('page-subtitle')))): ?>
                     <p class="page-subtitle"><?php echo $__env->yieldContent('page-subtitle'); ?></p>
-                    <?php endif; ?>
+                    <?php endif; ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php endif; ?>
                 </div>
                 <?php if (! empty(trim($__env->yieldContent('page-actions')))): ?>
                 <div class="page-actions">
                     <?php echo $__env->yieldContent('page-actions'); ?>
                 </div>
-                <?php endif; ?>
+                <?php endif; ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php endif; ?>
             </div>
 
             <div class="page-body">
@@ -711,6 +720,28 @@ $authUser = auth()->user();
             </div>
         </div>
     </div>
+
+    <?php if (isset($component)) { $__componentOriginal08a8786da7acaa0d17ad66b17276ca17 = $component; } ?>
+<?php if (isset($attributes)) { $__attributesOriginal08a8786da7acaa0d17ad66b17276ca17 = $attributes; } ?>
+<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.admin-notification','data' => []] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
+<?php $component->withName('admin-notification'); ?>
+<?php if ($component->shouldRender()): ?>
+<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
+<?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
+<?php $attributes = $attributes->except(\Illuminate\View\AnonymousComponent::ignoredParameterNames()); ?>
+<?php endif; ?>
+<?php $component->withAttributes([]); ?>
+<?php echo $__env->renderComponent(); ?>
+<?php endif; ?>
+<?php if (isset($__attributesOriginal08a8786da7acaa0d17ad66b17276ca17)): ?>
+<?php $attributes = $__attributesOriginal08a8786da7acaa0d17ad66b17276ca17; ?>
+<?php unset($__attributesOriginal08a8786da7acaa0d17ad66b17276ca17); ?>
+<?php endif; ?>
+<?php if (isset($__componentOriginal08a8786da7acaa0d17ad66b17276ca17)): ?>
+<?php $component = $__componentOriginal08a8786da7acaa0d17ad66b17276ca17; ?>
+<?php unset($__componentOriginal08a8786da7acaa0d17ad66b17276ca17); ?>
+<?php endif; ?>
+    <?php echo \Livewire\Mechanisms\FrontendAssets\FrontendAssets::scripts(); ?>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" defer></script>
     <?php echo $__env->yieldPushContent('scripts'); ?>

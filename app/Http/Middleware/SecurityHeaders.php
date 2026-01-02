@@ -24,18 +24,19 @@ class SecurityHeaders
             'Cross-Origin-Opener-Policy' => 'same-origin',
             'Cross-Origin-Resource-Policy' => 'same-origin',
             'X-Permitted-Cross-Domain-Policies' => 'none',
-            'Content-Security-Policy' => implode(' ', [
+            'Content-Security-Policy' => implode('; ', [
                 "default-src 'self'",
-                "script-src 'self' https: 'unsafe-inline'",
-                "style-src 'self' https: 'unsafe-inline'",
+                // allow local Vite (HTTP) during dev + HTTPS CDNs
+                "script-src 'self' 'unsafe-inline' 'unsafe-eval' http: https: 127.0.0.1:* localhost:*",
+                "style-src 'self' 'unsafe-inline' http: https: fonts.googleapis.com 127.0.0.1:* localhost:*",
                 "img-src 'self' data: https:",
-                "font-src 'self' data: https:",
-                "connect-src 'self' https:",
+                "font-src 'self' data: https: fonts.gstatic.com",
+                "connect-src 'self' ws: wss: http: https: 127.0.0.1:* localhost:*",
                 "frame-ancestors 'none'",
                 "form-action 'self'",
                 "base-uri 'self'",
                 "object-src 'none'",
-                'upgrade-insecure-requests',
+                "upgrade-insecure-requests"
             ]),
         ];
 

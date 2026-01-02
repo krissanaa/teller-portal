@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Teller;
 
+use App\Events\NewOnboardingRequest;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\TellerPortal\OnboardingRequest;
@@ -9,13 +10,14 @@ use App\Models\TellerPortal\BranchUnit;
 use App\Models\TellerPortal\Branch;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Validation\Rule;
 
 class OnboardingController extends Controller
 {
-    // Ã°Å¸Â§Â¾ Ã Â¸Å¸Ã Â¸Â­Ã Â¸Â£Ã Â¹Å’Ã Â¸Â¡Ã Â¸ÂªÃ Â¸Â£Ã Â¹â€°Ã Â¸Â²Ã Â¸â€¡Ã Â¸â€žÃ Â¸Â³Ã Â¸â€šÃ Â¸Â­Ã Â¹Æ’Ã Â¸Â«Ã Â¸Â¡Ã Â¹Ë†
+    // 💻 ฟอร์มสร้างคำขอใหม่
     public function create()
     {
         $tellerProfile = Auth::user()->loadMissing(['branch', 'unit']);
@@ -24,7 +26,7 @@ class OnboardingController extends Controller
         return view('teller.requests.create', compact('tellerProfile', 'branches', 'units'));
     }
 
-    // Ã°Å¸â€™Â¾ Ã Â¸Å¡Ã Â¸Â±Ã Â¸â„¢Ã Â¸â€”Ã Â¸Â¶Ã Â¸ÂÃ Â¸â€žÃ Â¸Â³Ã Â¸â€šÃ Â¸Â­Ã Â¹Æ’Ã Â¸Â«Ã Â¸Â¡Ã Â¹Ë†
+    // 📨 บันทึกคำขอใหม่
     public function store(Request $request)
     {
         $data = $request->validate([
@@ -46,7 +48,7 @@ class OnboardingController extends Controller
 
         $this->ensureUnitMatchesBranch($data['branch_id'], $data['unit_id']);
 
-        // Ã¢Å“â€¦ Ã Â¸Â­Ã Â¸Â±Ã Â¸â€ºÃ Â¹â€šÃ Â¸Â«Ã Â¸Â¥Ã Â¸â€Ã Â¹â€žÃ Â¸Å¸Ã Â¸Â¥Ã Â¹Å’Ã Â¹ÂÃ Â¸â„¢Ã Â¸Å¡
+        // จัดเก็บไฟล์แนบ
         $paths = [];
         if ($request->hasFile('attachments')) {
             foreach ($request->file('attachments') as $file) {
@@ -58,7 +60,7 @@ class OnboardingController extends Controller
         $data['teller_id'] = Auth::user()->teller_id;
         $data['approval_status'] = 'pending';
 
-        DB::transaction(function () use (&$data) {
+        $req = DB::transaction(function () use (&$data) {
             $latest = OnboardingRequest::lockForUpdate()
                 ->orderBy('id', 'desc')
                 ->first();
@@ -83,12 +85,17 @@ class OnboardingController extends Controller
                 'description' => "Created request {$req->refer_code}",
                 'details' => ['request_id' => $req->id, 'store_name' => $req->store_name]
             ]);
+
+            return $req;
         });
+
+        Cache::forget('pending_onboarding_count');
+        NewOnboardingRequest::dispatch($req);
 
         return redirect()->route('teller.dashboard')->with('success', 'ສ້າງຄຳຂໍສຳເລັດ');
     }
 
-    // Ã°Å¸Â§Â° Ã Â¸Å¸Ã Â¸Â­Ã Â¸Â£Ã Â¹Å’Ã Â¸Â¡Ã Â¹ÂÃ Â¸ÂÃ Â¹â€°Ã Â¹â€žÃ Â¸â€š
+    // ✏️ แก้ไขคำขอ
     public function edit($id)
     {
         $request = OnboardingRequest::ownedBy(Auth::user())
@@ -100,7 +107,7 @@ class OnboardingController extends Controller
         return view('teller.requests.edit', compact('request', 'tellerProfile'));
     }
 
-    // Ã°Å¸â€â€ž Ã Â¸Â­Ã Â¸Â±Ã Â¸â€ºÃ Â¹â‚¬Ã Â¸â€Ã Â¸â€¢Ã Â¸â€šÃ Â¹â€°Ã Â¸Â­Ã Â¸Â¡Ã Â¸Â¹Ã Â¸Â¥
+    // ✏️ อัปเดตข้อมูล
     public function update(Request $request, $id)
     {
         $record = OnboardingRequest::ownedBy(Auth::user())->findOrFail($id);
@@ -122,10 +129,10 @@ class OnboardingController extends Controller
         $data['pos_serial'] = trim($data['pos_serial'] ?? '') ?: null;
 
 
-        // Ã Â¸â€Ã Â¸Â¶Ã Â¸â€¡Ã Â¸Â£Ã Â¸Â²Ã Â¸Â¢Ã Â¸ÂÃ Â¸Â²Ã Â¸Â£Ã Â¹â€žÃ Â¸Å¸Ã Â¸Â¥Ã Â¹Å’Ã Â¹â‚¬Ã Â¸â€Ã Â¸Â´Ã Â¸Â¡
+        // ดึงรายการไฟล์เดิม
         $existing = json_decode($record->attachments ?? '[]', true);
 
-        // Ã¢Å“â€¦ Ã Â¸Â¥Ã Â¸Å¡Ã Â¹â€žÃ Â¸Å¸Ã Â¸Â¥Ã Â¹Å’Ã Â¸â€”Ã Â¸ÂµÃ Â¹Ë†Ã Â¹â‚¬Ã Â¸Â¥Ã Â¸Â·Ã Â¸Â­Ã Â¸Â
+        // ลบไฟล์ที่เลือก
         $toDelete = $request->input('delete_attachments', []);
         foreach ($toDelete as $idx) {
             if (isset($existing[$idx])) {
@@ -135,7 +142,7 @@ class OnboardingController extends Controller
         }
         $existing = array_values($existing);
 
-        // Ã¢Å“â€¦ Ã Â¹â‚¬Ã Â¸Å¾Ã Â¸Â´Ã Â¹Ë†Ã Â¸Â¡Ã Â¹â€žÃ Â¸Å¸Ã Â¸Â¥Ã Â¹Å’Ã Â¹Æ’Ã Â¸Â«Ã Â¸Â¡Ã Â¹Ë†
+        // เพิ่มไฟล์ใหม่
         if ($request->hasFile('attachments')) {
             foreach ($request->file('attachments') as $file) {
                 $existing[] = $file->store('attachments', 'public');
@@ -146,7 +153,7 @@ class OnboardingController extends Controller
 
 
 
-        // Ã¢Å“â€¦ Ã Â¸Â­Ã Â¸Â±Ã Â¸â€ºÃ Â¹â‚¬Ã Â¸â€Ã Â¸â€¢Ã Â¸â€šÃ Â¹â€°Ã Â¸Â­Ã Â¸Â¡Ã Â¸Â¹Ã Â¸Â¥
+        // อัปเดตข้อมูล
         $record->update($data);
 
         // 📝 Log Update Request
@@ -169,7 +176,7 @@ class OnboardingController extends Controller
             ->with('success', 'ແກ້ໄຂສຳເລັດ');
     }
 
-    // Ã°Å¸â€˜ÂÃ¯Â¸Â Ã Â¹ÂÃ Â¸ÂªÃ Â¸â€Ã Â¸â€¡Ã Â¸Â£Ã Â¸Â²Ã Â¸Â¢Ã Â¸Â¥Ã Â¸Â°Ã Â¹â‚¬Ã Â¸Â­Ã Â¸ÂµÃ Â¸Â¢Ã Â¸â€Ã Â¸â€žÃ Â¸Â³Ã Â¸â€šÃ Â¸Â­
+    // 📄 แสดงรายละเอียด
     public function show($id)
     {
         $request = OnboardingRequest::visibleTo(Auth::user())
@@ -188,7 +195,7 @@ class OnboardingController extends Controller
 
         if (!$branchId) {
             throw ValidationException::withMessages([
-                'branch_id' => __('Ã¯Â¿Â½Ã¯Â¿Â½Ã¯Â¿Â½Ã¯Â¿Â½Ã¯Â¿Â½TÃ¯Â¿Â½Ã¯Â¿Â½^Ã¯Â¿Â½Ã¯Â¿Â½?Ã¯Â¿Â½Ã¯Â¿Â½?Ã¯Â¿Â½Ã¯Â¿Â½Ã¯Â¿Â½Ã¯Â¿Â½Ã¯Â¿Â½%Ã¯Â¿Â½Ã¯Â¿Â½Ã¯Â¿Â½Ã¯Â¿Â½Ã¯Â¿Â½Ã¯Â¿Â½Ã¯Â¿Â½Ã¯Â¿Â½,Ã¯Â¿Â½Ã¯Â¿Â½Ã¯Â¿Â½'),
+                'branch_id' => __('ກະລຸນາເລືອກສາຂາ'),
             ]);
         }
 
@@ -196,13 +203,13 @@ class OnboardingController extends Controller
 
         if (!$unit) {
             throw ValidationException::withMessages([
-                'unit_id' => __('Ã ÂºÂ«Ã Âºâ„¢Ã Â»Ë†Ã ÂºÂ§Ã ÂºÂÃ ÂºÂÃ Â»Ë†Ã ÂºÂ­Ã ÂºÂÃ Âºâ€”Ã ÂºÂµÃ Â»Ë†Ã Â»â‚¬Ã ÂºÂ¥Ã ÂºÂ·Ã ÂºÂ­Ã ÂºÂÃ ÂºÅ¡Ã Â»ÂÃ Â»Ë†Ã Âºâ€“Ã ÂºÂ·Ã ÂºÂÃ Âºâ€¢Ã Â»â€°Ã ÂºÂ­Ã Âºâ€¡'),
+                'unit_id' => __('ຫາຂໍ້ມູນຫ້ອງກວດບໍ່ເຈີ'),
             ]);
         }
 
         if ($branchId && (int) $unit->branch_id !== (int) $branchId) {
             throw ValidationException::withMessages([
-                'unit_id' => __('Ã ÂºÂ«Ã Âºâ„¢Ã Â»Ë†Ã ÂºÂ§Ã ÂºÂÃ ÂºÂÃ Â»Ë†Ã ÂºÂ­Ã ÂºÂÃ ÂºÅ¡Ã Â»ÂÃ Â»Ë†Ã ÂºÂÃ ÂºÂ»Ã Âºâ€¡Ã ÂºÂÃ ÂºÂ±Ã ÂºÅ¡Ã ÂºÂªÃ ÂºÂ²Ã Âºâ€šÃ ÂºÂ²Ã Âºâ€”Ã ÂºÂµÃ Â»Ë†Ã Â»â‚¬Ã ÂºÂ¥Ã ÂºÂ·Ã ÂºÂ­Ã ÂºÂ'),
+                'unit_id' => __('ຫ້ອງກວດກັບສາຂາທີ່ເລືອກ'),
             ]);
         }
     }

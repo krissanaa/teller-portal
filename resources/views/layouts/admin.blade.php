@@ -1,11 +1,10 @@
 @php
-$pending_count = \Cache::remember('pending_onboarding_count', 30, function () {
 try {
-return \App\Models\TellerPortal\OnboardingRequest::where('approval_status', 'pending')->count();
+// Always show the current pending count (no caching to avoid stale badges).
+$pending_count = \App\Models\TellerPortal\OnboardingRequest::where('approval_status', 'pending')->count();
 } catch (\Exception $e) {
-return 0;
+$pending_count = 0;
 }
-});
 
 $authUser = auth()->user();
 @endphp
@@ -20,6 +19,7 @@ $authUser = auth()->user();
     <link rel="preload" as="style" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -28,6 +28,7 @@ $authUser = auth()->user();
     <noscript>
         <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+Lao:wght@300;400;500;600;700;800&family=Noto+Sans:wght@300;400;500;600;700;800&display=swap">
     </noscript>
+    @livewireStyles
 
     <style>
         :root {
@@ -162,6 +163,21 @@ $authUser = auth()->user();
             50% {
                 transform: scale(1.1);
             }
+        }
+
+        /* Menu Badge (for sidebar/dashboard items) */
+        .menu-badge {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            background: #DC3545;
+            color: white;
+            border-radius: 12px;
+            padding: 2px 8px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            animation: pulse 2s infinite;
+            box-shadow: 0 2px 8px rgba(220, 53, 69, 0.4);
         }
 
         .profile-section {
@@ -639,14 +655,6 @@ $authUser = auth()->user();
             </div>
 
             <ul class="navbar-nav ms-auto d-flex flex-row align-items-center gap-3">
-                <li class="nav-item">
-                    <a href="{{ route('admin.onboarding.index') }}" class="notification-btn" title="Pending onboarding requests">
-                        <i class="bi bi-bell-fill"></i>
-                        @if($pending_count > 0)
-                        <span class="notification-badge">{{ $pending_count }}</span>
-                        @endif
-                    </a>
-                </li>
                 <li class="nav-item dropdown">
                     <a class="profile-section d-flex align-items-center gap-2" href="#" id="adminUserDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                         <div class="profile-icon">
@@ -711,6 +719,8 @@ $authUser = auth()->user();
         </div>
     </div>
 
+    <x-admin-notification />
+    @livewireScripts
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" defer></script>
     @stack('scripts')
 </body>

@@ -74,6 +74,10 @@ class RegisteredUserController extends Controller
 
         event(new Registered($user));
 
+        // Broadcast new user registration to admin
+        $pendingUsersCount = User::where('status', 'pending')->count();
+        event(new \App\Events\NewUserRegistered($user, $pendingUsersCount));
+
         // 📝 Log Registration
         \App\Models\UserLog::create([
             'admin_id' => $user->id,

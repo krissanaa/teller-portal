@@ -21,6 +21,8 @@ services:
       OLD_DB_DATABASE: teller_portal
       OLD_DB_USERNAME: teller_user
       OLD_DB_PASSWORD: teller_pass
+    ports:
+      - "8080:8080"
     depends_on:
       - db
 

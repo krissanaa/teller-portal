@@ -4,22 +4,22 @@ ENV TZ=Asia/Bangkok
 
 # Install system dependencies and PHP extensions
 RUN if [ -f /etc/apt/sources.list ]; then \
-        sed -i 's|http://deb.debian.org|https://deb.debian.org|g;s|http://security.debian.org|https://security.debian.org|g' /etc/apt/sources.list; \
+    sed -i 's|http://deb.debian.org|https://deb.debian.org|g;s|http://security.debian.org|https://security.debian.org|g' /etc/apt/sources.list; \
     fi \
     && if [ -f /etc/apt/sources.list.d/debian.sources ]; then \
-        sed -i 's|http://deb.debian.org|https://deb.debian.org|g;s|http://security.debian.org|https://security.debian.org|g' /etc/apt/sources.list.d/debian.sources; \
+    sed -i 's|http://deb.debian.org|https://deb.debian.org|g;s|http://security.debian.org|https://security.debian.org|g' /etc/apt/sources.list.d/debian.sources; \
     fi \
     && apt-get update && apt-get install -y \
-        tzdata \
-        libzip-dev \
-        unzip \
-        libfreetype6-dev \
-        libjpeg62-turbo-dev \
-        libpng-dev \
+    tzdata \
+    libzip-dev \
+    unzip \
+    libfreetype6-dev \
+    libjpeg62-turbo-dev \
+    libpng-dev \
     && ln -snf /usr/share/zoneinfo/$TZ /etc/localtime \
     && echo $TZ > /etc/timezone \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
-    && docker-php-ext-install zip gd pdo pdo_mysql \
+    && docker-php-ext-install zip gd pdo pdo_mysql pcntl \
     && rm -rf /var/lib/apt/lists/*
 
 # Set PHP timezone
@@ -37,6 +37,16 @@ RUN composer install --no-dev --optimize-autoloader --no-interaction --prefer-di
 
 # Copy application code
 COPY . .
+# Ensure storage directories exist
+RUN mkdir -p storage/framework/sessions \
+    storage/framework/views \
+    storage/framework/cache \
+    storage/logs \
+    bootstrap/cache
+
+# Fix permissions
+RUN chown -R www-data:www-data storage bootstrap/cache
+
 RUN composer run-script post-autoload-dump
 
 # Ensure writable directories for Laravel

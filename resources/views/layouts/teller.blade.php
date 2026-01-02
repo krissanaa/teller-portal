@@ -16,6 +16,7 @@
     <noscript>
         <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+Lao:wght@300;400;500;600;700;800&family=Noto+Sans:wght@300;400;500;600;700;800&display=swap">
     </noscript>
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
 
     <style>
         :root {
@@ -1248,6 +1249,7 @@
         });
     </script>
 
+    <x-teller-notification />
 </body>
 
 </html>

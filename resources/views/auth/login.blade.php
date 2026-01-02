@@ -383,7 +383,7 @@
         aspect-ratio: 1 / 1;
         border-radius: 999px;
         background-image: linear-gradient(135deg, rgba(6, 18, 11, 0.82), rgba(9, 31, 19, 0.88)),
-        url('{{ asset(' images/APB-logo.jpeg') }}');
+        url('{{ asset('images/APB-logo.jpeg') }}');
         background-size: cover;
         background-position: center;
         border: 1px solid rgba(255, 255, 255, 0.12);

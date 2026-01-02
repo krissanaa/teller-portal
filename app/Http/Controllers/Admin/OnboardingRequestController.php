@@ -7,6 +7,7 @@ use App\Models\TellerPortal\OnboardingRequest;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Events\RequestStatusUpdated;
 
 class OnboardingRequestController extends Controller
 {
@@ -57,6 +58,9 @@ class OnboardingRequestController extends Controller
             'details' => ['request_id' => $req->id, 'pos_serial' => $req->pos_serial],
         ]);
 
+        // Dispatch Real-time Event to Teller
+        RequestStatusUpdated::dispatch($req, 'approved', 'Your request has been approved!', $tellerUserId);
+
         return back()->with('success', 'Request approved.');
     }
 
@@ -81,6 +85,9 @@ class OnboardingRequestController extends Controller
             'description' => "Rejected request {$req->refer_code}",
             'details' => ['request_id' => $req->id, 'remark' => $req->admin_remark],
         ]);
+
+        // Dispatch Real-time Event to Teller
+        RequestStatusUpdated::dispatch($req, 'rejected', 'Your request has been rejected.', $tellerUserId);
 
         return back()->with('success', 'Request rejected.');
     }

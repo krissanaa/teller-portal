@@ -241,163 +241,28 @@
     }
 </style>
 
-<!-- Stats Overview Section -->
-<div class="page-section">
-    <h2 class="section-title">
-        <i class="bi bi-bar-chart-fill"></i>
-        ພາບລວມສະຖິຕິ
-    </h2>
+<?php
+$__split = function ($name, $params = []) {
+    return [$name, $params];
+};
+[$__name, $__params] = $__split('admin-stats', []);
 
-    <div class="stats-grid">
-        <div class="stat-card total">
-            <div class="stat-card-body">
-                <div class="stat-header">
-                    <div class="stat-info">
-                        <div class="stat-label">Total POS</div>
-                        <div class="stat-count"><?php echo e($total_pos); ?></div>
-                        <div class="stat-description">
-                            <i class="bi bi-graph-up"></i>
-                            ທັງໝົດໃນລະບົບ
-                        </div>
-                    </div>
-                    <div class="stat-icon-box">
-                        <i class="bi bi-shop"></i>
-                    </div>
-                </div>
-            </div>
-        </div>
+$key = null;
 
-        <div class="stat-card approved">
-            <div class="stat-card-body">
-                <div class="stat-header">
-                    <div class="stat-info">
-                        <div class="stat-label">Approved</div>
-                        <div class="stat-count"><?php echo e($approved); ?></div>
-                        <div class="stat-description">
-                            <i class="bi bi-check-circle"></i>
-                            ອະນຸມັດ
-                        </div>
-                    </div>
-                    <div class="stat-icon-box">
-                        <i class="bi bi-check-circle-fill"></i>
-                    </div>
-                </div>
-            </div>
-        </div>
+$key ??= \Livewire\Features\SupportCompiledWireKeys\SupportCompiledWireKeys::generateKey('lw-312391461-0', null);
 
-        <div class="stat-card pending">
-            <div class="stat-card-body">
-                <div class="stat-header">
-                    <div class="stat-info">
-                        <div class="stat-label">Pending</div>
-                        <div class="stat-count"><?php echo e($pending); ?></div>
-                        <div class="stat-description">
-                            <i class="bi bi-clock"></i>
-                            ລໍຖ້າອະນຸມັດ
-                        </div>
-                    </div>
-                    <div class="stat-icon-box">
-                        <i class="bi bi-hourglass-split"></i>
-                    </div>
-                </div>
-            </div>
-        </div>
+$__html = app('livewire')->mount($__name, $__params, $key);
 
-        <div class="stat-card rejected">
-            <div class="stat-card-body">
-                <div class="stat-header">
-                    <div class="stat-info">
-                        <div class="stat-label">Rejected</div>
-                        <div class="stat-count"><?php echo e($rejected); ?></div>
-                        <div class="stat-description">
-                            <i class="bi bi-x-circle"></i>
-                            ປະຕິເສດ
-                        </div>
-                    </div>
-                    <div class="stat-icon-box">
-                        <i class="bi bi-x-circle-fill"></i>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+echo $__html;
+
+unset($__html);
+unset($__name);
+unset($__params);
+unset($__split);
+if (isset($__slots)) unset($__slots);
+?>
 </div>
 
-<!-- Quick Actions Section -->
-<div class="page-section">
-    <h2 class="section-title">
-        <i class="bi bi-lightning-charge-fill"></i>
-        ການດຳເນີນການດ່ວນ
-    </h2>
 
-
-    <div class="quick-actions-grid">
-        <!-- 🔹 Pending Approvals -->
-        <a href="<?php echo e(route('admin.onboarding.index')); ?>" class="action-card shortcut-card">
-            <div class="action-icon">
-                <i class="bi bi-hourglass-split"></i>
-
-            </div>
-            <div class="action-info">
-                <h3 class="action-title">ຄຳຂໍລໍຖ້າອະນຸມັດ</h3>
-                <p class="action-subtitle"><?php echo e($pending); ?> ລາຍການ</p>
-            </div>
-        </a>
-        <!-- 🔹 View All Requests -->
-        <a href="<?php echo e(route('admin.reports.index')); ?>" class="action-card shortcut-card">
-            <div class="action-icon">
-                <i class="bi bi-list-ul"></i>
-            </div>
-            <div class="action-info">
-                <h3 class="action-title">ລາຍງານທັງໝົດ</h3>
-
-            </div>
-        </a>
-
-
-
-        <!-- 🔹 Manage Users -->
-        <a href="<?php echo e(route('admin.users.index')); ?>" class="action-card shortcut-card">
-            <div class="action-icon">
-                <i class="bi bi-people"></i>
-            </div>
-            <div class="action-info">
-                <h3 class="action-title">ຈັດການຜູ້ໃຊ້</h3>
-
-            </div>
-        </a>
-
-        <!-- 🔹 Manage Branches -->
-        <a href="<?php echo e(route('admin.branches.index')); ?>" class="action-card shortcut-card">
-
-            <div class="action-icon">
-                <i class="bi bi-building"></i>
-            </div>
-            <div class="action-info">
-                <h3 class="action-title">ຈັດການເພີ່ມສາຂາ</h3>
-
-            </div>
-        </a>
-
-        <!-- 🔹 Extra Placeholder Card -->
-        <a href="<?php echo e(route('admin.logs.index')); ?>" class="action-card shortcut-card">
-            <div class="action-icon">
-                <i class="bi bi-building"></i>
-            </div>
-            <div class="action-info">
-                <h3 class="action-title">log</h3>
-
-            </div>
-        </a>
-    </div>
-
-</div>
-</div>
-
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        setInterval(() => window.location.reload(), 300000);
-    });
-</script>
 <?php $__env->stopSection(); ?>
 <?php echo $__env->make('layouts.admin', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH /var/www/html/resources/views/admin/dashboard.blade.php ENDPATH**/ ?>

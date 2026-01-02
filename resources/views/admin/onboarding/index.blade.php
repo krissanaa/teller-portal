@@ -76,10 +76,15 @@ $statusClassMap = [
     }
 
     .request-card:hover {
-        background-color: #e6fffa;
-        transform: translateY(-1px);
-        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-        border-color: var(--apb-primary);
+        background-color: #f8fafc;
+        /* Subtle Grey */
+        border-color: #cbd5e1;
+        /* Slightly darker border on hover */
+        border-left-color: var(--apb-primary);
+        /* Show teal accent */
+        transform: translateY(-2px);
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
+        /* Premium soft shadow */
     }
 
     /* Header Section */
@@ -891,8 +896,8 @@ $statusClassMap = [
             div.className = 'mb-2';
             div.innerHTML = `
                     <label class="small text-muted mb-1">Device #${i + 1}</label>
-                    <input type="text" name="pos_serial[]" class="form-control" 
-                           placeholder="Enter Serial Number for Device ${i + 1}" 
+                    <input type="text" name="pos_serial[]" class="form-control"
+                           placeholder="Enter Serial Number for Device ${i + 1}"
                            required value="${val}">
                 `;
             container.appendChild(div);
